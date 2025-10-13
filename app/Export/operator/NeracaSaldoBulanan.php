@@ -3,7 +3,7 @@
 namespace App\Export\operator;
 
 use App\Models\COA;
-use App\Models\HeaderCoa;
+use App\Models\HeaderCOA;
 use App\Models\NeracaSaldo;
 use App\Models\SaldoAwal;
 use Illuminate\Support\Collection;
