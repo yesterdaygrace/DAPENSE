@@ -12,10 +12,13 @@ use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithTitle;
 use Maatwebsite\Excel\Concerns\WithStyles;
+use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
 
 
-class NeracaSaldoBulanan implements FromCollection, WithTitle, WithStyles
+class NeracaSaldoBulanan implements FromCollection, WithTitle, WithStyles, WithColumnWidths
 {
     protected $periode_id;
     protected $month;
@@ -265,7 +268,6 @@ class NeracaSaldoBulanan implements FromCollection, WithTitle, WithStyles
     {
         $indent = str_repeat(' ', $level * 2);
 
-        // Pengecekan excludedHeaders yang aman dan fleksibel
         $isExcluded = false;
         foreach ($this->excludedHeaders as $excluded) {
             if (
@@ -278,7 +280,6 @@ class NeracaSaldoBulanan implements FromCollection, WithTitle, WithStyles
         }
 
         if ($isExcluded) {
-            // Tetap proses anak-anak meskipun parent dikecualikan
             foreach ($header->children as $child) {
                 $this->renderHeader($child, $rows, $level + 1);
             }
@@ -340,11 +341,53 @@ class NeracaSaldoBulanan implements FromCollection, WithTitle, WithStyles
         return $value < 0 ? "($formatted)" : $formatted;
     }
 
-    public function styles(Worksheet $sheet)
+    public function columnWidths(): array
     {
         return [
-            6 => ['font' => ['bold' => true]],
+            'A' => 16,
+            'B' => 35,
+            'C' => 18,
+            'D' => 18,
+            'E' => 18,
+            'F' => 18,
         ];
+    }
+
+    public function styles(Worksheet $sheet)
+    {
+        $headerRow = 6;
+        $highestRow = $sheet->getHighestRow();
+        $highestColumn = $sheet->getHighestColumn();
+
+        $sheet->getStyle("A{$headerRow}:{$highestColumn}{$headerRow}")->applyFromArray([
+            'font' => ['bold' => true, 'size' => 11],
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER,
+                'wrapText' => true,
+            ],
+            'borders' => [
+                'allBorders' => ['borderStyle' => Border::BORDER_THIN],
+            ],
+            'fill' => [
+                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                'startColor' => ['argb' => 'FFDCE6F1']
+            ],
+        ]);
+
+        $sheet->getStyle("A{$headerRow}:{$highestColumn}{$highestRow}")->applyFromArray([
+            'borders' => [
+                'allBorders' => ['borderStyle' => Border::BORDER_HAIR],
+            ],
+        ]);
+
+        $sheet->getStyle("A{$headerRow}:B{$highestRow}")
+            ->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
+
+        $sheet->getStyle("C{$headerRow}:F{$highestRow}")
+            ->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
+
+        $sheet->getStyle('C1')->getFont()->setBold(true)->setSize(14);
     }
 
 

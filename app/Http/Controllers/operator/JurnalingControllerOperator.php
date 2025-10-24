@@ -1436,106 +1436,79 @@ class JurnalingControllerOperator
             ];
         });
 
-        $coas = CoA::all();
+        $allSaldoAwal = SaldoAwal::where('periode_id', $periode_id)
+            ->whereDate('tanggal_saldo', $selectedMonthDate->toDateString())
+            ->get()
+            ->keyBy('coa_id');
 
-        foreach ($coas as $coa) {
-            if (in_array($coa->kode_akun, ['25000201', '89999999'])) {
-                continue;
-            }
+        $nextPeriode = null;
+        if ($selectedMonthDate->month === 12) {
+            $nextYear = $selectedMonthDate->year + 1;
+            $nextPeriode = Periode::firstOrCreate([
+                'tanggal_awal' => Carbon::create($nextYear, 1, 1)->toDateString(),
+                'tanggal_akhir' => Carbon::create($nextYear, 12, 31)->toDateString(),
+            ], [
+                'nama_periode' => $nextYear,
+                'is_rekap' => false,
+            ]);
+        }
 
-            $existingSaldoAwal = SaldoAwal::where('coa_id', $coa->id)
-                ->where('periode_id', $periode_id)
-                ->first();
+        $neracaSaldoBatch = [];
+        $saldoAwalBatch = [];
 
-            $saldoAwalDebit = $existingSaldoAwal?->debit ?? 0;
-            $saldoAwalKredit = $existingSaldoAwal?->kredit ?? 0;
+        COA::chunk(50, function ($coas) use (
+            $periode_id,
+            $selectedMonthDate,
+            $balanceByCoa,
+            $nextPeriode,
+            $allSaldoAwal,
+            &$neracaSaldoBatch,
+            &$saldoAwalBatch
+        ) {
+            foreach ($coas as $coa) {
+                if (in_array($coa->kode_akun, ['25000201', '89999999'])) continue;
 
-            $debit = $balanceByCoa->get($coa->id)['debit'] ?? 0;
-            $kredit = $balanceByCoa->get($coa->id)['kredit'] ?? 0;
+                $existingSaldoAwal = $allSaldoAwal->get($coa->id);
+                $saldoAwalDebit = $existingSaldoAwal?->debit ?? 0;
+                $saldoAwalKredit = $existingSaldoAwal?->kredit ?? 0;
 
-            $saldoAkhir = ($saldoAwalDebit - $saldoAwalKredit) + ($debit - $kredit);
+                $debit = $balanceByCoa->get($coa->id)['debit'] ?? 0;
+                $kredit = $balanceByCoa->get($coa->id)['kredit'] ?? 0;
 
-            NeracaSaldo::updateOrCreate(
-                [
-                    'coa_id' => $coa->kode_akun,
+                $saldoAkhir = ($saldoAwalDebit - $saldoAwalKredit) + ($debit - $kredit);
+
+                $neracaSaldoBatch[] = [
+                    'coa_id' => (string) $coa->kode_akun,
                     'periode_id' => $periode_id,
                     'month' => $selectedMonthDate->toDateString(),
-                ],
-                [
                     'debit' => $debit,
                     'kredit' => $kredit,
                     'balance' => $saldoAkhir,
                     'saldo_awal' => $saldoAwalDebit,
-                ]
-            );
+                ];
 
-            if ($selectedMonthDate->month < 12) {
                 $nextMonth = $selectedMonthDate->copy()->addMonth()->startOfMonth()->toDateString();
 
-                SaldoAwal::updateOrCreate(
-                    [
-                        'coa_id' => $coa->id,
-                        'periode_id' => $periode_id,
-                        'tanggal_saldo' => $nextMonth,
-                    ],
-                    [
-                        'debit' => $saldoAkhir,
-                        'kredit' => 0,
-                    ]
-                );
+                $saldoAwalBatch[] = [
+                    'coa_id' => $coa->id,
+                    'periode_id' => $selectedMonthDate->month < 12 ? $periode_id : $nextPeriode->id,
+                    'tanggal_saldo' => $selectedMonthDate->month < 12 ? $nextMonth : Carbon::create($selectedMonthDate->year + 1, 1, 1)->toDateString(),
+                    'debit' => $saldoAkhir,
+                    'kredit' => 0,
+                ];
             }
+        });
 
-            if ($selectedMonthDate->month === 12) {
-                $nextYear = $selectedMonthDate->year + 1;
-                $nextMonth = Carbon::create($nextYear, 1, 1)->toDateString();
+        $totalDebit = collect($neracaSaldoBatch)->whereBetween('coa_id', ['51110001', '82319999'])->sum('debit');
+        $totalKredit = collect($neracaSaldoBatch)->whereBetween('coa_id', ['51110001', '82319999'])->sum('kredit');
+        $selisih = abs($totalDebit - $totalKredit);
+        $isDebitGreater = $totalDebit > $totalKredit;
 
-                $nextPeriode = Periode::whereDate('tanggal_awal', Carbon::create($nextYear, 1, 1))
-                    ->whereDate('tanggal_akhir', Carbon::create($nextYear, 12, 31))
-                    ->first();
+        $coa25000201 = COA::where('kode_akun', '25000201')->first();
+        $coa89999999 = COA::where('kode_akun', '89999999')->first();
 
-                if (!$nextPeriode) {
-                    $nextPeriode = Periode::create([
-                        'nama_periode' => $nextYear,
-                        'tanggal_awal' => Carbon::create($nextYear, 1, 1)->toDateString(),
-                        'tanggal_akhir' => Carbon::create($nextYear, 12, 31)->toDateString(),
-                        'is_rekap' => false,
-                    ]);
-                }
-
-                SaldoAwal::updateOrCreate(
-                    [
-                        'coa_id' => $coa->id,
-                        'periode_id' => $nextPeriode->id,
-                        'tanggal_saldo' => $nextMonth,
-                    ],
-                    [
-                        'debit' => $saldoAkhir,
-                        'kredit' => 0,
-                    ]
-                );
-            }
-        }
-
-        $totalDebitInRange = NeracaSaldo::where('periode_id', $periode_id)
-            ->where('month', $selectedMonthDate->toDateString())
-            ->whereBetween('coa_id', [51110001, 82319999])
-            ->sum('debit');
-
-        $totalKreditInRange = NeracaSaldo::where('periode_id', $periode_id)
-            ->where('month', $selectedMonthDate->toDateString())
-            ->whereBetween('coa_id', [51110001, 82319999])
-            ->sum('kredit');
-
-        $selisih = abs($totalDebitInRange - $totalKreditInRange);
-        $isDebitGreater = $totalDebitInRange > $totalKreditInRange;
-
-        $coa25000201 = CoA::where('kode_akun', '25000201')->first();
-        $existingSaldoAwal25000201 = SaldoAwal::where('coa_id', $coa25000201->id)
-            ->where('periode_id', $periode_id)
-            ->first();
-
-        $saldoAwalDebit25000201 = $existingSaldoAwal25000201?->debit ?? 0;
-        $saldoAwalKredit25000201 = $existingSaldoAwal25000201?->kredit ?? 0;
+        $saldoAwal25000201 = $allSaldoAwal->get($coa25000201->id);
+        $saldoAwal89999999 = $allSaldoAwal->get($coa89999999->id);
 
         $debit25000201 = $balanceByCoa->get($coa25000201->id)['debit'] ?? 0;
         $kredit25000201 = $balanceByCoa->get($coa25000201->id)['kredit'] ?? 0;
@@ -1546,47 +1519,98 @@ class JurnalingControllerOperator
             $kredit25000201 += $selisih;
         }
 
-        $saldoAkhir25000201 = ($saldoAwalDebit25000201 - $saldoAwalKredit25000201) + ($debit25000201 - $kredit25000201);
+        $saldoAkhir25000201 = ($saldoAwal25000201?->debit ?? 0 - $saldoAwal25000201?->kredit ?? 0) + ($debit25000201 - $kredit25000201);
 
-        NeracaSaldo::updateOrCreate(
-            [
-                'coa_id' => '25000201',
-                'periode_id' => $periode_id,
-                'month' => $selectedMonthDate->toDateString(),
-            ],
-            [
-                'debit' => $debit25000201,
-                'kredit' => $kredit25000201,
-                'balance' => $saldoAkhir25000201,
-                'saldo_awal' => $saldoAwalDebit25000201,
-            ]
-        );
+        $neracaSaldoBatch[] = [
+            'coa_id' => '25000201',
+            'periode_id' => $periode_id,
+            'month' => $selectedMonthDate->toDateString(),
+            'debit' => $debit25000201,
+            'kredit' => $kredit25000201,
+            'balance' => $saldoAkhir25000201,
+            'saldo_awal' => $saldoAwal25000201?->debit ?? 0,
+        ];
 
-        $coa89999999 = CoA::where('kode_akun', '89999999')->first();
-        $existingSaldoAwal89999999 = SaldoAwal::where('coa_id', $coa89999999->id)
-            ->where('periode_id', $periode_id)
-            ->first();
-
-        $saldoAwalDebit89999999 = $existingSaldoAwal89999999?->debit ?? 0;
-        $saldoAwalKredit89999999 = $existingSaldoAwal89999999?->kredit ?? 0;
+        $saldoAwalBatch[] = [
+            'coa_id' => $coa25000201->id,
+            'periode_id' => $selectedMonthDate->month < 12 ? $periode_id : $nextPeriode->id,
+            'tanggal_saldo' => $selectedMonthDate->month < 12
+                ? $selectedMonthDate->copy()->addMonth()->startOfMonth()->toDateString()
+                : Carbon::create($selectedMonthDate->year + 1, 1, 1)->toDateString(),
+            'debit' => $saldoAkhir25000201,
+            'kredit' => 0,
+        ];
 
         $debit89999999 = !$isDebitGreater ? $selisih : 0;
         $kredit89999999 = $isDebitGreater ? $selisih : 0;
 
-        $saldoAkhir89999999 = ($saldoAwalDebit89999999 - $saldoAwalKredit89999999) + ($debit89999999 - $kredit89999999);
+        $saldoAkhir89999999 = ($saldoAwal89999999?->debit ?? 0 - $saldoAwal89999999?->kredit ?? 0) + ($debit89999999 - $kredit89999999);
 
-        NeracaSaldo::updateOrCreate(
-            [
-                'coa_id' => '89999999',
-                'periode_id' => $periode_id,
-                'month' => $selectedMonthDate->toDateString(),
-            ],
-            [
-                'debit' => $debit89999999,
-                'kredit' => $kredit89999999,
-                'balance' => $saldoAkhir89999999,
-                'saldo_awal' => $saldoAwalDebit89999999,
-            ]
+        $neracaSaldoBatch[] = [
+            'coa_id' => '89999999',
+            'periode_id' => $periode_id,
+            'month' => $selectedMonthDate->toDateString(),
+            'debit' => $debit89999999,
+            'kredit' => $kredit89999999,
+            'balance' => $saldoAkhir89999999,
+            'saldo_awal' => $saldoAwal89999999?->debit ?? 0,
+        ];
+
+        $saldoAwalBatch[] = [
+            'coa_id' => $coa89999999->id,
+            'periode_id' => $selectedMonthDate->month < 12 ? $periode_id : $nextPeriode->id,
+            'tanggal_saldo' => $selectedMonthDate->month < 12
+                ? $selectedMonthDate->copy()->addMonth()->startOfMonth()->toDateString()
+                : Carbon::create($selectedMonthDate->year + 1, 1, 1)->toDateString(),
+            'debit' => $saldoAkhir89999999,
+            'kredit' => 0,
+        ];
+
+        $existingNeraca = NeracaSaldo::where('periode_id', $periode_id)
+            ->where('month', $selectedMonthDate->toDateString())
+            ->get()
+            ->keyBy(fn($item) => $item->coa_id . '-' . $item->periode_id . '-' . $item->month);
+
+        $existingSaldoAwal = SaldoAwal::whereIn('tanggal_saldo', [
+            $selectedMonthDate->copy()->addMonth()->startOfMonth()->toDateString(),
+            Carbon::create($selectedMonthDate->year + 1, 1, 1)->toDateString()
+        ])
+            ->whereIn('periode_id', [$periode_id, optional($nextPeriode)->id])
+            ->get()
+            ->keyBy(fn($item) => $item->coa_id . '-' . $item->periode_id . '-' . $item->tanggal_saldo);
+
+        $neracaSaldoBatch = collect($neracaSaldoBatch)->filter(function ($item) use ($existingNeraca) {
+            $key = $item['coa_id'] . '-' . $item['periode_id'] . '-' . $item['month'];
+            $existing = $existingNeraca->get($key);
+
+            return !$existing || (
+                $existing->debit != $item['debit'] ||
+                $existing->kredit != $item['kredit'] ||
+                $existing->balance != $item['balance'] ||
+                $existing->saldo_awal != $item['saldo_awal']
+            );
+        })->values()->all();
+
+        $saldoAwalBatch = collect($saldoAwalBatch)->filter(function ($item) use ($existingSaldoAwal) {
+            $key = $item['coa_id'] . '-' . $item['periode_id'] . '-' . $item['tanggal_saldo'];
+            $existing = $existingSaldoAwal->get($key);
+
+            return !$existing || (
+                $existing->debit != $item['debit'] ||
+                $existing->kredit != $item['kredit']
+            );
+        })->values()->all();
+
+        NeracaSaldo::upsert(
+            $neracaSaldoBatch,
+            ['coa_id', 'periode_id', 'month'],
+            ['debit', 'kredit', 'balance', 'saldo_awal']
+        );
+
+        SaldoAwal::upsert(
+            $saldoAwalBatch,
+            ['coa_id', 'periode_id', 'tanggal_saldo'],
+            ['debit', 'kredit']
         );
 
         $periode->is_rekap = true;
