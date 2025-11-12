@@ -195,8 +195,18 @@ class LaporanPerubahanAsetNeto implements WithTitle, FromCollection, WithHeading
             'Saldo Akhir (Last)' => $this->formatSaldo($kenaikanAsetNetoLast),
         ];
 
+        // --- Updated ASET NETO calculation ---
+        $asetNetoAwalPeriodeCurrent = \App\Export\rootsuperuser\LaporanAsetNeto::$asetNeto['last'];
+        $asetNetoAkhirLast = $kenaikanAsetNetoLast + $asetNetoAwalPeriodeCurrent;
+
         $result[] = [
-            'Investasi Nilai Buku' => 'ASET NETO',
+            'Investasi Nilai Buku' => 'ASET NETO AWAL PERIODE',
+            'Saldo Akhir (Current)' => $this->formatSaldo(\App\Export\rootsuperuser\LaporanAsetNeto::$asetNeto['last']),
+            'Saldo Akhir (Last)' => $this->formatSaldo($asetNetoAkhirLast),
+        ];
+
+        $result[] = [
+            'Investasi Nilai Buku' => 'ASET NETO AKHIR PERIODE',
             'Saldo Akhir (Current)' => $this->formatSaldo(\App\Export\rootsuperuser\LaporanAsetNeto::$asetNeto['current']),
             'Saldo Akhir (Last)' => $this->formatSaldo(\App\Export\rootsuperuser\LaporanAsetNeto::$asetNeto['last']),
         ];
@@ -230,7 +240,6 @@ class LaporanPerubahanAsetNeto implements WithTitle, FromCollection, WithHeading
             ->selectRaw('COALESCE(SUM(debit), 0) as total_debit, COALESCE(SUM(kredit), 0) as total_kredit')
             ->first();
 
-        // 🔹 Khusus akun iuran di bagian penambahan
         $specialIuran = [
             'Iuran Normal Pemberi Kerja',
             'Iuran Normal Peserta',
@@ -241,14 +250,12 @@ class LaporanPerubahanAsetNeto implements WithTitle, FromCollection, WithHeading
             return $jurnal->total_kredit - $jurnal->total_debit;
         }
 
-        // 🔹 Default logic
         return $forceDebitOnly
             ? $jurnal->total_debit
             : ($sectionType === 'pengurangan'
                 ? $jurnal->total_kredit - $jurnal->total_debit
                 : $jurnal->total_debit - $jurnal->total_kredit);
     }
-
 
     private function formatSaldo($value, $useBracket = false)
     {

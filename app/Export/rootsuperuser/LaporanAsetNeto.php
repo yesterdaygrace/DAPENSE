@@ -160,14 +160,6 @@ class LaporanAsetNeto implements WithTitle, FromCollection, WithHeadings, WithEv
             }
         }
 
-        // Tambahkan row baru TOTAL ASET LAIN LAIN (sebelum ASET NETO)
-        $result[] = [
-            'Investasi Nilai Buku' => 'TOTAL ASET LAIN LAIN',
-            'Saldo Akhir (Current)' => $this->formatSaldo($asetLainTotals['current']),
-            'Saldo Akhir (Last)' => $this->formatSaldo($asetLainTotals['last']),
-        ];
-
-        // Final row: ASET NETO
         $result[] = [
             'Investasi Nilai Buku' => 'ASET NETO',
             'Saldo Akhir (Current)' => $this->formatSaldo($asetNetoTotals['current']),

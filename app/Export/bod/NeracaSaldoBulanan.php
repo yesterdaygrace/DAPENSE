@@ -170,19 +170,32 @@ class NeracaSaldoBulanan implements FromCollection, WithTitle, WithStyles, WithC
     {
         $selectedMonth = Carbon::parse($this->month . '-01');
 
-        $neracaByCoa = NeracaSaldo::where('periode_id', $this->periode_id)
+        $neracaByCoa = collect();
+        NeracaSaldo::where('periode_id', $this->periode_id)
             ->whereMonth('month', $selectedMonth->month)
             ->whereYear('month', $selectedMonth->year)
-            ->get()
-            ->keyBy('coa_id');
+            ->chunk(100, function ($neracas) use (&$neracaByCoa) {
+                foreach ($neracas as $neraca) {
+                    $neracaByCoa[$neraca->coa_id] = $neraca;
+                }
+            });
 
-        $saldoAwalByCoa = SaldoAwal::where('periode_id', $this->periode_id)
+        $saldoAwalByCoa = collect();
+        SaldoAwal::where('periode_id', $this->periode_id)
             ->whereMonth('tanggal_saldo', $selectedMonth->month)
             ->whereYear('tanggal_saldo', $selectedMonth->year)
-            ->get()
-            ->keyBy('coa_id');
+            ->chunk(100, function ($saldos) use (&$saldoAwalByCoa) {
+                foreach ($saldos as $saldo) {
+                    $saldoAwalByCoa[$saldo->coa_id] = $saldo;
+                }
+            });
 
-        $allCoas = COA::get();
+        $allCoas = collect();
+        COA::chunk(100, function ($coas) use (&$allCoas) {
+            foreach ($coas as $coa) {
+                $allCoas->push($coa);
+            }
+        });
 
         $headerCoas = HeaderCoa::with('children')->whereNull('parent_id')->get();
 
@@ -205,6 +218,7 @@ class NeracaSaldoBulanan implements FromCollection, WithTitle, WithStyles, WithC
 
         return $rows;
     }
+
 
     private function processHeader($header, $neracaByCoa, $saldoAwalByCoa, $allCoas, $index = null)
     {
