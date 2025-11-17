@@ -139,6 +139,8 @@ class LaporanBulanHasilInvestasi implements WithTitle, FromCollection, WithHeadi
 
     private function getSaldo(array $range, Carbon $date, bool $treatKreditAsPositiveIfNoDebit = true)
     {
+        $periodeId = $this->resolvePeriodeId($date);
+
         $query = Jurnaling::where('periode_id', $this->periode_id)
             ->whereMonth('tanggal_jurnal', $date->month)
             ->whereYear('tanggal_jurnal', $date->year)
@@ -160,6 +162,14 @@ class LaporanBulanHasilInvestasi implements WithTitle, FromCollection, WithHeadi
 
         return $result->debit - $result->kredit;
     }
+
+    private function resolvePeriodeId(Carbon $date)
+    {
+        return \App\Models\Periode::whereDate('tanggal_awal', '<=', $date->startOfMonth())
+            ->whereDate('tanggal_akhir', '>=', $date->endOfMonth())
+            ->value('id');
+    }
+
 
     private function formatSaldo($value)
     {

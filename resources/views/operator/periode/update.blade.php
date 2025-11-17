@@ -151,7 +151,7 @@
           @method('PUT')
           <div class="mb-3">
             <label for="nama_periode" class="form-label">Nama Periode</label>
-            <input type="text" id="nama_periode" name="nama_periode" class="form-control @error('nama_periode') is-invalid @enderror" placeholder="Masukkan nama periode" value="{{ $periode->nama_periode }}">
+            <input type="text" id="nama_periode" name="nama_periode" minlength="4" maxlength="4" class="form-control @error('nama_periode') is-invalid @enderror" placeholder="Masukkan nama periode" value="{{ $periode->nama_periode }}">
             @error('nama_periode')
             <div class="invalid-feedback">{{ $message }}</div>
             @enderror

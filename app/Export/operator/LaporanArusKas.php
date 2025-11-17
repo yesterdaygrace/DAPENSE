@@ -3,6 +3,7 @@
 namespace App\Export\operator;
 
 use App\Models\Jurnaling;
+use App\Models\SaldoAwal;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\{
     FromCollection,
@@ -63,8 +64,11 @@ class LaporanArusKas implements WithTitle, FromCollection, WithHeadings, WithEve
         $result = [];
 
         foreach ($sections as $section => $items) {
+            $sectionName = strtoupper(str_replace('^ARUS KAS DARI AKTIVITAS ', '', $section));
             $result[] = [strtoupper(str_replace('^', '', $section)), '', ''];
-            $totalCurrent = $totalLast = 0;
+
+            $totalCurrent = 0;
+            $totalLast    = 0;
 
             foreach ($items as $label => $key) {
                 $ranges = $this->getCustomRanges($key);
@@ -86,9 +90,86 @@ class LaporanArusKas implements WithTitle, FromCollection, WithHeadings, WithEve
                 $this->formatDisplay($totalCurrent),
                 $this->formatDisplay($totalLast)
             ];
+            $totals[$sectionName]     = $totalCurrent;
+            $totalsLast[$sectionName] = $totalLast;
         }
 
+        $kasAkhir = $this->getKasBankSaldo([12110000, 12129999], $selectedMonth);
+        $kasAwalCurrent =  $this->getKasBankSaldoAwal([12110000, 12129999], $selectedMonth);
+        $kenaikanPenurunan = $kasAkhir - $kasAwalCurrent;
+
+        $kasAkhirLast = $this->getKasBankSaldo([12110000, 12129999], $previousMonth);
+        $kasAwalLast =  $this->getKasBankSaldoAwal([12110000, 12129999], $previousMonth);
+        $kenaikanPenurunanLast = $kasAkhirLast - $kasAwalLast;
+
+
+        $result[] = ['', '', ''];
+        $result[] = ['ARUS KAS BERSIH DAN SALDO KAS', '', ''];
+
+        $result[] = [
+            'Kenaikan/Penurunan Kas Bersih',
+            $this->formatDisplay($kenaikanPenurunan),
+            $this->formatDisplay($kenaikanPenurunanLast),
+        ];
+
+        // Kas Pada Awal Periode
+        $result[] = [
+            'Kas Pada Awal Periode',
+            $this->formatDisplay($kasAwalCurrent),
+            $this->formatDisplay($kasAwalLast),
+        ];
+
+        // Kas Pada Akhir Periode
+        $result[] = [
+            'Kas Pada Akhir Periode',
+            $this->formatDisplay($kasAkhir),
+            $this->formatDisplay($kasAkhirLast),
+        ];
+
         return collect($result);
+    }
+
+    private function getKasBankSaldoAwal(array $range, Carbon $date)
+    {
+        $periodeId = $this->resolvePeriodeId($date);
+
+        $saldoAwal = SaldoAwal::where('periode_id', $periodeId)
+            ->whereMonth('tanggal_saldo', $date->month)
+            ->whereYear('tanggal_saldo', $date->year)
+            ->whereHas('coa', function ($q) use ($range) {
+                $q->whereBetween('kode_akun', $range);
+            })
+            ->selectRaw('COALESCE(SUM(debit),0) as debit, COALESCE(SUM(kredit),0) as kredit')
+            ->first();
+
+        return ($saldoAwal->debit ?? 0) - ($saldoAwal->kredit ?? 0);
+    }
+
+    private function getKasBankSaldo(array $range, Carbon $date)
+    {
+        $periodeId = $this->resolvePeriodeId($date);
+
+        $saldoAwal = SaldoAwal::where('periode_id', $periodeId)
+            ->whereMonth('tanggal_saldo', $date->month)
+            ->whereYear('tanggal_saldo', $date->year)
+            ->whereHas('coa', function ($q) use ($range) {
+                $q->whereBetween('kode_akun', $range);
+            })
+            ->selectRaw('COALESCE(SUM(debit),0) as debit, COALESCE(SUM(kredit),0) as kredit')
+            ->first();
+
+        $saldoAwalBersih = $saldoAwal->debit - $saldoAwal->kredit;
+
+        $jurnal = Jurnaling::where('periode_id', $periodeId)
+            ->whereMonth('tanggal_jurnal', $date->month)
+            ->whereYear('tanggal_jurnal', $date->year)
+            ->whereHas('coa', function ($q) use ($range) {
+                $q->whereBetween('kode_akun', $range);
+            })
+            ->selectRaw('COALESCE(SUM(debit),0) as total_debit, COALESCE(SUM(kredit),0) as total_kredit')
+            ->first();
+
+        return $saldoAwalBersih + ($jurnal->total_debit - $jurnal->total_kredit);
     }
 
     private function getCustomRanges($key)
@@ -247,7 +328,9 @@ class LaporanArusKas implements WithTitle, FromCollection, WithHeadings, WithEve
 
     private function getSaldoAkhir(array $range, Carbon $date, $key = '')
     {
-        $query = Jurnaling::where('periode_id', $this->periode_id)
+        $periodeId = $this->resolvePeriodeId($date);
+
+        $query = Jurnaling::where('periode_id', $periodeId)
             ->whereMonth('tanggal_jurnal', $date->month)
             ->whereYear('tanggal_jurnal', $date->year)
             ->where('kategori_jurnal', '!=', 'Memorial (Penutup)')
@@ -274,8 +357,12 @@ class LaporanArusKas implements WithTitle, FromCollection, WithHeadings, WithEve
         return $jurnal->total_kredit - $jurnal->total_debit;
     }
 
-
-
+    private function resolvePeriodeId(Carbon $date)
+    {
+        return \App\Models\Periode::whereDate('tanggal_awal', '<=', $date->startOfMonth())
+            ->whereDate('tanggal_akhir', '>=', $date->endOfMonth())
+            ->value('id');
+    }
 
     private function formatDisplay($value)
     {
@@ -284,7 +371,14 @@ class LaporanArusKas implements WithTitle, FromCollection, WithHeadings, WithEve
 
     public function headings(): array
     {
-        return ['AKTIVITAS', 'Saldo Akhir (Current)', 'Saldo Akhir (Last)'];
+        $selectedMonth = Carbon::parse($this->month . '-01');
+        $previousMonth = $selectedMonth->copy()->subMonth();
+
+        return [
+            'ASET',
+            'Saldo Akhir (' . $selectedMonth->translatedFormat('F Y') . ')',
+            'Saldo Akhir (' . $previousMonth->translatedFormat('F Y') . ')',
+        ];
     }
 
     public function columnWidths(): array

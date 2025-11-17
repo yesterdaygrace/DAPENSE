@@ -121,7 +121,7 @@ class LaporanInvestasi implements WithTitle, FromCollection, WithHeadings, WithE
 
     private function getSaldoAkhir(array $range, Carbon $date, string $label, string $pos, $fallback = 0, array $offsetAccounts = [], array $addAccounts = [])
     {
-        $periodeId = $this->periode_id;
+        $periodeId = $this->resolvePeriodeId($date);
 
         $saldoAwalQuery = SaldoAwal::where('periode_id', $periodeId)
             ->whereMonth('tanggal_saldo', $date->month)
@@ -168,6 +168,12 @@ class LaporanInvestasi implements WithTitle, FromCollection, WithHeadings, WithE
         return $final;
     }
 
+    private function resolvePeriodeId(Carbon $date)
+    {
+        return \App\Models\Periode::whereDate('tanggal_awal', '<=', $date->startOfMonth())
+            ->whereDate('tanggal_akhir', '>=', $date->endOfMonth())
+            ->value('id');
+    }
 
     private function formatSaldo($value)
     {
@@ -178,18 +184,26 @@ class LaporanInvestasi implements WithTitle, FromCollection, WithHeadings, WithE
 
     public function headings(): array
     {
-        return ['ASET', 'Saldo Akhir (Current)', '% Current', 'Saldo Akhir (Last)', '% Last'];
-    }
+        $selectedMonth = Carbon::parse($this->month . '-01');
+        $previousMonth = $selectedMonth->copy()->subMonth();
 
+        return [
+            'ASET',
+            'Saldo Akhir (' . $selectedMonth->translatedFormat('F Y') . ')',
+            '% (' . $selectedMonth->translatedFormat('F Y') . ')',
+            'Saldo Akhir (' . $previousMonth->translatedFormat('F Y') . ')',
+            '% (' . $previousMonth->translatedFormat('F Y') . ')',
+        ];
+    }
 
     public function columnWidths(): array
     {
         return [
             'A' => 50,
             'B' => 30,
-            'C' => 15,
+            'C' => 18,
             'D' => 30,
-            'E' => 15
+            'E' => 18
         ];
     }
 

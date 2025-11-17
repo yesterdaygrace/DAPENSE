@@ -149,7 +149,7 @@
                     @method('PUT')
                     <div class="mb-3">
                         <label for="kode_header" class="form-label">Kode Header</label>
-                        <input style="text-transform: uppercase;" type="text" id="kode_header" name="kode_header" class="form-control @error('kode_header') is-invalid @enderror" placeholder="Masukkan kode header" value="{{ old('kode_header', $headerCoa->kode_header) }}">
+                        <input style="text-transform: uppercase;" type="text" id="kode_header" name="kode_header" maxlength="7" class="form-control @error('kode_header') is-invalid @enderror" placeholder="Masukkan kode header" value="{{ old('kode_header', $headerCoa->kode_header) }}">
                         @error('kode_header')
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -163,7 +163,13 @@
                     </div>
                     <div class="mb-3">
                         <label for="level" class="form-label">Level</label>
-                        <input style="text-transform: uppercase;" type="number" id="level" name="level" class="form-control @error('level') is-invalid @enderror" placeholder="Enter level" value="{{ old('level', $headerCoa->level) }}">
+                        <select id="level" name="level" class="form-select @error('level') is-invalid @enderror" required>
+                            <option value="">-- Pilih level --</option>
+                            <option value="0" {{ old('level', $headerCoa->level) == '0' ? 'selected' : '' }}>0</option>
+                            <option value="1" {{ old('level', $headerCoa->level) == '1' ? 'selected' : '' }}>1</option>
+                            <option value="2" {{ old('level', $headerCoa->level) == '2' ? 'selected' : '' }}>2</option>
+                            <option value="3" {{ old('level', $headerCoa->level) == '3' ? 'selected' : '' }}>3</option>
+                        </select>
                         @error('level')
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -172,9 +178,9 @@
                         <label for="parent_id" class="form-label">Parent Header</label>
                         <select id="parent_id" name="parent_id" class="form-control @error('parent_id') is-invalid @enderror">
                             <option value="">NULL</option>
-                            @foreach($headerCoas as $headerCoa)
-                            <option value="{{ $headerCoa->id }}" {{ old('parent_id') == $headerCoa->id ? 'selected' : '' }}>
-                                {{ $headerCoa->nama_header }}
+                            @foreach($headerCoas as $headerCoaItem)
+                            <option value="{{ $headerCoaItem->id }}" {{ old('parent_id', $headerCoa->parent_id) == $headerCoaItem->id ? 'selected' : '' }}>
+                                {{ $headerCoaItem->kode_header }} - {{ $headerCoaItem->nama_header }}
                             </option>
                             @endforeach
                         </select>

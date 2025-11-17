@@ -156,7 +156,7 @@ class LaporanAnalisaLikuiditas implements WithTitle, FromCollection, WithHeading
 
     private function getSaldoAkhir(array $range, Carbon $date)
     {
-        $periodeId = $this->periode_id;
+        $periodeId = $this->resolvePeriodeId($date);
 
         $saldoAwal = SaldoAwal::where('periode_id', $periodeId)
             ->whereMonth('tanggal_saldo', $date->month)
@@ -179,6 +179,13 @@ class LaporanAnalisaLikuiditas implements WithTitle, FromCollection, WithHeading
         return ($saldoAwal->debit - $saldoAwal->kredit) + ($jurnal->total_debit - $jurnal->total_kredit);
     }
 
+    private function resolvePeriodeId(Carbon $date)
+    {
+        return \App\Models\Periode::whereDate('tanggal_awal', '<=', $date->startOfMonth())
+            ->whereDate('tanggal_akhir', '>=', $date->endOfMonth())
+            ->value('id');
+    }
+
     private function formatSaldo($value)
     {
         if (!$value) return '-';
@@ -188,7 +195,14 @@ class LaporanAnalisaLikuiditas implements WithTitle, FromCollection, WithHeading
 
     public function headings(): array
     {
-        return ['ASET', 'Saldo Akhir (Current)', 'Saldo Akhir (Last)'];
+        $selectedMonth = Carbon::parse($this->month . '-01');
+        $previousMonth = $selectedMonth->copy()->subMonth();
+
+        return [
+            'ASET',
+            'Saldo Akhir (' . $selectedMonth->translatedFormat('F Y') . ')',
+            'Saldo Akhir (' . $previousMonth->translatedFormat('F Y') . ')',
+        ];
     }
 
     public function columnWidths(): array

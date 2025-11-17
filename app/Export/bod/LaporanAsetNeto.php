@@ -160,20 +160,21 @@ class LaporanAsetNeto implements WithTitle, FromCollection, WithHeadings, WithEv
             }
         }
 
+
+        // Final row: ASET NETO
         $result[] = [
             'Investasi Nilai Buku' => 'ASET NETO',
             'Saldo Akhir (Current)' => $this->formatSaldo($asetNetoTotals['current']),
             'Saldo Akhir (Last)' => $this->formatSaldo($asetNetoTotals['last']),
         ];
 
-        self::$asetNeto = $asetNetoTotals;
 
         return collect($result);
     }
 
     private function getSaldoAkhir(array $range, Carbon $date, string $label, string $pos, $fallback = 0, array $offsetAccounts = [], array $addAccounts = [])
     {
-        $periodeId = $this->periode_id;
+        $periodeId = $this->resolvePeriodeId($date);
 
         $saldoAwalQuery = SaldoAwal::where('periode_id', $periodeId)
             ->whereMonth('tanggal_saldo', $date->month)
@@ -220,6 +221,13 @@ class LaporanAsetNeto implements WithTitle, FromCollection, WithHeadings, WithEv
         return $final;
     }
 
+    private function resolvePeriodeId(Carbon $date)
+    {
+        return \App\Models\Periode::whereDate('tanggal_awal', '<=', $date->startOfMonth())
+            ->whereDate('tanggal_akhir', '>=', $date->endOfMonth())
+            ->value('id');
+    }
+
     private function formatSaldo($value, $isLiabilitas = false)
     {
         if (!$value) return '-';
@@ -233,11 +241,40 @@ class LaporanAsetNeto implements WithTitle, FromCollection, WithHeadings, WithEv
         return $value < 0 ? "($formatted)" : $formatted;
     }
 
-    public function headings(): array
+    public static function getKasBankValues($periode_id, $month)
     {
-        return ['ASET', 'Saldo Akhir (Current)', 'Saldo Akhir (Last)'];
+        $cleanMonth = preg_replace('/[^0-9\-]/', '', $month);
+        $selectedMonth = Carbon::parse($cleanMonth . '-01');
+        $previousMonth = $selectedMonth->copy()->subMonth();
+
+        $range = [12110000, 12129999]; // KAS & BANK
+
+        // LAST PERIOD
+        $last = (new static($periode_id, $month))
+            ->getSaldoAkhir($range, $previousMonth, 'Kas & Bank Last', 'Last');
+
+        // CURRENT PERIOD
+        $current = (new static($periode_id, $month))
+            ->getSaldoAkhir($range, $selectedMonth, 'Kas & Bank Current', 'Current');
+
+        return [
+            'kas_awal' => $last,
+            'kas_akhir' => $current
+        ];
     }
 
+
+    public function headings(): array
+    {
+        $selectedMonth = Carbon::parse($this->month . '-01');
+        $previousMonth = $selectedMonth->copy()->subMonth();
+
+        return [
+            'ASET',
+            'Saldo Akhir (' . $selectedMonth->translatedFormat('F Y') . ')',
+            'Saldo Akhir (' . $previousMonth->translatedFormat('F Y') . ')',
+        ];
+    }
     public function columnWidths(): array
     {
         return ['A' => 50, 'B' => 30, 'C' => 30];

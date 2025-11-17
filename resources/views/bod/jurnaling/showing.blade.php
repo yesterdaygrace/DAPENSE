@@ -24,7 +24,7 @@
                 <div data-i18n="Layouts">Jurnaling</div>
             </a>
             <ul class="menu-sub">
-                <li class="menu-item">
+                <li class="menu-item active">
                     <a href="{{ route('bod/jurnaling/showing') }}" class="menu-link">
                         <div data-i18n="Without menu">Tampil</div>
                     </a>

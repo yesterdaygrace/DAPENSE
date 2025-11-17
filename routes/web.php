@@ -100,7 +100,7 @@ Route::middleware(['auth', RootSuperuser::class])->group(function () {
     Route::post('/rootsuperuser/jurnaling/storebankmasuk', [JurnalingControllerRootSuperuser::class, 'storebankmasuk'])->name('rootsuperuser/jurnaling/storebankmasuk');
     Route::post('/rootsuperuser/jurnaling/storebankkeluar', [JurnalingControllerRootSuperuser::class, 'storebankkeluar'])->name('rootsuperuser/jurnaling/storebankkeluar');
     Route::post('/rootsuperuser/jurnaling/storememorial', [JurnalingControllerRootSuperuser::class, 'storememorial'])->name('rootsuperuser/jurnaling/storememorial');
-    Route::post('/rootsuperuser/jurnaling/storememorialpenutup', [JurnalingControllerRootSuperuser::class, 'storememorialprnutup'])->name('rootsuperuser/jurnaling/storememorialpenutup');
+    Route::post('/rootsuperuser/jurnaling/storememorialpenutup', [JurnalingControllerRootSuperuser::class, 'storememorialpenutup'])->name('rootsuperuser/jurnaling/storememorialpenutup');
     Route::post('rootsuperuser/jurnaling/unrekap/{periode_id}', [JurnalingControllerRootSuperuser::class, 'unrekapJurnal'])->name('rootsuperuser/jurnaling/unrekap');
     Route::post('rootsuperuser/jurnaling/rekap/{periode_id}', [JurnalingControllerRootSuperuser::class, 'rekapJurnal'])->name('rootsuperuser/jurnaling/rekap');
     Route::get('/rootsuperuser/jurnaling/showing', [JurnalingControllerRootSuperuser::class, 'showEntries'])->name('rootsuperuser/jurnaling/showing');
@@ -191,7 +191,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('/admin/jurnaling/storebankmasuk', [JurnalingControllerAdmin::class, 'storebankmasuk'])->name('admin/jurnaling/storebankmasuk');
     Route::post('/admin/jurnaling/storebankkeluar', [JurnalingControllerAdmin::class, 'storebankkeluar'])->name('admin/jurnaling/storebankkeluar');
     Route::post('/admin/jurnaling/storememorial', [JurnalingControllerAdmin::class, 'storememorial'])->name('admin/jurnaling/storememorial');
-    Route::post('/admin/jurnaling/storememorialpenutup', [JurnalingControllerAdmin::class, 'storememorialprnutup'])->name('admin/jurnaling/storememorialpenutup');
+    Route::post('/admin/jurnaling/storememorialpenutup', [JurnalingControllerAdmin::class, 'storememorialpenutup'])->name('admin/jurnaling/storememorialpenutup');
     Route::post('admin/jurnaling/unrekap/{periode_id}', [JurnalingControllerAdmin::class, 'unrekapJurnal'])->name('admin/jurnaling/unrekap');
     Route::post('admin/jurnaling/rekap/{periode_id}', [JurnalingControllerAdmin::class, 'rekapJurnal'])->name('admin/jurnaling/rekap');
     Route::get('/admin/jurnaling/showing', [JurnalingControllerAdmin::class, 'showEntries'])->name('admin/jurnaling/showing');
@@ -272,7 +272,7 @@ Route::middleware(['auth', 'operator'])->group(function () {
     Route::post('/operator/jurnaling/storebankmasuk', [JurnalingControllerOperator::class, 'storebankmasuk'])->name('operator/jurnaling/storebankmasuk');
     Route::post('/operator/jurnaling/storebankkeluar', [JurnalingControllerOperator::class, 'storebankkeluar'])->name('operator/jurnaling/storebankkeluar');
     Route::post('/operator/jurnaling/storememorial', [JurnalingControllerOperator::class, 'storememorial'])->name('operator/jurnaling/storememorial');
-    Route::post('/operator/jurnaling/storememorialpenutup', [JurnalingControllerOperator::class, 'storememorialprnutup'])->name('operator/jurnaling/storememorialpenutup');
+    Route::post('/operator/jurnaling/storememorialpenutup', [JurnalingControllerOperator::class, 'storememorialpenutup'])->name('operator/jurnaling/storememorialpenutup');
     Route::post('operator/jurnaling/unrekap/{periode_id}', [JurnalingControllerOperator::class, 'unrekapJurnal'])->name('operator/jurnaling/unrekap');
     Route::post('operator/jurnaling/rekap/{periode_id}', [JurnalingControllerOperator::class, 'rekapJurnal'])->name('operator/jurnaling/rekap');
     Route::get('/operator/jurnaling/showing', [JurnalingControllerOperator::class, 'showEntries'])->name('operator/jurnaling/showing');

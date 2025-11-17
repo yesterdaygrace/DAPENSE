@@ -225,7 +225,8 @@ class LaporanPerubahanAsetNeto implements WithTitle, FromCollection, WithHeading
 
     private function getSaldoAkhir(array $range, Carbon $date, string $label, string $sectionType = 'penambahan', bool $forceDebitOnly = false)
     {
-        $periodeId = $this->periode_id;
+        $periodeId = $this->resolvePeriodeId($date);
+
 
         $jurnalQuery = Jurnaling::where('periode_id', $periodeId)
             ->whereMonth('tanggal_jurnal', $date->month)
@@ -257,6 +258,13 @@ class LaporanPerubahanAsetNeto implements WithTitle, FromCollection, WithHeading
                 : $jurnal->total_debit - $jurnal->total_kredit);
     }
 
+    private function resolvePeriodeId(Carbon $date)
+    {
+        return \App\Models\Periode::whereDate('tanggal_awal', '<=', $date->startOfMonth())
+            ->whereDate('tanggal_akhir', '>=', $date->endOfMonth())
+            ->value('id');
+    }
+
     private function formatSaldo($value, $useBracket = false)
     {
         if (!$value) return '-';
@@ -266,7 +274,14 @@ class LaporanPerubahanAsetNeto implements WithTitle, FromCollection, WithHeading
 
     public function headings(): array
     {
-        return ['ASET', 'Saldo Akhir (Current)', 'Saldo Akhir (Last)'];
+        $selectedMonth = Carbon::parse($this->month . '-01');
+        $previousMonth = $selectedMonth->copy()->subMonth();
+
+        return [
+            'ASET',
+            'Saldo Akhir (' . $selectedMonth->translatedFormat('F Y') . ')',
+            'Saldo Akhir (' . $previousMonth->translatedFormat('F Y') . ')',
+        ];
     }
 
     public function columnWidths(): array

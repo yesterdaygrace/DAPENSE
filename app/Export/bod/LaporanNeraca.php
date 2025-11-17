@@ -164,7 +164,8 @@ class LaporanNeraca implements WithTitle, FromCollection, WithHeadings, WithEven
 
     private function getSaldoAkhir(array $range, Carbon $date, string $label, string $pos, $fallback = 0, array $offsetAccounts = [], array $addAccounts = [])
     {
-        $periodeId = $this->periode_id;
+        $periodeId = $this->resolvePeriodeId($date);
+
 
         $saldoAwalQuery = SaldoAwal::where('periode_id', $periodeId)
             ->whereMonth('tanggal_saldo', $date->month)
@@ -207,6 +208,14 @@ class LaporanNeraca implements WithTitle, FromCollection, WithHeadings, WithEven
         return $final;
     }
 
+    private function resolvePeriodeId(Carbon $date)
+    {
+        return \App\Models\Periode::whereDate('tanggal_awal', '<=', $date->startOfMonth())
+            ->whereDate('tanggal_akhir', '>=', $date->endOfMonth())
+            ->value('id');
+    }
+
+
     private function formatSaldo($value)
     {
         if (!$value) return '-';
@@ -216,7 +225,14 @@ class LaporanNeraca implements WithTitle, FromCollection, WithHeadings, WithEven
 
     public function headings(): array
     {
-        return ['ASET', 'Saldo Akhir (Current)', 'Saldo Akhir (Last)'];
+        $selectedMonth = Carbon::parse($this->month . '-01');
+        $previousMonth = $selectedMonth->copy()->subMonth();
+
+        return [
+            'ASET',
+            'Saldo Akhir (' . $selectedMonth->translatedFormat('F Y') . ')',
+            'Saldo Akhir (' . $previousMonth->translatedFormat('F Y') . ')',
+        ];
     }
 
     public function columnWidths(): array

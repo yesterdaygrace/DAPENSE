@@ -55,7 +55,7 @@ class NeracaSaldoControllerRootSuperuser
 
     public function indexrecap()
     {
-        $periodes = Periode::orderBy('tanggal_awal', 'asc')->get();;
+        $periodes = Periode::orderBy('tanggal_awal', 'desc')->get();;
         return view('rootsuperuser.neracasaldo.recap', compact('periodes'));
     }
 

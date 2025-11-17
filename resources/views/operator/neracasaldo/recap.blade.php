@@ -159,7 +159,7 @@
                                 @csrf
                                 <button type="submit" class="btn btn-warning">Unrekap</button>
                             </form>
-                            <form method="GET" action="{{ route('rootsuperuser/neracasaldo/monthstampil', ['periode' => $periode->id]) }}">
+                            <form method="GET" action="{{ route('operator/neracasaldo/monthstampil', ['periode' => $periode->id]) }}">
                                 @csrf
                                 <button type="submit" class="btn btn-primary">Tampilkan Neraca</button>
                             </form>

@@ -153,7 +153,7 @@
                     @csrf
                     <div class="mb-3">
                         <label for="kode_akun" class="form-label">Kode Akun</label>
-                        <input style="text-transform: uppercase;" type="text" id="kode_akun" name="kode_akun" class="form-control @error('kode_akun') is-invalid @enderror" placeholder="Masukkan kode akun" value="{{ old('kode_akun') }}">
+                        <input style="text-transform: uppercase;" type="text" id="kode_akun" name="kode_akun" minlength="8" maxlength="8" class="form-control @error('kode_akun') is-invalid @enderror" placeholder="Masukkan kode akun" value="{{ old('kode_akun') }}">
                         @error('kode_akun')
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror

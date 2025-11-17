@@ -168,7 +168,7 @@
                                 </select>
                             </div>
                             <div class="col-md-4 d-flex align-items-end">
-                                <button type="submit" class="btn btn-primary">Filter</button>
+                                <button type="submit" class="btn btn-primary">Tampil</button>
                             </div>
                         </div>
                     </form>
@@ -192,8 +192,7 @@
                                 <th>Kode COA</th>
                                 <th>Tanggal Saldo</th>
                                 <th>COA</th>
-                                <th>Debit</th>
-                                <th>Kredit</th>
+                                <th>Saldo Awal</th>
                                 <th>Periode</th>
                                 <th>Action</th>
                             </tr>
@@ -209,13 +208,6 @@
                                         ({{ number_format(abs($saldo_awal->debit), 2) }})
                                         @else
                                         {{ number_format($saldo_awal->debit, 2) }}
-                                        @endif
-                                        </td>
-                                <td>
-                                    @if($saldo_awal->kredit < 0)
-                                        ({{ number_format(abs($saldo_awal->kredit), 2) }})
-                                        @else
-                                        {{ number_format($saldo_awal->kredit, 2) }}
                                         @endif
                                         </td>
                                 <td>{{ $saldo_awal->periode->nama_periode }}</td>

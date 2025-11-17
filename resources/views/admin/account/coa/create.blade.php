@@ -153,7 +153,7 @@
                     @csrf
                     <div class="mb-3">
                         <label for="kode_akun" class="form-label">Kode Akun</label>
-                        <input style="text-transform: uppercase;" type="text" id="kode_akun" name="kode_akun" class="form-control @error('kode_akun') is-invalid @enderror" placeholder="Masukkan kode akun" value="{{ old('kode_akun') }}">
+                        <input style="text-transform: uppercase;" type="text" id="kode_akun" name="kode_akun" minlength="8" maxlength="8" class="form-control @error('kode_akun') is-invalid @enderror" placeholder="Masukkan kode akun" value="{{ old('kode_akun') }}">
                         @error('kode_akun')
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -190,7 +190,9 @@
 
                     <div class="mb-3">
                         <label for="level" class="form-label">Level</label>
-                        <input type="number" id="level" name="level" class="form-control @error('level') is-invalid @enderror" placeholder="Enter level" value="{{ old('level') }}">
+                        <select id="level" name="level" class="form-select @error('level') is-invalid @enderror" required>
+                            <option value="4" {{ old('level') == '0' ? 'selected' : '' }}>4</option>
+                        </select>
                         @error('level')
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -199,7 +201,7 @@
                         <label for="header_coa_id" class="form-label">Header COA</label>
                         <select id="header_coa_id" name="header_coa_id" class="form-control @error('header_coa_id') is-invalid @enderror">
                             @foreach($headers as $header)
-                            <option value="{{ $header->id }}">{{ $header->nama_header }}</option>
+                            <option value="{{ $header->id }}">{{ $header->kode_header }} - {{ $header->nama_header }}</option>
                             @endforeach
                         </select>
                         @error('header_coa_id')
