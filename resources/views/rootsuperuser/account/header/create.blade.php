@@ -178,12 +178,14 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
+
                     <div class="mb-3">
                         <label for="parent_id" class="form-label">Parent Header</label>
                         <select id="parent_id" name="parent_id" class="form-control @error('parent_id') is-invalid @enderror">
                             <option value="">NULL</option>
+                            {{-- semua header dikirim ke JS --}}
                             @foreach($headerCoas as $headerCoa)
-                            <option value="{{ $headerCoa->id }}" {{ old('parent_id') == $headerCoa->id ? 'selected' : '' }}>
+                            <option value="{{ $headerCoa->id }}" data-level="{{ $headerCoa->level }}">
                                 {{ $headerCoa->kode_header }} - {{ $headerCoa->nama_header }}
                             </option>
                             @endforeach
@@ -192,6 +194,7 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
+
                     <div class="mb-3">
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </div>
@@ -204,4 +207,38 @@
     <div class="content-backdrop fade"></div>
 </div>
 <!-- Content wrapper -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const levelSelect = document.getElementById('level');
+        const parentSelect = document.getElementById('parent_id');
+        const allOptions = Array.from(parentSelect.options);
+
+        function filterParentOptions() {
+            const selectedLevel = levelSelect.value;
+            parentSelect.innerHTML = ''; // kosongkan dulu
+
+            if (selectedLevel === '0') {
+                // hanya NULL
+                parentSelect.innerHTML = '<option value="">NULL</option>';
+            } else {
+                // tambahkan NULL dulu
+                parentSelect.innerHTML = '<option value="">NULL</option>';
+                // ambil parent dengan level = selectedLevel - 1
+                const parentLevel = parseInt(selectedLevel) - 1;
+                allOptions.forEach(opt => {
+                    if (opt.dataset.level == parentLevel) {
+                        parentSelect.appendChild(opt.cloneNode(true));
+                    }
+                });
+            }
+        }
+
+        // jalankan saat level berubah
+        levelSelect.addEventListener('change', filterParentOptions);
+
+        // jalankan sekali saat halaman load (untuk old value)
+        filterParentOptions();
+    });
+</script>
+
 @endsection

@@ -9,7 +9,7 @@ class HeaderCoaControllerOperator
 {
     public function index()
     {
-        $headerCoas = HeaderCoa::paginate(10);
+        $headerCoas = HeaderCOA::paginate(10);
         return view('operator.account.headercoa.home', compact('headerCoas'));
     }
 }

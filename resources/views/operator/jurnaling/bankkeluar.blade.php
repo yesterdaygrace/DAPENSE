@@ -173,7 +173,10 @@
                             <div class="mb-3 row">
                                 <div class="col">
                                     <label for="prefix-kode-akun" class="form-label">Kode Akun</label>
-                                    <input type="text" class="form-control" id="prefix-kode-akun" name="prefix_kode_akun" maxlength="4" value="" required>
+                                    <select class="form-control" id="prefix-kode-akun" name="prefix_kode_akun" required>
+                                        <option value="1061">1061</option>
+                                        <option value="1212">1212</option>
+                                    </select>
                                 </div>
                                 <div class="col">
                                     <button type="button" id="pilih-akun" class="mt-4 btn btn-primary">Pilih</button>

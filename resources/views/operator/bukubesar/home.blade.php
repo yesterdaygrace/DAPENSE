@@ -238,10 +238,10 @@
                             <td>{{ $entry->tanggal_jurnal }}</td>
                             <td>{{ $entry->nomor_bukti ?? '-' }}</td>
                             <td>{{ $entry->keterangan }}</td>
-                            <td>{{ $entry->debit < 0 ? '(' . number_format(abs($entry->debit), 2) . ')' : number_format($entry->debit, 2) }}</td>
-                            <td>{{ $entry->kredit < 0 ? '(' . number_format(abs($entry->kredit), 2) . ')' : number_format($entry->kredit, 2) }}</td>
+                            <td class="text-end">{{ $entry->debit < 0 ? '(' . number_format(abs($entry->debit), 2) . ')' : number_format($entry->debit, 2) }}</td>
+                            <td class="text-end">{{ $entry->kredit < 0 ? '(' . number_format(abs($entry->kredit), 2) . ')' : number_format($entry->kredit, 2) }}</td>
                             @if(isset($action) && $action === 'show_all')
-                            <td>{{ $entry->running_total < 0 ? '(' . number_format(abs($entry->running_total), 2) . ')' : number_format($entry->running_total, 2) }}</td>
+                            <td class="text-end">{{ $entry->running_total < 0 ? '(' . number_format(abs($entry->running_total), 2) . ')' : number_format($entry->running_total, 2) }}</td>
                             @endif
                         </tr>
                         @endforeach
@@ -250,7 +250,7 @@
                         <tr>
                             <th colspan="5" class="text-end">Total:</th>
                             @if(isset($action) && $action === 'show_all')
-                            <th>{{ $finalRunningTotal < 0 ? '(' . number_format(abs($finalRunningTotal), 2) . ')' : number_format($finalRunningTotal, 2) }}</th>
+                            <th class="text-end">{{ $finalRunningTotal < 0 ? '(' . number_format(abs($finalRunningTotal), 2) . ')' : number_format($finalRunningTotal, 2) }}</th>
                             @endif
                         </tr>
                     </tfoot>
@@ -326,46 +326,21 @@
             }
         }
 
-
         const rows = document.querySelectorAll('table tbody tr');
 
         rows.forEach((row) => {
-            const debit = parseFloat(row.querySelector('td:nth-child(4)').textContent.replace(/,/g, '') || 0);
-            const kredit = parseFloat(row.querySelector('td:nth-child(5)').textContent.replace(/,/g, '') || 0);
-            const tanggal = row.querySelector('td:first-child').textContent.trim();
             const nomorBukti = row.querySelector('td:nth-child(2)').textContent.trim();
             const keteranganCell = row.querySelector('td:nth-child(3)');
+            const currentText = keteranganCell.textContent.trim();
 
+            if (currentText.includes('Saldo Awal')) return;
 
-            if (keteranganCell.textContent.includes('Saldo Awal')) {
-                return;
-            }
-
-            if (debit === 0 && kredit === 0) {
-                keteranganCell.textContent = tanggal;
-                return;
-            }
-
-            if (nomorBukti.startsWith('KK') && kredit > 0) {
-                keteranganCell.textContent = `PENGELUARAN KAS ${tanggal}`;
-            } else if (nomorBukti.startsWith('KK') && debit > 0) {
-                keteranganCell.textContent = `PEMASUKAN KAS ${tanggal}`;
-            } else if (nomorBukti.startsWith('KM') && kredit > 0) {
-                keteranganCell.textContent = `PENGELUARAN KAS ${tanggal}`;
-            } else if (nomorBukti.startsWith('KM') && debit > 0) {
-                keteranganCell.textContent = `PEMASUKAN KAS ${tanggal}`;
-            } else if (nomorBukti.includes('-BK-') && kredit > 0) {
-                keteranganCell.textContent = `PENGELUARAN BANK ${tanggal}`;
-            } else if (nomorBukti.includes('-BK-') && debit > 0) {
-                keteranganCell.textContent = `PEMASUKAN BANK ${tanggal}`;
-            } else if (nomorBukti.includes('-BM-') && kredit > 0) {
-                keteranganCell.textContent = `PENGELUARAN BANK ${tanggal}`;
-            } else if (nomorBukti.includes('-BM-') && debit > 0) {
-                keteranganCell.textContent = `PEMASUKAN BANK ${tanggal}`;
-            } else if (kredit > 0) {
-                keteranganCell.textContent = `PENGELUARAN ${tanggal}`;
-            } else if (debit > 0) {
-                keteranganCell.textContent = `PEMASUKAN ${tanggal}`;
+            if (!currentText || currentText === '') {
+                const merged = keteranganGabungan[nomorBukti];
+                if (merged) {
+                    keteranganCell.textContent = merged;
+                    keteranganCell.title = merged; // tooltip opsional
+                }
             }
         });
     });

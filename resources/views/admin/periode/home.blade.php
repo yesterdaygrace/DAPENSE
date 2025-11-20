@@ -168,7 +168,7 @@
               <td class="align-middle">{{ $periode->tanggal_awal }}</td>
               <td class="align-middle">{{ $periode->tanggal_akhir }}</td>
               <td class="align-middle">
-                <a href="{{ route('admin/periodes/edit', $periode->id) }}" type="button" class="btn btn-warning">Edit</a>
+                <!-- <a href="{{ route('admin/periodes/edit', $periode->id) }}" type="button" class="btn btn-warning">Edit</a> -->
                 <button type="button" class="btn btn-danger" onclick="confirmDelete('{{ route('admin/periodes/delete', $periode->id) }}')">Hapus</button>
               </td>
             </tr>

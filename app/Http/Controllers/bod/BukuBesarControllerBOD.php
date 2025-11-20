@@ -16,7 +16,7 @@ class BukuBesarControllerBOD
     public function filterView()
     {
         $periodes = Periode::orderBy('tanggal_awal', 'desc')->get();
-        $coas = Coa::all();
+        $coas = COA::all();
 
         return view('bod.bukubesar.filter', compact('periodes', 'coas'));
     }
@@ -31,7 +31,7 @@ class BukuBesarControllerBOD
 
         $periodes = Periode::orderBy('tanggal_awal', 'desc')->get();
 
-        $coas = Coa::whereHas('jurnalings', function ($query) use ($periodeId) {
+        $coas = COA::whereHas('jurnalings', function ($query) use ($periodeId) {
             $query->where('periode_id', $periodeId);
         })->get();
 
@@ -59,7 +59,7 @@ class BukuBesarControllerBOD
             ->get();
 
         // Fetch COAs that have been used in Jurnaling for the selected period
-        $coas = Coa::whereHas('jurnalings', function ($query) use ($periodeId) {
+        $coas = COA::whereHas('jurnalings', function ($query) use ($periodeId) {
             $query->where('periode_id', $periodeId);
         })->get();
 
@@ -72,7 +72,7 @@ class BukuBesarControllerBOD
     {
         $periodeId = $request->input('periode_id', null);
         $periodes = Periode::orderBy('tanggal_awal', 'desc')->get();
-        $coas = Coa::all();
+        $coas = COA::all();
 
         $availableMonths = $periodeId
             ? Jurnaling::where('periode_id', $periodeId)
@@ -99,10 +99,10 @@ class BukuBesarControllerBOD
         $tanggalAkhir = $request->input('tanggal_akhir');
 
         // Fetch COA and period data
-        $selectedCoa = Coa::findOrFail($coaId);
+        $selectedCoa = COA::findOrFail($coaId);
         $periodes =  $periodes = Periode::orderBy('tanggal_awal', 'desc')
             ->get();
-        $coas = Coa::all();
+        $coas = COA::all();
 
         // Calculate Saldo Awal up to the day before 'tanggal_awal'
         $saldoAwal = SaldoAwal::where('coa_id', $coaId)
@@ -211,8 +211,8 @@ class BukuBesarControllerBOD
             ]);
         }
 
-        $coas = Coa::all();
-        $selectedCoa = Coa::findOrFail($coaId);
+        $coas = COA::all();
+        $selectedCoa = COA::findOrFail($coaId);
 
         return view('bod.bukubesar.home', compact('coas', 'entries', 'selectedCoa', 'bulan'));
     }
@@ -228,7 +228,7 @@ class BukuBesarControllerBOD
         $coaId = $request->input('coa_id');
         $periodeId = $request->input('periode_id');
         $bulan = $request->input('bulan');
-        $selectedCoa = Coa::findOrFail($coaId);
+        $selectedCoa = COA::findOrFail($coaId);
 
         $availableMonths = Jurnaling::where('periode_id', $periodeId)
             ->selectRaw('DISTINCT MONTH(tanggal_jurnal) as bulan')
@@ -264,23 +264,50 @@ class BukuBesarControllerBOD
             ->orderBy('nomor_bukti', 'ASC')
             ->get(['tanggal_jurnal', 'nomor_bukti', 'keterangan', 'debit', 'kredit']);
 
+        // Ambil semua keterangan dari jurnal lain dengan nomor_bukti yang sama
+        $keteranganGabungan = Jurnaling::where('periode_id', $periodeId)
+            ->whereMonth('tanggal_jurnal', $bulan)
+            ->whereIn('nomor_bukti', $journalEntries->pluck('nomor_bukti')->unique())
+            ->whereNotNull('keterangan')
+            ->where('keterangan', '!=', '')
+            ->get()
+            ->groupBy('nomor_bukti')
+            ->map(function ($group) {
+                return $group->pluck('keterangan')->unique()->implode(', ');
+            });
+
         foreach ($journalEntries as $entry) {
             $runningTotal += $entry->debit - $entry->kredit;
+
+            // Jika keterangan kosong, isi dengan gabungan dari nomor_bukti yang sama
+            $keterangan = $entry->keterangan;
+            if (!$keterangan || trim($keterangan) === '') {
+                $keterangan = $keteranganGabungan[$entry->nomor_bukti] ?? '';
+            }
 
             $entries->push((object) [
                 'tanggal_jurnal' => $entry->tanggal_jurnal,
                 'nomor_bukti' => $entry->nomor_bukti,
-                'keterangan' => $entry->keterangan,
+                'keterangan' => $keterangan,
                 'debit' => $entry->debit,
                 'kredit' => $entry->kredit,
                 'running_total' => $runningTotal,
             ]);
         }
 
-        $coas = Coa::all();
+        $coas = COA::all();
         $periodes = Periode::orderBy('tanggal_awal', 'desc')->get();
 
-        return view('bod.bukubesar.home', compact('coas', 'entries', 'selectedCoa', 'periodes', 'periodeId', 'bulan', 'availableMonths', 'runningTotal'))
-            ->with('action', 'show_all');
+        return view('bod.bukubesar.home', compact(
+            'coas',
+            'entries',
+            'selectedCoa',
+            'periodes',
+            'periodeId',
+            'bulan',
+            'availableMonths',
+            'runningTotal',
+            'keteranganGabungan' // dikirim ke Blade juga kalau mau dipakai di JS
+        ))->with('action', 'show_all');
     }
 }

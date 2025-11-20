@@ -97,6 +97,7 @@ class NeracaSaldoControllerAdmin
         ]);
     }
 
+
     public function indexmon(Request $request, $periode_id)
     {
         $month = $request->input('month');
@@ -158,7 +159,7 @@ class NeracaSaldoControllerAdmin
 
         $allCoas = COA::all();
 
-        $headerCoas = HeaderCoa::with(['children', 'coas'])->whereNull('parent_id')->get();
+        $headerCoas = HeaderCOA::with(['children', 'coas'])->whereNull('parent_id')->get();
 
         foreach ($headerCoas as $header) {
             $this->processHeader($header, $neracaByCoa, $saldoAwalByCoa, $allCoas);

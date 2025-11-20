@@ -180,12 +180,15 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
+
                     <div class="mb-3">
                         <label for="parent_id" class="form-label">Parent Header</label>
                         <select id="parent_id" name="parent_id" class="form-control @error('parent_id') is-invalid @enderror">
                             <option value="">NULL</option>
                             @foreach($headerCoas as $headerCoaItem)
-                            <option value="{{ $headerCoaItem->id }}" {{ old('parent_id', $headerCoa->parent_id) == $headerCoaItem->id ? 'selected' : '' }}>
+                            <option value="{{ $headerCoaItem->id }}"
+                                data-level="{{ $headerCoaItem->level }}"
+                                {{ old('parent_id', $headerCoa->parent_id) == $headerCoaItem->id ? 'selected' : '' }}>
                                 {{ $headerCoaItem->kode_header }} - {{ $headerCoaItem->nama_header }}
                             </option>
                             @endforeach
@@ -205,4 +208,35 @@
     <div class="content-backdrop fade"></div>
 </div>
 <!-- Content wrapper -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const levelSelect = document.getElementById('level');
+        const parentSelect = document.getElementById('parent_id');
+        const allOptions = Array.from(parentSelect.options);
+
+        function filterParentOptions() {
+            const selectedLevel = levelSelect.value;
+            parentSelect.innerHTML = ''; // kosongkan dulu
+
+            if (selectedLevel === '0') {
+                parentSelect.innerHTML = '<option value="">NULL</option>';
+            } else {
+                parentSelect.innerHTML = '<option value="">NULL</option>';
+                const parentLevel = parseInt(selectedLevel) - 1;
+                allOptions.forEach(opt => {
+                    if (opt.dataset.level == parentLevel) {
+                        parentSelect.appendChild(opt.cloneNode(true));
+                    }
+                });
+            }
+        }
+
+        // jalankan saat level berubah
+        levelSelect.addEventListener('change', filterParentOptions);
+
+        // jalankan sekali saat halaman load (untuk old value / edit mode)
+        filterParentOptions();
+    });
+</script>
+
 @endsection

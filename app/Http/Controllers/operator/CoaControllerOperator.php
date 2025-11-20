@@ -18,19 +18,21 @@ class CoaControllerOperator
 
     public function create()
     {
-        $headers = HeaderCoa::all(); // Fetch all headers
+        $headers = HeaderCOA::where('level', 3)->orderBy('kode_header')->get();
         return view('operator.account.coa.create', compact('headers'));
     }
 
     public function save(Request $request)
     {
         $request->validate([
-            'kode_akun' => 'required|string|max:255',
+            'kode_akun' => 'required|string|max:255|unique:coas,kode_akun',
             'nama_akun' => 'required|string|max:255',
-            'saldo_normal' => 'required|string|max:255',
+            'saldo_normal' => 'required|in:Debit,Kredit',
             'kategori' => 'required|string|max:255',
             'level' => 'required|integer',
             'header_coa_id' => 'required|exists:header_coas,id',
+        ], [
+            'kode_akun.unique' => 'Kode akun sudah ada, silakan gunakan kode lain.',
         ]);
 
         COA::create($request->all());
@@ -41,8 +43,7 @@ class CoaControllerOperator
     public function update($id)
     {
         $coa = COA::findOrFail($id);
-        $headers = HeaderCoa::all(); // Fetch all headers
-
+        $headers = HeaderCOA::where('level', 3)->orderBy('kode_header')->get();
         return view('operator.account.coa.update', compact('coa', 'headers'));
     }
 
@@ -50,12 +51,14 @@ class CoaControllerOperator
     {
         $coa = COA::findOrFail($id);
         $request->validate([
-            'kode_akun' => 'required|string|max:255',
+            'kode_akun' => 'required|string|max:255|unique:coas,kode_akun,' . $coa->id,
             'nama_akun' => 'required|string|max:255',
-            'saldo_normal' => 'required|string|max:255',
+            'saldo_normal' => 'required|in:Debit,Kredit',
             'kategori' => 'required|string|max:255',
             'level' => 'required|integer',
             'header_coa_id' => 'required|exists:header_coas,id',
+        ], [
+            'kode_akun.unique' => 'Kode akun sudah ada, silakan gunakan kode lain.',
         ]);
 
         $coa->update([

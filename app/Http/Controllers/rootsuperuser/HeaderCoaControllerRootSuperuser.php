@@ -9,7 +9,7 @@ class HeaderCoaControllerRootSuperuser
 {
     public function index()
     {
-        $headerCoas = HeaderCoa::paginate(10);
+        $headerCoas = HeaderCOA::paginate(10);
         return view('rootsuperuser.account.headercoa.home', compact('headerCoas'));
     }
 }

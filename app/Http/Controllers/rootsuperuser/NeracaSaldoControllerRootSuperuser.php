@@ -159,7 +159,7 @@ class NeracaSaldoControllerRootSuperuser
 
         $allCoas = COA::all();
 
-        $headerCoas = HeaderCoa::with(['children', 'coas'])->whereNull('parent_id')->get();
+        $headerCoas = HeaderCOA::with(['children', 'coas'])->whereNull('parent_id')->get();
 
         foreach ($headerCoas as $header) {
             $this->processHeader($header, $neracaByCoa, $saldoAwalByCoa, $allCoas);

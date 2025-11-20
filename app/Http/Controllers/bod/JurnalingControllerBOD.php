@@ -39,7 +39,7 @@ class JurnalingControllerBOD
         $periodeId = $request->query('periode_id', session('selectedPeriode')); // Default to session value if not in request
 
         // Get all COA and Periode for the dropdowns
-        $coas = Coa::all();
+        $coas = COA::all();
         $periodes = Periode::orderBy('tanggal_awal', 'desc')
             ->get();
 
@@ -68,7 +68,7 @@ class JurnalingControllerBOD
         $periodeId = $request->query('periode_id', session('selectedPeriode')); // Default to session value if not in request
 
         // Get all COA and Periode for the dropdowns
-        $coas = Coa::all();
+        $coas = COA::all();
         $periodes = Periode::orderBy('tanggal_awal', 'desc')
             ->get();
 
@@ -97,7 +97,7 @@ class JurnalingControllerBOD
         $periodeId = $request->query('periode_id', session('selectedPeriode')); // Default to session value if not in request
 
         // Get all COA and Periode for the dropdowns
-        $coas = Coa::all();
+        $coas = COA::all();
         $periodes = Periode::orderBy('tanggal_awal', 'desc')
             ->get();
 
@@ -126,7 +126,7 @@ class JurnalingControllerBOD
         $periodeId = $request->query('periode_id', session('selectedPeriode')); // Default to session value if not in request
 
         // Get all COA and Periode for the dropdowns
-        $coas = Coa::all();
+        $coas = COA::all();
         $periodes = Periode::orderBy('tanggal_awal', 'desc')
             ->get();
 
@@ -155,7 +155,7 @@ class JurnalingControllerBOD
         $periodeId = $request->query('periode_id', session('selectedPeriode')); // Default to session value if not in request
 
         // Get all COA and Periode for the dropdowns
-        $coas = Coa::all();
+        $coas = COA::all();
         $periodes = Periode::orderBy('tanggal_awal', 'desc')
             ->get();
 
@@ -184,7 +184,7 @@ class JurnalingControllerBOD
         $periodeId = $request->query('periode_id', session('selectedPeriode')); // Default to session value if not in request
 
         // Get all COA and Periode for the dropdowns
-        $coas = Coa::all();
+        $coas = COA::all();
         $periodes = Periode::orderBy('tanggal_awal', 'desc')
             ->get();
 
@@ -299,16 +299,6 @@ class JurnalingControllerBOD
             'periode_id' => 'required|exists:periodes,id',
             'kategori_jurnal' => 'required|string|max:255',
         ]);
-
-        $periode = Periode::find($request->periode_id);
-        $tahunPeriode = \Carbon\Carbon::parse($periode->tanggal_awal)->year;
-        $tahunJurnal = \Carbon\Carbon::parse($request->tanggal_jurnal)->year;
-
-        if ($tahunJurnal !== $tahunPeriode) {
-            return back()->withErrors([
-                'tanggal_jurnal' => 'Tahun jurnal (' . $tahunJurnal . ') tidak sesuai dengan tahun periode (' . $tahunPeriode . ').',
-            ])->withInput();
-        }
 
         $nomorBukti = $request->nomor_bukti;
 
@@ -1058,6 +1048,7 @@ class JurnalingControllerBOD
             ]);
     }
 
+
     public function updatekk(Request $request, $id)
     {
         $request->validate([
@@ -1176,6 +1167,7 @@ class JurnalingControllerBOD
                 'success' => 'Data berhasil diperbarui!',
             ]);
     }
+
 
     public function updatebk(Request $request, $id)
     {
@@ -1375,6 +1367,7 @@ class JurnalingControllerBOD
         ]);
     }
 
+
     public function showMonths(Request $request, $periode = null)
     {
         $periodes = Periode::orderBy('tanggal_awal', 'desc')->get();
@@ -1414,6 +1407,8 @@ class JurnalingControllerBOD
 
         return view('bod/jurnaling/months', compact('periodes', 'selectedPeriode', 'months'));
     }
+
+
 
     public function rekapJurnalMonth(Request $request, $periode_id)
     {
@@ -1622,6 +1617,8 @@ class JurnalingControllerBOD
         ])->with('success', 'Neraca Saldo berhasil direkap untuk bulan ini.');
     }
 
+
+
     public function rekapJurnal(Request $request, $periode_id)
     {
         // Fetch the current period
@@ -1644,7 +1641,7 @@ class JurnalingControllerBOD
         });
 
         // Get all COAs and process saldo_awal and saldo_akhir
-        $coas = CoA::all();
+        $coas = COA::all();
         foreach ($coas as $coa) {
             // Fetch saldo_awal for the current COA and period
             $existingSaldoAwal = SaldoAwal::where('coa_id', $coa->id)
@@ -1711,7 +1708,7 @@ class JurnalingControllerBOD
     private function fetchDropdownData()
     {
         return [
-            'coas' => Coa::all(),
+            'coas' => COA::all(),
             'periodes' => Periode::all(),
         ];
     }
@@ -1719,7 +1716,7 @@ class JurnalingControllerBOD
     public function showJurnaling(Request $request)
     {
         $periodes = Periode::all();
-        $coas = Coa::all();
+        $coas = COA::all();
 
 
         $selectedPeriode = $request->query('periode_id', null);

@@ -152,7 +152,7 @@
               <th>Nama</th>
               <th>Tanggal Awal</th>
               <th>Tanggal Akhir</th>
-              <th>Action</th>
+              <!-- <th>Action</th> -->
             </tr>
           </thead>
           <tbody>
@@ -162,10 +162,10 @@
               <td class="align-middle">{{ $periode->nama_periode }}</td>
               <td class="align-middle">{{ $periode->tanggal_awal }}</td>
               <td class="align-middle">{{ $periode->tanggal_akhir }}</td>
-              <td class="align-middle">
+              <!-- <td class="align-middle">
                 <a href="{{ route('operator/periodes/edit', $periode->id) }}" type="button" class="btn btn-warning">Edit</a>
                 <button type="button" class="btn btn-danger" onclick="confirmDelete('{{ route('operator/periodes/delete', $periode->id) }}')">Hapus</button>
-              </td>
+              </td> -->
             </tr>
             @empty
             <tr>
