@@ -350,6 +350,22 @@
     </div>
 </div>
 
+<div class="p-3 toast-container position-fixed top-50 start-50 translate-middle" style="z-index: 1050;">
+    <div id="deleteToast" class="text-white toast bg-danger" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <i class="bx bx-trash me-2"></i>
+            <strong class="me-auto">Konfirmasi Hapus</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            Apakah Anda yakin ingin menghapus entri jurnal ini?
+            <div class="pt-2 mt-4 d-flex justify-content-end border-top">
+                <button type="button" class="btn btn-light btn-sm me-2" data-bs-dismiss="toast">Batal</button>
+                <button type="button" class="btn btn-danger btn-sm" id="confirmDeleteBtn">Hapus</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -581,6 +597,41 @@
             form.submit();
         }
 
+        function createDeleteButton(dataId) {
+            let deleteBtn = document.getElementById('delete-btn');
+            if (!deleteBtn) {
+                deleteBtn = document.createElement('button');
+                deleteBtn.type = 'button';
+                deleteBtn.id = 'delete-btn';
+                deleteBtn.className = 'btn btn-danger ms-2';
+                deleteBtn.textContent = 'Delete';
+
+                const editBtn = document.getElementById('edit-btn');
+                editBtn.parentNode.insertBefore(deleteBtn, editBtn.nextSibling)
+
+                deleteBtn.addEventListener('click', function() {
+                    const deleteToast = new bootstrap.Toast(document.getElementById('deleteToast'));
+                    deleteToast.show();
+
+                    document.getElementById('confirmDeleteBtn').onclick = function() {
+                        prepareFormForDelete(dataId);
+                        deleteToast.hide();
+                    };
+                });
+            } else {
+                deleteBtn.style.display = 'inline-block';
+                deleteBtn.onclick = function() {
+                    prepareFormForDelete(dataId);
+                };
+            }
+        }
+
+        function prepareFormForDelete(dataId) {
+            form.action = `/rootsuperuser/jurnaling/deletebm/${dataId}`;
+            document.getElementById('form-method').value = 'DELETE';
+            form.submit();
+        }
+
         function selectAkunPertama() {
             const nomorAkunAkhir = nomorAkunInput.value;
             const prefixKodeAkun = document.getElementById('prefix-kode-akun').value;
@@ -673,6 +724,7 @@
                             document.getElementById('nomor_bukti').value = nomorBukti;
 
                             createEditButton(data.id_debit);
+                            createDeleteButton(data.id_debit);
                             clearAdditionalCoas();
                             data.additional_coas.forEach(coa => {
                                 addCoaField(coa);
@@ -872,12 +924,77 @@
 
         function setupCustomDropdown(input, dropdown, hiddenInputId) {
             const options = document.getElementById('coa-options').options;
+            let activeIndex = -1;
 
             input.addEventListener('focus', function() {
-                showDropdown(input, dropdown, hiddenInputId, options);
+                const currentValue = input.value.trim().toLowerCase();
+                dropdown.innerHTML = '';
+                activeIndex = -1;
+
+                // Jika input cocok persis dengan salah satu opsi
+                const matchedOptions = Array.from(options).filter(opt =>
+                    opt.value.trim().toLowerCase() === currentValue
+                );
+
+                if (matchedOptions.length === 1) {
+                    // Tampilkan hanya akun yang cocok persis
+                    const option = matchedOptions[0];
+                    const div = document.createElement('div');
+                    div.textContent = option.value;
+                    div.setAttribute('data-id', option.getAttribute('data-id'));
+                    div.classList.add('dropdown-item');
+                    div.style.padding = '8px';
+                    div.style.cursor = 'pointer';
+                    div.style.backgroundColor = 'white';
+
+                    div.addEventListener('click', function() {
+                        selectItem(div, input, hiddenInputId, dropdown);
+                    });
+
+                    dropdown.appendChild(div);
+                } else {
+                    // Jika tidak cocok persis, tampilkan semua lalu filter
+                    showDropdown(input, dropdown, hiddenInputId, options);
+                    filterDropdown(input, dropdown, options);
+                }
+
+                dropdown.style.display = 'block';
             });
+
             input.addEventListener('input', function() {
                 filterDropdown(input, dropdown, options);
+                activeIndex = -1;
+
+                const visible = getVisibleItems(dropdown);
+                if (visible.length) highlightItem(visible, 0);
+            });
+
+            input.addEventListener('keydown', function(e) {
+                const visible = getVisibleItems(dropdown);
+                if (visible.length === 0) return;
+
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    activeIndex = (activeIndex + 1) % visible.length;
+                    highlightItem(visible, activeIndex);
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    activeIndex = (activeIndex - 1 + visible.length) % visible.length;
+                    highlightItem(visible, activeIndex);
+                } else if (e.key === 'Enter') {
+                    e.preventDefault();
+
+                    if (visible.length === 1) {
+                        selectItem(visible[0], input, hiddenInputId, dropdown);
+                    } else {
+                        const exactMatch = visible.find(item => item.textContent.trim() === input.value.trim());
+                        if (exactMatch) {
+                            selectItem(exactMatch, input, hiddenInputId, dropdown);
+                        } else if (activeIndex >= 0 && visible[activeIndex]) {
+                            selectItem(visible[activeIndex], input, hiddenInputId, dropdown);
+                        }
+                    }
+                }
             });
 
             document.addEventListener('click', function(event) {
@@ -889,26 +1006,24 @@
 
         function showDropdown(input, dropdown, hiddenInputId, options) {
             dropdown.innerHTML = '';
+
             for (let i = 0; i < options.length; i++) {
                 const option = options[i];
                 const div = document.createElement('div');
                 div.textContent = option.value;
                 div.setAttribute('data-id', option.getAttribute('data-id'));
+                div.classList.add('dropdown-item');
                 div.style.padding = '8px';
                 div.style.cursor = 'pointer';
+                div.style.backgroundColor = 'white';
+
                 div.addEventListener('click', function() {
-                    input.value = option.value;
-                    document.getElementById(hiddenInputId).value = option.getAttribute('data-id');
-                    dropdown.style.display = 'none';
+                    selectItem(div, input, hiddenInputId, dropdown);
                 });
-                div.addEventListener('mouseover', function() {
-                    div.style.backgroundColor = '#f1f1f1';
-                });
-                div.addEventListener('mouseout', function() {
-                    div.style.backgroundColor = 'white';
-                });
+
                 dropdown.appendChild(div);
             }
+
             dropdown.style.position = 'absolute';
             dropdown.style.backgroundColor = 'white';
             dropdown.style.border = '1px solid #ccc';
@@ -920,28 +1035,108 @@
 
         function filterDropdown(input, dropdown, options) {
             const filter = input.value.toLowerCase();
-            const divs = dropdown.getElementsByTagName('div');
+            const divs = dropdown.getElementsByClassName('dropdown-item');
             for (let i = 0; i < divs.length; i++) {
                 const div = divs[i];
-                if (div.textContent.toLowerCase().indexOf(filter) > -1) {
-                    div.style.display = '';
-                } else {
-                    div.style.display = 'none';
-                }
+                div.style.display = div.textContent.toLowerCase().includes(filter) ? '' : 'none';
             }
         }
 
+        function getVisibleItems(dropdown) {
+            return Array.from(dropdown.querySelectorAll('.dropdown-item'))
+                .filter(item => item.style.display !== 'none');
+        }
+
+        function highlightItem(items, index) {
+            items.forEach((item, i) => {
+                item.style.backgroundColor = i === index ? '#e0e0e0' : 'white';
+            });
+            items[index].scrollIntoView({
+                block: 'nearest'
+            });
+        }
+
+        function selectItem(div, input, hiddenInputId, dropdown) {
+            input.value = div.textContent;
+            document.getElementById(hiddenInputId).value = div.getAttribute('data-id');
+            dropdown.style.display = 'none';
+        }
 
         setupCustomDropdown(document.getElementById('first-coa'), document.getElementById('first-coa-dropdown'), 'first-coa-id');
         setupCustomDropdown(document.getElementById('opposite-coa'), document.getElementById('opposite-coa-dropdown'), 'opposite-coa-id');
 
         function setDateConstraints() {
             const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            const todayISO = `${yyyy}-${mm}-${dd}`;
 
-            tanggalJurnalInput.setAttribute('max', today.toISOString().split('T')[0]);
+            const tanggalJurnalInput = document.getElementById('tanggal_jurnal');
+            tanggalJurnalInput.setAttribute('max', todayISO);
 
-            const firstDayOfLastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
-            tanggalJurnalInput.setAttribute('min', firstDayOfLastMonth.toISOString().split('T')[0]);
+            const firstDayOfLastMonth = new Date(yyyy, today.getMonth() - 1, 1);
+            const minISO = firstDayOfLastMonth.toISOString().split('T')[0];
+            tanggalJurnalInput.setAttribute('min', minISO);
+
+            tanggalJurnalInput.addEventListener('input', function() {
+                validateDate(this);
+            });
+
+            tanggalJurnalInput.addEventListener('blur', function() {
+                validateDate(this);
+            });
+
+            function validateDate(inputEl) {
+                const val = inputEl.value;
+                if (!isValidDate(val)) {
+                    inputEl.value = todayISO;
+                    showTanggalWarning("Tanggal tidak boleh melebihi hari ini");
+                    return;
+                }
+
+                const inputDate = new Date(val);
+                if (inputDate > today) {
+                    inputEl.value = todayISO;
+                    showTanggalWarning("Tanggal tidak boleh melebihi hari ini");
+                } else {
+                    hideTanggalWarning();
+                }
+            }
+
+            function isValidDate(dateString) {
+                const parts = dateString.split("-");
+                if (parts.length !== 3) return false;
+
+                const yyyy = parseInt(parts[0], 10);
+                const mm = parseInt(parts[1], 10);
+                const dd = parseInt(parts[2], 10);
+
+                if (isNaN(yyyy) || isNaN(mm) || isNaN(dd)) return false;
+                if (mm < 1 || mm > 12) return false;
+
+                const maxDay = new Date(yyyy, mm, 0).getDate();
+                return dd >= 1 && dd <= maxDay;
+            }
+
+            function showTanggalWarning(msg) {
+                let warning = document.getElementById('tanggal-warning');
+                if (!warning) {
+                    warning = document.createElement('small');
+                    warning.id = 'tanggal-warning';
+                    warning.className = 'text-danger';
+                    tanggalJurnalInput.parentNode.appendChild(warning);
+                }
+                warning.textContent = msg;
+                warning.style.display = 'inline';
+            }
+
+            function hideTanggalWarning() {
+                const warning = document.getElementById('tanggal-warning');
+                if (warning) {
+                    warning.style.display = 'none';
+                }
+            }
         }
         setDateConstraints();
     });

@@ -119,6 +119,13 @@ Route::middleware(['auth', RootSuperuser::class])->group(function () {
     Route::put('/rootsuperuser/jurnaling/editmem/{id}', [JurnalingControllerRootSuperuser::class, 'updatemem'])->name('rootsuperuser/jurnaling/updatemem');
     Route::put('/rootsuperuser/jurnaling/editmempenutup/{id}', [JurnalingControllerRootSuperuser::class, 'updatemempenutup'])->name('rootsuperuser/jurnaling/updatemempenutup');
 
+    Route::delete('/rootsuperuser/jurnaling/deletekm/{id}', [JurnalingControllerRootSuperuser::class, 'deletekm'])->name('rootsuperuser/jurnaling/deletekm');
+    Route::delete('/rootsuperuser/jurnaling/deletekk/{id}', [JurnalingControllerRootSuperuser::class, 'deletekk'])->name('rootsuperuser/jurnaling/deletekk');
+    Route::delete('/rootsuperuser/jurnaling/deletebk/{id}', [JurnalingControllerRootSuperuser::class, 'deletebk'])->name('rootsuperuser/jurnaling/deletebk');
+    Route::delete('/rootsuperuser/jurnaling/deletebm/{id}', [JurnalingControllerRootSuperuser::class, 'deletebm'])->name('rootsuperuser/jurnaling/deletebm');
+    Route::delete('/rootsuperuser/jurnaling/deletemem/{id}', [JurnalingControllerRootSuperuser::class, 'deletemem'])->name('rootsuperuser/jurnaling/deletemem');
+    Route::delete('/rootsuperuser/jurnaling/deletemempenutup/{id}', [JurnalingControllerRootSuperuser::class, 'deletemempenutup'])->name('rootsuperuser/jurnaling/deletemempenutup');
+
     Route::get('/rootsuperuser/bukubesar', [BukuBesarControllerRootSuperuser::class, 'showLedgerForm'])->name('rootsuperuser/bukubesar');
     Route::get('/rootsuperuser/bukubesar/searchCoaByPeriod', [BukuBesarControllerRootSuperuser::class, 'searchCoaByPeriod'])->name('rootsuperuser/bukubesar/searchCoaByPeriod');
     Route::get('rootsuperuser/bukubesar/showAll', [BukuBesarControllerRootSuperuser::class, 'showAll'])->name('rootsuperuser/bukubesar/showAll');
@@ -210,6 +217,14 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::put('/admin/jurnaling/editmem/{id}', [JurnalingControllerAdmin::class, 'updatemem'])->name('admin/jurnaling/updatemem');
     Route::put('/admin/jurnaling/editmempenutup/{id}', [JurnalingControllerAdmin::class, 'updatemempenutup'])->name('admin/jurnaling/updatemempenutup');
 
+    Route::delete('/admin/jurnaling/deletekm/{id}', [JurnalingControllerAdmin::class, 'deletekm'])->name('admin/jurnaling/deletekm');
+    Route::delete('/admin/jurnaling/deletekk/{id}', [JurnalingControllerAdmin::class, 'deletekk'])->name('admin/jurnaling/deletekk');
+    Route::delete('/admin/jurnaling/deletebk/{id}', [JurnalingControllerAdmin::class, 'deletebk'])->name('admin/jurnaling/deletebk');
+    Route::delete('/admin/jurnaling/deletebm/{id}', [JurnalingControllerAdmin::class, 'deletebm'])->name('admin/jurnaling/deletebm');
+    Route::delete('/admin/jurnaling/deletemem/{id}', [JurnalingControllerAdmin::class, 'deletemem'])->name('admin/jurnaling/deletemem');
+    Route::delete('/admin/jurnaling/deletemempenutup/{id}', [JurnalingControllerAdmin::class, 'deletemempenutup'])->name('admin/jurnaling/deletemempenutup');
+
+
     Route::get('/admin/bukubesar', [BukuBesarControllerAdmin::class, 'showLedgerForm'])->name('admin/bukubesar');
     Route::get('/admin/bukubesar/searchCoaByPeriod', [BukuBesarControllerAdmin::class, 'searchCoaByPeriod'])->name('admin/bukubesar/searchCoaByPeriod');
     Route::get('admin/bukubesar/showAll', [BukuBesarControllerAdmin::class, 'showAll'])->name('admin/bukubesar/showAll');
@@ -291,6 +306,14 @@ Route::middleware(['auth', 'operator'])->group(function () {
     Route::put('/operator/jurnaling/editbk/{id}', [JurnalingControllerOperator::class, 'updatebk'])->name('operator/jurnaling/updatebk');
     Route::put('/operator/jurnaling/editmem/{id}', [JurnalingControllerOperator::class, 'updatemem'])->name('operator/jurnaling/updatemem');
     Route::put('/operator/jurnaling/editmempenutup/{id}', [JurnalingControllerOperator::class, 'updatemempenutup'])->name('operator/jurnaling/updatemempenutup');
+
+    Route::delete('/operator/jurnaling/deletekm/{id}', [JurnalingControllerOperator::class, 'deletekm'])->name('operator/jurnaling/deletekm');
+    Route::delete('/operator/jurnaling/deletekk/{id}', [JurnalingControllerOperator::class, 'deletekk'])->name('operator/jurnaling/deletekk');
+    Route::delete('/operator/jurnaling/deletebk/{id}', [JurnalingControllerOperator::class, 'deletebk'])->name('operator/jurnaling/deletebk');
+    Route::delete('/operator/jurnaling/deletebm/{id}', [JurnalingControllerOperator::class, 'deletebm'])->name('operator/jurnaling/deletebm');
+    Route::delete('/operator/jurnaling/deletemem/{id}', [JurnalingControllerOperator::class, 'deletemem'])->name('operator/jurnaling/deletemem');
+    Route::delete('/operator/jurnaling/deletemempenutup/{id}', [JurnalingControllerOperator::class, 'deletemempenutup'])->name('operator/jurnaling/deletemempenutup');
+
 
     Route::get('/operator/bukubesar', [BukuBesarControllerOperator::class, 'showLedgerForm'])->name('operator/bukubesar');
     Route::get('/operator/bukubesar/searchCoaByPeriod', [BukuBesarControllerOperator::class, 'searchCoaByPeriod'])->name('operator/bukubesar/searchCoaByPeriod');

@@ -192,7 +192,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($saldo_awals as $saldo_awal)
+                            @foreach ($saldo_awals->sortBy('coa.kode_akun') as $saldo_awal)
                             <tr>
                                 <td>{{ $saldo_awal->coa->kode_akun }}</td>
                                 <td>{{ $saldo_awal->tanggal_saldo }}</td>

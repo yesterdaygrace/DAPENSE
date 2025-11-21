@@ -1322,6 +1322,192 @@ class JurnalingControllerBOD
             ]);
     }
 
+     public function deletekm(Request $request)
+    {
+        try {
+            $nomorBukti = $request->input('nomor_bukti');
+
+            $jurnal = Jurnaling::where('nomor_bukti', $nomorBukti)->first();
+
+            if (!$jurnal) {
+                return redirect()->route('bod/jurnaling')
+                    ->with([
+                        'selectedPeriode' => $request->periode_id,
+                        'error' => 'Jurnal dengan nomor bukti tersebut tidak ditemukan.'
+                    ]);
+            }
+
+            Jurnaling::where('nomor_bukti', $nomorBukti)->delete();
+
+            return redirect()->route('bod/jurnaling')
+                ->with([
+                    'selectedPeriode' => $request->periode_id,
+                    'success' => 'Data berhasil dihapus!',
+                ]);
+        } catch (\Exception $e) {
+            return redirect()->route('bod/jurnaling')
+                ->with([
+                    'selectedPeriode' => $request->periode_id,
+                    'error' => 'Terjadi kesalahan saat menghapus jurnal: ' . $e->getMessage(),
+                ]);
+        }
+    }
+
+    public function deletekk(Request $request)
+    {
+        try {
+            $nomorBukti = $request->input('nomor_bukti');
+
+            $jurnal = Jurnaling::where('nomor_bukti', $nomorBukti)->first();
+
+            if (!$jurnal) {
+                return redirect()->route('bod/jurnaling/kaskeluar')
+                    ->with([
+                        'selectedPeriode' => $request->periode_id,
+                        'error' => 'Jurnal dengan nomor bukti tersebut tidak ditemukan.'
+                    ]);
+            }
+
+            Jurnaling::where('nomor_bukti', $nomorBukti)->delete();
+
+            return redirect()->route('bod/jurnaling/kaskeluar')
+                ->with([
+                    'selectedPeriode' => $request->periode_id,
+                    'success' => 'Data berhasil dihapus!',
+                ]);
+        } catch (\Exception $e) {
+            return redirect()->route('bod/jurnaling/kaskeluar')
+                ->with([
+                    'selectedPeriode' => $request->periode_id,
+                    'error' => 'Terjadi kesalahan saat menghapus jurnal: ' . $e->getMessage(),
+                ]);
+        }
+    }
+
+    public function deletebk(Request $request)
+    {
+        try {
+            $nomorBukti = $request->input('nomor_bukti');
+
+            $jurnal = Jurnaling::where('nomor_bukti', $nomorBukti)->first();
+
+            if (!$jurnal) {
+                return redirect()->route('bod/jurnaling/bankkeluar')
+                    ->with([
+                        'selectedPeriode' => $request->periode_id,
+                        'error' => 'Jurnal dengan nomor bukti tersebut tidak ditemukan.'
+                    ]);
+            }
+
+            Jurnaling::where('nomor_bukti', $nomorBukti)->delete();
+
+            return redirect()->route('bod/jurnaling/bankkeluar')
+                ->with([
+                    'selectedPeriode' => $request->periode_id,
+                    'success' => 'Data berhasil dihapus!',
+                ]);
+        } catch (\Exception $e) {
+            return redirect()->route('bod/jurnaling/bankkeluar')
+                ->with([
+                    'selectedPeriode' => $request->periode_id,
+                    'error' => 'Terjadi kesalahan saat menghapus jurnal: ' . $e->getMessage(),
+                ]);
+        }
+    }
+
+    public function deletebm(Request $request)
+    {
+        try {
+            $nomorBukti = $request->input('nomor_bukti');
+
+            $jurnal = Jurnaling::where('nomor_bukti', $nomorBukti)->first();
+
+            if (!$jurnal) {
+                return redirect()->route('bod/jurnaling/bankmasuk')
+                    ->with([
+                        'selectedPeriode' => $request->periode_id,
+                        'error' => 'Jurnal dengan nomor bukti tersebut tidak ditemukan.'
+                    ]);
+            }
+
+            Jurnaling::where('nomor_bukti', $nomorBukti)->delete();
+
+            return redirect()->route('bod/jurnaling/bankmasuk')
+                ->with([
+                    'selectedPeriode' => $request->periode_id,
+                    'success' => 'Data berhasil dihapus!',
+                ]);
+        } catch (\Exception $e) {
+            return redirect()->route('bod/jurnaling/bankmasuk')
+                ->with([
+                    'selectedPeriode' => $request->periode_id,
+                    'error' => 'Terjadi kesalahan saat menghapus jurnal: ' . $e->getMessage(),
+                ]);
+        }
+    }
+
+    public function deletemem(Request $request)
+    {
+        try {
+            $nomorBukti = $request->input('nomor_bukti');
+
+            $jurnal = Jurnaling::where('nomor_bukti', $nomorBukti)->first();
+
+            if (!$jurnal) {
+                return redirect()->route('bod/jurnaling/memorial')
+                    ->with([
+                        'selectedPeriode' => $request->periode_id,
+                        'error' => 'Jurnal dengan nomor bukti tersebut tidak ditemukan.'
+                    ]);
+            }
+
+            Jurnaling::where('nomor_bukti', $nomorBukti)->delete();
+
+            return redirect()->route('bod/jurnaling/memorial')
+                ->with([
+                    'selectedPeriode' => $request->periode_id,
+                    'success' => 'Data berhasil dihapus!',
+                ]);
+        } catch (\Exception $e) {
+            return redirect()->route('bod/jurnaling/memorial')
+                ->with([
+                    'selectedPeriode' => $request->periode_id,
+                    'error' => 'Terjadi kesalahan saat menghapus jurnal: ' . $e->getMessage(),
+                ]);
+        }
+    }
+
+    public function deletemempenutup(Request $request)
+    {
+        try {
+            $nomorBukti = $request->input('nomor_bukti');
+
+            $jurnal = Jurnaling::where('nomor_bukti', $nomorBukti)->first();
+
+            if (!$jurnal) {
+                return redirect()->route('bod/jurnaling/memorialpenutup')
+                    ->with([
+                        'selectedPeriode' => $request->periode_id,
+                        'error' => 'Jurnal dengan nomor bukti tersebut tidak ditemukan.'
+                    ]);
+            }
+
+            Jurnaling::where('nomor_bukti', $nomorBukti)->delete();
+
+            return redirect()->route('bod/jurnaling/memorialpenutup')
+                ->with([
+                    'selectedPeriode' => $request->periode_id,
+                    'success' => 'Data berhasil dihapus!',
+                ]);
+        } catch (\Exception $e) {
+            return redirect()->route('bod/jurnaling/memorialpenutup')
+                ->with([
+                    'selectedPeriode' => $request->periode_id,
+                    'error' => 'Terjadi kesalahan saat menghapus jurnal: ' . $e->getMessage(),
+                ]);
+        }
+    }
+
 
     public function showPerMonth(Request $request, $periode = null)
     {
@@ -1561,10 +1747,11 @@ class JurnalingControllerBOD
             'kredit' => 0,
         ];
 
+
         $existingNeraca = NeracaSaldo::where('periode_id', $periode_id)
             ->where('month', $selectedMonthDate->toDateString())
             ->get()
-            ->keyBy(fn($item) => $item->coa_id . '-' . $item->periode_id . '-' . $item->month);
+            ->keyBy(fn($item) => $item->coa_id . '-' . (int)$item->periode_id . '-' . Carbon::parse($item->month)->toDateString());
 
         $existingSaldoAwal = SaldoAwal::whereIn('tanggal_saldo', [
             $selectedMonthDate->copy()->addMonth()->startOfMonth()->toDateString(),
@@ -1572,10 +1759,10 @@ class JurnalingControllerBOD
         ])
             ->whereIn('periode_id', [$periode_id, optional($nextPeriode)->id])
             ->get()
-            ->keyBy(fn($item) => $item->coa_id . '-' . $item->periode_id . '-' . $item->tanggal_saldo);
+            ->keyBy(fn($item) => $item->coa_id . '-' . (int)$item->periode_id . '-' . Carbon::parse($item->tanggal_saldo)->toDateString());
 
         $neracaSaldoBatch = collect($neracaSaldoBatch)->filter(function ($item) use ($existingNeraca) {
-            $key = $item['coa_id'] . '-' . $item['periode_id'] . '-' . $item['month'];
+            $key = $item['coa_id'] . '-' . (int)$item['periode_id'] . '-' . Carbon::parse($item['month'])->toDateString();
             $existing = $existingNeraca->get($key);
 
             return !$existing || (
@@ -1587,7 +1774,7 @@ class JurnalingControllerBOD
         })->values()->all();
 
         $saldoAwalBatch = collect($saldoAwalBatch)->filter(function ($item) use ($existingSaldoAwal) {
-            $key = $item['coa_id'] . '-' . $item['periode_id'] . '-' . $item['tanggal_saldo'];
+            $key = $item['coa_id'] . '-' . (int)$item['periode_id'] . '-' . Carbon::parse($item['tanggal_saldo'])->toDateString();
             $existing = $existingSaldoAwal->get($key);
 
             return !$existing || (
@@ -1596,17 +1783,46 @@ class JurnalingControllerBOD
             );
         })->values()->all();
 
+
+        $seenSaldoAwal = [];
+        $finalSaldoAwalBatch = [];
+        foreach ($saldoAwalBatch as $row) {
+            $key = $row['coa_id'] . '-' . (int)$row['periode_id'] . '-' . Carbon::parse($row['tanggal_saldo'])->toDateString();
+            if (isset($seenSaldoAwal[$key])) continue;
+            $seenSaldoAwal[$key] = true;
+            $finalSaldoAwalBatch[] = $row;
+        }
+
+        $seenNeraca = [];
+        $finalNeracaSaldoBatch = [];
+        foreach ($neracaSaldoBatch as $row) {
+            $key = $row['coa_id'] . '-' . (int)$row['periode_id'] . '-' . Carbon::parse($row['month'])->toDateString();
+            if (isset($seenNeraca[$key])) continue;
+            $seenNeraca[$key] = true;
+            $finalNeracaSaldoBatch[] = $row;
+        }
+
         NeracaSaldo::upsert(
-            $neracaSaldoBatch,
+            $finalNeracaSaldoBatch,
             ['coa_id', 'periode_id', 'month'],
             ['debit', 'kredit', 'balance', 'saldo_awal']
         );
 
-        SaldoAwal::upsert(
-            $saldoAwalBatch,
-            ['coa_id', 'periode_id', 'tanggal_saldo'],
-            ['debit', 'kredit']
-        );
+        collect($finalSaldoAwalBatch)->chunk(50)->each(function ($chunk) {
+            foreach ($chunk as $row) {
+                SaldoAwal::updateOrCreate(
+                    [
+                        'coa_id' => $row['coa_id'],
+                        'periode_id' => (int)$row['periode_id'],
+                        'tanggal_saldo' => Carbon::parse($row['tanggal_saldo'])->toDateString(),
+                    ],
+                    [
+                        'debit' => $row['debit'],
+                        'kredit' => $row['kredit'],
+                    ]
+                );
+            }
+        });
 
         $periode->is_rekap = true;
         $periode->save();
