@@ -61,10 +61,10 @@ class LaporanInvestasi implements WithTitle, FromCollection, WithHeadings, WithE
             if ($isTitle) {
                 $result[] = [
                     'ASET' => $section,
-                    'Saldo Akhir (Current)' => '',
-                    '% Current' => '',
                     'Saldo Akhir (Last)' => '',
-                    '% Last' => ''
+                    '% Last' => '',
+                    'Saldo Akhir (Current)' => '',
+                    '% Current' => ''
                 ];
             }
 
@@ -82,8 +82,8 @@ class LaporanInvestasi implements WithTitle, FromCollection, WithHeadings, WithE
 
                 $tempRows[] = [
                     'name' => $name,
+                    'last' => $last,
                     'current' => $current,
-                    'last' => $last
                 ];
 
                 $totalCurrent += abs($current);
@@ -92,24 +92,25 @@ class LaporanInvestasi implements WithTitle, FromCollection, WithHeadings, WithE
 
             // Process each row again with percentages
             foreach ($tempRows as $row) {
-                $percentCurrent = ($totalCurrent && $totalCurrent != 0.0) ? (abs($row['current']) / $totalCurrent) * 100 : 0;
                 $percentLast = ($totalLast && $totalLast != 0.0) ? (abs($row['last']) / $totalLast) * 100 : 0;
+                $percentCurrent = ($totalCurrent && $totalCurrent != 0.0) ? (abs($row['current']) / $totalCurrent) * 100 : 0;
 
                 $result[] = [
                     'ASET' => $row['name'],
-                    'Saldo Akhir (Current)' => $this->formatSaldo($row['current']),
-                    '% Current' => number_format($percentCurrent, 2, ',', '') . '%',
                     'Saldo Akhir (Last)' => $this->formatSaldo($row['last']),
                     '% Last' => number_format($percentLast, 2, ',', '') . '%',
+                    'Saldo Akhir (Current)' => $this->formatSaldo($row['current']),
+                    '% Current' => number_format($percentCurrent, 2, ',', '') . '%',
                 ];
             }
 
             $result[] = [
                 'ASET' => '               Total ' . ucwords(strtolower(str_replace('^', '', $section))),
-                'Saldo Akhir (Current)' => $this->formatSaldo($totalCurrent),
-                '% Current' => '100%',
                 'Saldo Akhir (Last)' => $this->formatSaldo($totalLast),
                 '% Last' => '100%',
+                'Saldo Akhir (Current)' => $this->formatSaldo($totalCurrent),
+                '% Current' => '100%',
+
             ];
         }
 
@@ -189,10 +190,10 @@ class LaporanInvestasi implements WithTitle, FromCollection, WithHeadings, WithE
 
         return [
             'ASET',
-            'Saldo Akhir (' . $selectedMonth->translatedFormat('F Y') . ')',
-            '% (' . $selectedMonth->translatedFormat('F Y') . ')',
             'Saldo Akhir (' . $previousMonth->translatedFormat('F Y') . ')',
             '% (' . $previousMonth->translatedFormat('F Y') . ')',
+            'Saldo Akhir (' . $selectedMonth->translatedFormat('F Y') . ')',
+            '% (' . $selectedMonth->translatedFormat('F Y') . ')',
         ];
     }
 
@@ -251,7 +252,7 @@ class LaporanInvestasi implements WithTitle, FromCollection, WithHeadings, WithE
 
                     if (preg_match('/^\^/', $val)) {
                         $text = strtoupper(str_replace('^', '', $val));
-                        $sheet->mergeCells("A$row:C$row");
+                        $sheet->mergeCells("A$row:E$row");
                         $sheet->setCellValue("A$row", $text);
                         $sheet->getStyle("A$row")->applyFromArray([
                             'font' => ['bold' => true, 'size' => 12],
@@ -260,9 +261,12 @@ class LaporanInvestasi implements WithTitle, FromCollection, WithHeadings, WithE
                     }
 
                     if (stripos($val, 'Total') !== false) {
-                        $sheet->getStyle("A$row:C$row")->getFont()->setBold(true);
+                        $sheet->getStyle("A$row:E$row")->getFont()->setBold(true);
                     }
                 }
+                $protection = $sheet->getProtection();
+                $protection->setSheet(true);
+                $protection->setPassword('dapense');
             }
         ];
     }

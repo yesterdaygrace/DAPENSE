@@ -152,7 +152,7 @@
                     @csrf
                     <div class="mb-3">
                         <label for="kode_header" class="form-label">Kode Header</label>
-                        <input style="text-transform: uppercase;" type="text" id="kode_header" name="kode_header" maxlength="7" class="form-control @error('kode_header') is-invalid @enderror" placeholder="Masukkan kode header" value="{{ old('kode_header') }}">
+                        <input style="text-transform: uppercase;" type="text" id="kode_header" name="kode_header" maxlength="7" class="form-control @error('kode_header') is-invalid @enderror" placeholder="Masukkan kode header" value="{{ old('kode_header') }}" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                         @error('kode_header')
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror

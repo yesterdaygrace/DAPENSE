@@ -5,6 +5,8 @@ namespace App\Http\Controllers\rootsuperuser;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Periode;
+use App\Models\SaldoAwal;
+use App\Models\Jurnaling;
 
 class PeriodeControllerRootSuperuser extends Controller
 {
@@ -81,8 +83,18 @@ class PeriodeControllerRootSuperuser extends Controller
     public function delete($id)
     {
         $periode = Periode::findOrFail($id);
+
+        $usedInSaldoAwal = SaldoAwal::where('periode_id', $periode->id)->exists();
+
+        $usedInJurnaling = Jurnaling::where('periode_id', $periode->id)->exists();
+
+        if ($usedInSaldoAwal || $usedInJurnaling) {
+            return redirect()->route('rootsuperuser/periodes')
+                ->with('error', 'Periode tidak dapat dihapus karena sudah digunakan pada Saldo Awal atau Jurnaling.');
+        }
+
         $periode->delete();
 
-        return redirect()->route('rootsuperuser/periodes')->with('success', 'Periode deleted successfully.');
+        return redirect()->route('rootsuperuser/periodes')->with('success', 'Periode berhasil dihapus.');
     }
 }

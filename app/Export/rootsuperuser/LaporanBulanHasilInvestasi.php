@@ -243,6 +243,9 @@ class LaporanBulanHasilInvestasi implements WithTitle, FromCollection, WithHeadi
                         'startColor' => ['rgb' => 'E2EFDA']
                     ]
                 ]);
+                $protection = $sheet->getProtection();
+                $protection->setSheet(true);
+                $protection->setPassword('dapense');
             }
         ];
     }

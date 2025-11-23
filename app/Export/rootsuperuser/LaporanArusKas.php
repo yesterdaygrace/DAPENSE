@@ -80,15 +80,16 @@ class LaporanArusKas implements WithTitle, FromCollection, WithHeadings, WithEve
 
                 $result[] = [
                     $label,
-                    $this->formatDisplay($current),
-                    $this->formatDisplay($last)
+                    $this->formatDisplay($last),
+                    $this->formatDisplay($current)
                 ];
             }
 
             $result[] = [
                 'Total ' . ucwords(strtolower(str_replace('^', '', $section))),
-                $this->formatDisplay($totalCurrent),
-                $this->formatDisplay($totalLast)
+                $this->formatDisplay($totalLast),
+                $this->formatDisplay($totalCurrent)
+
             ];
             $totals[$sectionName]     = $totalCurrent;
             $totalsLast[$sectionName] = $totalLast;
@@ -100,7 +101,7 @@ class LaporanArusKas implements WithTitle, FromCollection, WithHeadings, WithEve
 
         $kasAkhirLast = $this->getKasBankSaldo([12110000, 12129999], $previousMonth);
         $kasAwalLast =  $this->getKasBankSaldoAwal([12110000, 12129999], $previousMonth);
-        $kenaikanPenurunanLast = $kasAkhirLast - $kasAwalLast;        
+        $kenaikanPenurunanLast = $kasAkhirLast - $kasAwalLast;
 
 
         $result[] = ['', '', ''];
@@ -108,22 +109,22 @@ class LaporanArusKas implements WithTitle, FromCollection, WithHeadings, WithEve
 
         $result[] = [
             'Kenaikan/Penurunan Kas Bersih',
-            $this->formatDisplay($kenaikanPenurunan),
             $this->formatDisplay($kenaikanPenurunanLast),
+            $this->formatDisplay($kenaikanPenurunan)
         ];
 
         // Kas Pada Awal Periode
         $result[] = [
             'Kas Pada Awal Periode',
-            $this->formatDisplay($kasAwalCurrent),
             $this->formatDisplay($kasAwalLast),
+            $this->formatDisplay($kasAwalCurrent)
         ];
 
         // Kas Pada Akhir Periode
         $result[] = [
             'Kas Pada Akhir Periode',
-            $this->formatDisplay($kasAkhir),
             $this->formatDisplay($kasAkhirLast),
+            $this->formatDisplay($kasAkhir)
         ];
 
         return collect($result);
@@ -376,8 +377,9 @@ class LaporanArusKas implements WithTitle, FromCollection, WithHeadings, WithEve
 
         return [
             'ASET',
-            'Saldo Akhir (' . $selectedMonth->translatedFormat('F Y') . ')',
             'Saldo Akhir (' . $previousMonth->translatedFormat('F Y') . ')',
+            'Saldo Akhir (' . $selectedMonth->translatedFormat('F Y') . ')',
+
         ];
     }
 
@@ -437,6 +439,9 @@ class LaporanArusKas implements WithTitle, FromCollection, WithHeadings, WithEve
                         $sheet->getStyle("A$row:C$row")->getFont()->setBold(true);
                     }
                 }
+                $protection = $sheet->getProtection();
+                $protection->setSheet(true);
+                $protection->setPassword('dapense');
             }
         ];
     }

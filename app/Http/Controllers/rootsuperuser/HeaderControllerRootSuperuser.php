@@ -21,7 +21,7 @@ class HeaderControllerRootSuperuser
 
     public function save(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'kode_header' => 'required|string|max:255|unique:header_coas,kode_header',
             'nama_header' => 'required|string|max:255',
             'level' => 'required|integer',
@@ -29,15 +29,11 @@ class HeaderControllerRootSuperuser
         ], [
             'kode_header.unique' => 'Kode header sudah ada, silakan gunakan kode lain.',
         ]);
+        $validated['nama_header'] = strtoupper($validated['nama_header']);
 
-        HeaderCOA::create([
-            'kode_header' => $request->kode_header,
-            'nama_header' => $request->nama_header,
-            'level' => $request->level,
-            'parent_id' => $request->parent_id,
-        ]);
+        HeaderCOA::create($validated);
 
-        return redirect()->route('rootsuperuser/account/header')->with('success', 'Header COA created successfully.');
+        return redirect()->route('rootsuperuser/account/header')->with('success', 'Header COA berhasil ditambahkan.');
     }
 
     public function update($id)
@@ -50,30 +46,35 @@ class HeaderControllerRootSuperuser
     public function updateSave(Request $request, $id)
     {
         $header_coa = HeaderCOA::findOrFail($id);
-        $request->validate([
+
+        $validated = $request->validate([
             'kode_header' => 'required|string|max:255|unique:header_coas,kode_header,' . $header_coa->id,
             'nama_header' => 'required|string|max:255',
-            'level' => 'required|integer',
-            'parent_id' => 'nullable|exists:header_coas,id',
+            'level'       => 'required|integer',
+            'parent_id'   => 'nullable|exists:header_coas,id',
         ], [
             'kode_header.unique' => 'Kode header sudah ada, silakan gunakan kode lain.',
         ]);
 
+        $validated['nama_header'] = strtoupper($validated['nama_header']);
+
         $header_coa->update([
-            'kode_header' => $request->kode_header,
-            'nama_header' => $request->nama_header,
-            'level' => $request->level,
-            'parent_id' => $request->parent_id,
+            'kode_header' => $validated['kode_header'],
+            'nama_header' => $validated['nama_header'],
+            'level'       => $validated['level'],
+            'parent_id'   => $validated['parent_id'],
         ]);
 
-        return redirect()->route('rootsuperuser/account/header')->with('success', 'Header COA updated successfully.');
+        return redirect()->route('rootsuperuser/account/header')
+            ->with('success', 'Header COA berhasil diubah.');
     }
+
 
     public function delete($id)
     {
         $header_coa = HeaderCOA::findOrFail($id);
         $header_coa->delete();
 
-        return redirect()->route('rootsuperuser/account/header')->with('success', 'Header COA deleted successfully.');
+        return redirect()->route('rootsuperuser/account/header')->with('success', 'Header COA berhasil dihapus.');
     }
 }

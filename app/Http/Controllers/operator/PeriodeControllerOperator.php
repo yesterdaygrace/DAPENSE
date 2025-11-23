@@ -5,6 +5,8 @@ namespace App\Http\Controllers\operator;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Periode;
+use App\Models\SaldoAwal;
+use App\Models\Jurnaling;
 
 class PeriodeControllerOperator extends Controller
 {
@@ -81,8 +83,18 @@ class PeriodeControllerOperator extends Controller
     public function delete($id)
     {
         $periode = Periode::findOrFail($id);
+
+        $usedInSaldoAwal = SaldoAwal::where('periode_id', $periode->id)->exists();
+
+        $usedInJurnaling = Jurnaling::where('periode_id', $periode->id)->exists();
+
+        if ($usedInSaldoAwal || $usedInJurnaling) {
+            return redirect()->route('operator/periodes')
+                ->with('error', 'Periode tidak dapat dihapus karena sudah digunakan pada Saldo Awal atau Jurnaling.');
+        }
+
         $periode->delete();
 
-        return redirect()->route('operator/periodes')->with('success', 'Periode deleted successfully.');
+        return redirect()->route('operator/periodes')->with('success', 'Periode berhasil dihapus.');
     }
 }

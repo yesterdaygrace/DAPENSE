@@ -110,7 +110,7 @@ class LaporanAsetNeto implements WithTitle, FromCollection, WithHeadings, WithEv
             $isLiabilitas = ($sectionName === 'LIABILITAS');
 
             if ($isTitle) {
-                $result[] = ['Investasi Nilai Buku' => $section, 'Saldo Akhir (Current)' => '', 'Saldo Akhir (Last)' => ''];
+                $result[] = ['Investasi Nilai Buku' => $section, 'Saldo Akhir (Last)' => '', 'Saldo Akhir (Current)' => ''];
             }
 
             $totalCurrent = $totalLast = 0;
@@ -125,8 +125,8 @@ class LaporanAsetNeto implements WithTitle, FromCollection, WithHeadings, WithEv
 
                 $result[] = [
                     'Investasi Nilai Buku' => $name,
-                    'Saldo Akhir (Current)' => $this->formatSaldo($current, $isLiabilitas),
                     'Saldo Akhir (Last)' => $this->formatSaldo($last, $isLiabilitas),
+                    'Saldo Akhir (Current)' => $this->formatSaldo($current, $isLiabilitas),
                 ];
 
                 $totalCurrent += abs($current);
@@ -136,8 +136,8 @@ class LaporanAsetNeto implements WithTitle, FromCollection, WithHeadings, WithEv
             $label = 'Total ' . ucwords(strtolower(str_replace('^', '', $section)));
             $result[] = [
                 'Investasi Nilai Buku' => '               ' . $label,
-                'Saldo Akhir (Current)' => $this->formatSaldo($totalCurrent, $isLiabilitas),
                 'Saldo Akhir (Last)' => $this->formatSaldo($totalLast, $isLiabilitas),
+                'Saldo Akhir (Current)' => $this->formatSaldo($totalCurrent, $isLiabilitas),
             ];
 
             // Akumulasi untuk ASET NETO
@@ -164,8 +164,8 @@ class LaporanAsetNeto implements WithTitle, FromCollection, WithHeadings, WithEv
         // Final row: ASET NETO
         $result[] = [
             'Investasi Nilai Buku' => 'ASET NETO',
-            'Saldo Akhir (Current)' => $this->formatSaldo($asetNetoTotals['current']),
             'Saldo Akhir (Last)' => $this->formatSaldo($asetNetoTotals['last']),
+            'Saldo Akhir (Current)' => $this->formatSaldo($asetNetoTotals['current']),
         ];
 
 
@@ -271,8 +271,8 @@ class LaporanAsetNeto implements WithTitle, FromCollection, WithHeadings, WithEv
 
         return [
             'ASET',
-            'Saldo Akhir (' . $selectedMonth->translatedFormat('F Y') . ')',
             'Saldo Akhir (' . $previousMonth->translatedFormat('F Y') . ')',
+            'Saldo Akhir (' . $selectedMonth->translatedFormat('F Y') . ')',
         ];
     }
     public function columnWidths(): array
@@ -336,6 +336,9 @@ class LaporanAsetNeto implements WithTitle, FromCollection, WithHeadings, WithEv
                         $sheet->getStyle("A$row:C$row")->getFont()->setBold(true);
                     }
                 }
+                $protection = $sheet->getProtection();
+                $protection->setSheet(true);
+                $protection->setPassword('dapense');
             }
         ];
     }

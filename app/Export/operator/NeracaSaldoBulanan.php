@@ -401,6 +401,9 @@ class NeracaSaldoBulanan implements FromCollection, WithTitle, WithStyles, WithC
             ->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
 
         $sheet->getStyle('C1')->getFont()->setBold(true)->setSize(14);
+        $protection = $sheet->getProtection();
+        $protection->setSheet(true);
+        $protection->setPassword('dapense');
     }
 
     public function title(): string

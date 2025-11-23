@@ -55,15 +55,15 @@ class LaporanAnalisaLikuiditas implements WithTitle, FromCollection, WithHeading
                 $last = $this->getSaldoAkhir($range, $previousMonth);
                 $result[] = [
                     'Investasi Nilai Buku' => $name,
-                    'Saldo Akhir (Current)' => $this->formatSaldo($current),
                     'Saldo Akhir (Last)' => $this->formatSaldo($last),
+                    'Saldo Akhir (Current)' => $this->formatSaldo($current),
                 ];
                 $asetLancarTotal += abs($current);
             }
             $result[] = [
                 'Investasi Nilai Buku' => '        Total ASET LANCAR',
-                'Saldo Akhir (Current)' => $this->formatSaldo($asetLancarTotal),
                 'Saldo Akhir (Last)' => $this->formatSaldo($sectionTitle === '^LIQUIDITAS BULANAN' ? $this->getAsetLancarLast($asetLancarItems, $previousMonth) : $asetLancarTotal),
+                'Saldo Akhir (Current)' => $this->formatSaldo($asetLancarTotal),
             ];
 
             // BIAYA INVESTASI DAN OPERASIONAL
@@ -83,16 +83,16 @@ class LaporanAnalisaLikuiditas implements WithTitle, FromCollection, WithHeading
                 }
                 $result[] = [
                     'Investasi Nilai Buku' => $name,
-                    'Saldo Akhir (Current)' => $this->formatSaldo($current),
                     'Saldo Akhir (Last)' => $this->formatSaldo($last),
+                    'Saldo Akhir (Current)' => $this->formatSaldo($current),
                 ];
                 $biayaTotal += abs($current);
             }
 
             $result[] = [
                 'Investasi Nilai Buku' => '        Total BIAYA INVESTASI DAN OPERASIONAL',
-                'Saldo Akhir (Current)' => $this->formatSaldo($biayaTotal),
                 'Saldo Akhir (Last)' => $this->formatSaldo($sectionTitle === '^LIQUIDITAS BULANAN' ? $this->getBiayaLast($biayaItems, $previousMonth) : $biayaTotal),
+                'Saldo Akhir (Current)' => $this->formatSaldo($biayaTotal),
             ];
 
             if ($isAkumulatif) {
@@ -100,33 +100,33 @@ class LaporanAnalisaLikuiditas implements WithTitle, FromCollection, WithHeading
                 $jumlahDisetahunkan = ($biayaTotal / 12) * ($monthNumber - 1);
                 $result[] = [
                     'Investasi Nilai Buku' => 'JUMLAH DISETAHUNKAN',
-                    'Saldo Akhir (Current)' => $this->formatSaldo($jumlahDisetahunkan),
                     'Saldo Akhir (Last)' => '-',
+                    'Saldo Akhir (Current)' => $this->formatSaldo($jumlahDisetahunkan),
                 ];
                 $result[] = [
                     'Investasi Nilai Buku' => 'TOTAL JUMLAH DISETAHUNKAN',
-                    'Saldo Akhir (Current)' => '-',
                     'Saldo Akhir (Last)' => '-',
+                    'Saldo Akhir (Current)' => '-',
                 ];
                 $rasio = $jumlahDisetahunkan != 0 ? $asetLancarTotal / $jumlahDisetahunkan : 0;
                 $result[] = [
                     'Investasi Nilai Buku' => 'TINGKAT LIQUIDITAS',
-                    'Saldo Akhir (Current)' => number_format($rasio, 2),
                     'Saldo Akhir (Last)' => '-',
+                    'Saldo Akhir (Current)' => number_format($rasio, 2),
                 ];
             } elseif ($sectionTitle === '^LIQUIDITAS BULANAN') {
                 $rasio = $biayaTotal != 0 ? $asetLancarTotal / $biayaTotal : 0;
                 $result[] = [
                     'Investasi Nilai Buku' => 'Rasio Aset Lancar terhadap Biaya',
-                    'Saldo Akhir (Current)' => number_format($rasio, 2),
                     'Saldo Akhir (Last)' => '-',
+                    'Saldo Akhir (Current)' => number_format($rasio, 2),
                 ];
             }
 
             $result[] = [
                 'Investasi Nilai Buku' => 'TOTAL ' . str_replace('^', '', $sectionTitle),
-                'Saldo Akhir (Current)' => $this->formatSaldo($asetLancarTotal + $biayaTotal),
                 'Saldo Akhir (Last)' => $this->formatSaldo($asetLancarTotal + $biayaTotal),
+                'Saldo Akhir (Current)' => $this->formatSaldo($asetLancarTotal + $biayaTotal),
             ];
         }
 
@@ -200,8 +200,8 @@ class LaporanAnalisaLikuiditas implements WithTitle, FromCollection, WithHeading
 
         return [
             'ASET',
-            'Saldo Akhir (' . $selectedMonth->translatedFormat('F Y') . ')',
             'Saldo Akhir (' . $previousMonth->translatedFormat('F Y') . ')',
+            'Saldo Akhir (' . $selectedMonth->translatedFormat('F Y') . ')',
         ];
     }
 
@@ -252,6 +252,9 @@ class LaporanAnalisaLikuiditas implements WithTitle, FromCollection, WithHeading
                         $sheet->getStyle("A$row:C$row")->getFont()->setBold(true);
                     }
                 }
+                $protection = $sheet->getProtection();
+                $protection->setSheet(true);
+                $protection->setPassword('dapense');
             }
         ];
     }

@@ -116,8 +116,8 @@ class LaporanPerhitunganHasilUsaha implements WithTitle, FromCollection, WithHea
 
             $result[] = [
                 'Total ' . ucwords(strtolower($sectionName)),
-                $this->formatSaldo($totalCurrent),
                 $this->formatSaldo($totalLast),
+                $this->formatSaldo($totalCurrent)
             ];
 
             $totals[$sectionName] = [$totalCurrent, $totalLast];
@@ -127,8 +127,9 @@ class LaporanPerhitunganHasilUsaha implements WithTitle, FromCollection, WithHea
                 $hasilInvestasiLast = $totals['PENDAPATAN INVESTASI'][1] - $totals['BEBAN INVESTASI'][1];
                 $result[] = [
                     'HASIL USAHA INVESTASI',
-                    $this->formatSaldo($hasilInvestasiCurrent),
                     $this->formatSaldo($hasilInvestasiLast),
+                    $this->formatSaldo($hasilInvestasiCurrent)
+
                 ];
             }
 
@@ -137,16 +138,16 @@ class LaporanPerhitunganHasilUsaha implements WithTitle, FromCollection, WithHea
                 $hasilUsahaSetelahPajakLast = $hasilInvestasiLast - $totals['BEBAN OPERASIONAL'][1];
                 $result[] = [
                     'HASIL USAHA SETELAH PAJAK',
-                    $this->formatSaldo($hasilUsahaSetelahPajakCurrent),
                     $this->formatSaldo($hasilUsahaSetelahPajakLast),
+                    $this->formatSaldo($hasilUsahaSetelahPajakCurrent),
                 ];
 
                 $hasilUsahaSebelumPajakCurrent = $hasilUsahaSetelahPajakCurrent + $totals['PENDAPATAN DAN BEBAN LAIN-LAIN'][0];
                 $hasilUsahaSebelumPajakLast = $hasilUsahaSetelahPajakLast + $totals['PENDAPATAN DAN BEBAN LAIN-LAIN'][1];
                 $result[] = [
                     'HASIL USAHA SEBELUM PAJAK',
-                    $this->formatSaldo($hasilUsahaSebelumPajakCurrent),
                     $this->formatSaldo($hasilUsahaSebelumPajakLast),
+                    $this->formatSaldo($hasilUsahaSebelumPajakCurrent)
                 ];
             }
         }
@@ -210,8 +211,8 @@ class LaporanPerhitunganHasilUsaha implements WithTitle, FromCollection, WithHea
 
         return [
             'ASET',
-            'Saldo Akhir (' . $selectedMonth->translatedFormat('F Y') . ')',
             'Saldo Akhir (' . $previousMonth->translatedFormat('F Y') . ')',
+            'Saldo Akhir (' . $selectedMonth->translatedFormat('F Y') . ')',
         ];
     }
 
@@ -264,6 +265,9 @@ class LaporanPerhitunganHasilUsaha implements WithTitle, FromCollection, WithHea
                         $sheet->getStyle("A$row:C$row")->getFont()->setBold(true);
                     }
                 }
+                $protection = $sheet->getProtection();
+                $protection->setSheet(true);
+                $protection->setPassword('dapense');
             }
         ];
     }

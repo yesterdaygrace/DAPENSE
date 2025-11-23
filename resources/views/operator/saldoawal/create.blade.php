@@ -193,8 +193,67 @@
         const coaOptions = document.querySelectorAll('#coa_list option');
         const hiddenInput = document.getElementById('coa_id');
 
-        coaInput.addEventListener('focus', showDropdown);
-        coaInput.addEventListener('input', filterDropdown);
+        let activeIndex = -1;
+
+        coaInput.addEventListener('focus', function() {
+            const currentValue = coaInput.value.trim().toLowerCase();
+            coaDropdown.innerHTML = '';
+            activeIndex = -1;
+
+            // Cari apakah ada yang cocok persis
+            const matchedOptions = Array.from(coaOptions).filter(opt =>
+                opt.value.trim().toLowerCase() === currentValue
+            );
+
+            if (matchedOptions.length === 1) {
+                const option = matchedOptions[0];
+                const div = createDropdownItem(option);
+                coaDropdown.appendChild(div);
+            } else {
+                showDropdown();
+                filterDropdown();
+            }
+
+            coaDropdown.style.display = 'block';
+        });
+
+        coaInput.addEventListener('input', function() {
+            filterDropdown();
+            activeIndex = -1;
+
+            const visible = getVisibleItems();
+            if (visible.length) highlightItem(visible, 0);
+        });
+
+        coaInput.addEventListener('keydown', function(e) {
+            const visible = getVisibleItems();
+            if (visible.length === 0) return;
+
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                activeIndex = (activeIndex + 1) % visible.length;
+                highlightItem(visible, activeIndex);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                activeIndex = (activeIndex - 1 + visible.length) % visible.length;
+                highlightItem(visible, activeIndex);
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+
+                if (visible.length === 1) {
+                    selectItem(visible[0]);
+                } else {
+                    const exactMatch = visible.find(item =>
+                        item.textContent.trim().toLowerCase() === coaInput.value.trim().toLowerCase()
+                    );
+                    if (exactMatch) {
+                        selectItem(exactMatch);
+                    } else if (activeIndex >= 0 && visible[activeIndex]) {
+                        selectItem(visible[activeIndex]);
+                    }
+                }
+            }
+        });
 
         document.addEventListener('click', function(event) {
             if (!coaInput.contains(event.target) && !coaDropdown.contains(event.target)) {
@@ -204,63 +263,66 @@
 
         function showDropdown() {
             coaDropdown.innerHTML = '';
+            coaOptions.forEach(option => {
+                const div = createDropdownItem(option);
+                coaDropdown.appendChild(div);
+            });
+
             coaDropdown.style.position = 'absolute';
-            coaDropdown.style.backgroundColor = '#fff';
+            coaDropdown.style.backgroundColor = 'white';
             coaDropdown.style.border = '1px solid #ccc';
             coaDropdown.style.maxHeight = '200px';
             coaDropdown.style.overflowY = 'auto';
             coaDropdown.style.zIndex = '1000';
             coaDropdown.style.width = `${coaInput.offsetWidth}px`;
-            coaDropdown.style.padding = '0';
-            coaDropdown.style.margin = '0';
+            coaDropdown.style.display = 'block';
+        }
 
-            coaOptions.forEach(option => {
-                const div = document.createElement('div');
-                div.textContent = option.value;
-                div.setAttribute('data-id', option.dataset.id);
-                div.setAttribute('data-saldo-normal', option.dataset.saldoNormal);
-                div.style.padding = '8px';
-                div.style.cursor = 'pointer';
-                div.style.borderBottom = '1px solid #f0f0f0';
+        function createDropdownItem(option) {
+            const div = document.createElement('div');
+            div.textContent = option.value;
+            div.setAttribute('data-id', option.dataset.id);
+            div.setAttribute('data-saldo-normal', option.dataset.saldoNormal);
+            div.classList.add('dropdown-item');
+            div.style.padding = '8px';
+            div.style.cursor = 'pointer';
+            div.style.backgroundColor = 'white';
 
-                div.addEventListener('click', function() {
-                    coaInput.value = option.value;
-                    hiddenInput.value = option.dataset.id;
-                    coaDropdown.style.display = 'none';
-                    handleSaldoNormal(option.dataset.saldoNormal);
-                });
-
-                div.addEventListener('mouseover', function() {
-                    div.style.backgroundColor = '#f1f1f1';
-                });
-
-                div.addEventListener('mouseout', function() {
-                    div.style.backgroundColor = '#fff';
-                });
-
-                coaDropdown.appendChild(div);
+            div.addEventListener('click', function() {
+                selectItem(div);
             });
 
-            if (coaDropdown.innerHTML !== '') {
-                coaDropdown.style.display = 'block';
-            }
+            return div;
         }
 
         function filterDropdown() {
             const filter = coaInput.value.toLowerCase();
-            const divs = coaDropdown.getElementsByTagName('div');
-            let hasVisibleOptions = false;
+            const divs = coaDropdown.getElementsByClassName('dropdown-item');
+            for (let i = 0; i < divs.length; i++) {
+                const div = divs[i];
+                div.style.display = div.textContent.toLowerCase().includes(filter) ? '' : 'none';
+            }
+        }
 
-            Array.from(divs).forEach(div => {
-                if (div.textContent.toLowerCase().includes(filter)) {
-                    div.style.display = '';
-                    hasVisibleOptions = true;
-                } else {
-                    div.style.display = 'none';
-                }
+        function getVisibleItems() {
+            return Array.from(coaDropdown.querySelectorAll('.dropdown-item'))
+                .filter(item => item.style.display !== 'none');
+        }
+
+        function highlightItem(items, index) {
+            items.forEach((item, i) => {
+                item.style.backgroundColor = i === index ? '#e0e0e0' : 'white';
             });
+            items[index].scrollIntoView({
+                block: 'nearest'
+            });
+        }
 
-            coaDropdown.style.display = hasVisibleOptions ? 'block' : 'none';
+        function selectItem(div) {
+            coaInput.value = div.textContent;
+            hiddenInput.value = div.getAttribute('data-id');
+            coaDropdown.style.display = 'none';
+            handleSaldoNormal(div.getAttribute('data-saldo-normal'));
         }
 
         function handleSaldoNormal(saldoNormal) {

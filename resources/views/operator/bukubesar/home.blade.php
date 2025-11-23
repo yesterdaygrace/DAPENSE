@@ -274,8 +274,68 @@
         const coaDropdown = document.getElementById('coa_dropdown');
         const options = document.getElementById('coa_list').options;
 
-        coaInput.addEventListener('focus', showDropdown);
-        coaInput.addEventListener('input', filterDropdown);
+        let activeIndex = -1;
+
+        coaInput.addEventListener('focus', function() {
+            const currentValue = coaInput.value.trim().toLowerCase();
+            coaDropdown.innerHTML = '';
+            activeIndex = -1;
+
+            // Cari apakah ada yang cocok persis
+            const matchedOptions = Array.from(options).filter(opt =>
+                opt.value.trim().toLowerCase() === currentValue
+            );
+
+            if (matchedOptions.length === 1) {
+                const option = matchedOptions[0];
+                const div = createDropdownItem(option);
+                coaDropdown.appendChild(div);
+            } else {
+                showDropdown();
+                filterDropdown();
+            }
+
+            coaDropdown.style.display = 'block';
+        });
+
+        coaInput.addEventListener('input', function() {
+            filterDropdown();
+            activeIndex = -1;
+
+            const visible = getVisibleItems();
+            if (visible.length) highlightItem(visible, 0);
+        });
+
+        coaInput.addEventListener('keydown', function(e) {
+            const visible = getVisibleItems();
+            if (visible.length === 0) return;
+
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                activeIndex = (activeIndex + 1) % visible.length;
+                highlightItem(visible, activeIndex);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                activeIndex = (activeIndex - 1 + visible.length) % visible.length;
+                highlightItem(visible, activeIndex);
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+
+                if (visible.length === 1) {
+                    selectItem(visible[0]);
+                } else {
+                    const exactMatch = visible.find(item =>
+                        item.textContent.trim().toLowerCase() === coaInput.value.trim().toLowerCase()
+                    );
+                    if (exactMatch) {
+                        selectItem(exactMatch);
+                    } else if (activeIndex >= 0 && visible[activeIndex]) {
+                        selectItem(visible[activeIndex]);
+                    }
+                }
+            }
+        });
+
         document.addEventListener('click', function(event) {
             if (!coaInput.contains(event.target) && !coaDropdown.contains(event.target)) {
                 coaDropdown.style.display = 'none';
@@ -286,44 +346,63 @@
             coaDropdown.innerHTML = '';
             for (let i = 0; i < options.length; i++) {
                 const option = options[i];
-                const div = document.createElement('div');
-                div.textContent = option.value;
-                div.setAttribute('data-id', option.getAttribute('data-id'));
-                div.style.padding = '8px';
-                div.style.cursor = 'pointer';
-                div.addEventListener('click', function() {
-                    coaInput.value = option.value;
-                    hiddenCoaInput.value = option.getAttribute('data-id');
-                    coaDropdown.style.display = 'none';
-                });
-                div.addEventListener('mouseover', function() {
-                    div.style.backgroundColor = '#f1f1f1';
-                });
-                div.addEventListener('mouseout', function() {
-                    div.style.backgroundColor = 'white';
-                });
+                const div = createDropdownItem(option);
                 coaDropdown.appendChild(div);
             }
+
             coaDropdown.style.position = 'absolute';
             coaDropdown.style.backgroundColor = 'white';
             coaDropdown.style.border = '1px solid #ccc';
             coaDropdown.style.maxHeight = '200px';
             coaDropdown.style.overflowY = 'auto';
             coaDropdown.style.zIndex = '1000';
+            coaDropdown.style.width = `${coaInput.offsetWidth}px`;
             coaDropdown.style.display = 'block';
+        }
+
+        function createDropdownItem(option) {
+            const div = document.createElement('div');
+            div.textContent = option.value;
+            div.setAttribute('data-id', option.getAttribute('data-id'));
+            div.classList.add('dropdown-item');
+            div.style.padding = '8px';
+            div.style.cursor = 'pointer';
+            div.style.backgroundColor = 'white';
+
+            div.addEventListener('click', function() {
+                selectItem(div);
+            });
+
+            return div;
         }
 
         function filterDropdown() {
             const filter = coaInput.value.toLowerCase();
-            const divs = coaDropdown.getElementsByTagName('div');
+            const divs = coaDropdown.getElementsByClassName('dropdown-item');
             for (let i = 0; i < divs.length; i++) {
                 const div = divs[i];
-                if (div.textContent.toLowerCase().indexOf(filter) > -1) {
-                    div.style.display = '';
-                } else {
-                    div.style.display = 'none';
-                }
+                div.style.display = div.textContent.toLowerCase().includes(filter) ? '' : 'none';
             }
+        }
+
+        function getVisibleItems() {
+            return Array.from(coaDropdown.querySelectorAll('.dropdown-item'))
+                .filter(item => item.style.display !== 'none');
+        }
+
+        function highlightItem(items, index) {
+            items.forEach((item, i) => {
+                item.style.backgroundColor = i === index ? '#e0e0e0' : 'white';
+            });
+            items[index].scrollIntoView({
+                block: 'nearest'
+            });
+        }
+
+        function selectItem(div) {
+            coaInput.value = div.textContent;
+            hiddenCoaInput.value = div.getAttribute('data-id');
+            coaDropdown.style.display = 'none';
         }
 
         const rows = document.querySelectorAll('table tbody tr');

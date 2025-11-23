@@ -88,9 +88,9 @@ class LaporanNeraca implements WithTitle, FromCollection, WithHeadings, WithEven
         ];
 
         $result = [];
-        $asetNeto = ['current' => 0, 'last' => 0];
-        $totalAsetLain = ['current' => 0, 'last' => 0];
-        $totalSemua = ['current' => 0, 'last' => 0];
+        $asetNeto = ['last' => 0, 'current' => 0];
+        $totalAsetLain = ['last' => 0, 'current' => 0];
+        $totalSemua = ['last' => 0, 'current' => 0];
 
         foreach ($sections as $section => $items) {
             $result[] = [$section, '', ''];
@@ -126,8 +126,8 @@ class LaporanNeraca implements WithTitle, FromCollection, WithHeadings, WithEven
 
                     $result[] = [
                         $label,
-                        $this->formatSaldo($current),
                         $this->formatSaldo($last),
+                        $this->formatSaldo($current),
                     ];
 
                     $currentTotal += $current;
@@ -137,27 +137,27 @@ class LaporanNeraca implements WithTitle, FromCollection, WithHeadings, WithEven
 
             $result[] = ['Total ' . str_replace('^', '', $section), $this->formatSaldo($currentTotal), $this->formatSaldo($lastTotal)];
             if (str_contains($section, 'LIABILITAS')) {
-                $asetNeto['current'] -= $currentTotal;
                 $asetNeto['last'] -= $lastTotal;
+                $asetNeto['current'] -= $currentTotal;
             } else {
-                $asetNeto['current'] += $currentTotal;
                 $asetNeto['last'] += $lastTotal;
+                $asetNeto['current'] += $currentTotal;
 
-                $totalAsetLain['current'] += $currentTotal;
                 $totalAsetLain['last'] += $lastTotal;
+                $totalAsetLain['current'] += $currentTotal;
 
-                $totalSemua['current'] += $currentTotal;
                 $totalSemua['last'] += $lastTotal;
+                $totalSemua['current'] += $currentTotal;
             }
 
 
             if (str_contains($section, 'ASET OPERASIONAL')) {
-                $result[] = ['ASET LAIN LAIN', $this->formatSaldo($totalAsetLain['current']), $this->formatSaldo($totalAsetLain['last'])];
+                $result[] = ['ASET LAIN LAIN', $this->formatSaldo($totalAsetLain['last']), $this->formatSaldo($totalAsetLain['current'])];
             }
         }
 
         // ✅ Final TOTAL SEMUA
-        $result[] = ['TOTAL SEMUA', $this->formatSaldo($totalSemua['current']), $this->formatSaldo($totalSemua['last'])];
+        $result[] = ['TOTAL SEMUA',  $this->formatSaldo($totalSemua['last']), $this->formatSaldo($totalSemua['current'])];
 
         return collect($result);
     }
@@ -230,8 +230,8 @@ class LaporanNeraca implements WithTitle, FromCollection, WithHeadings, WithEven
 
         return [
             'ASET',
-            'Saldo Akhir (' . $selectedMonth->translatedFormat('F Y') . ')',
             'Saldo Akhir (' . $previousMonth->translatedFormat('F Y') . ')',
+            'Saldo Akhir (' . $selectedMonth->translatedFormat('F Y') . ')',
         ];
     }
 
@@ -296,6 +296,9 @@ class LaporanNeraca implements WithTitle, FromCollection, WithHeadings, WithEven
                         $sheet->getStyle("A$row:C$row")->getFont()->setBold(true);
                     }
                 }
+                $protection = $sheet->getProtection();
+                $protection->setSheet(true);
+                $protection->setPassword('dapense');
             }
         ];
     }

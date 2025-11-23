@@ -150,6 +150,11 @@
           {{ Session::get('success') }}
         </div>
         @endif
+        @if(Session::has('error'))
+        <div class="alert alert-danger" role="alert">
+          {{ Session::get('error') }}
+        </div>
+        @endif
         <table class="table table-hover">
           <thead class="table-primary">
             <tr>
