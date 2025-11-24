@@ -736,7 +736,7 @@ class JurnalingControllerOperator
 
     public function cekNomorBuktiBM(Request $request)
     {
-        $nomorTransaksi = str_pad($request->get('nomor_transaksi'), 3, '0', STR_PAD_LEFT);
+        $nomorTransaksi = str_pad($request->get('nomor_transaksi'), 4, '0', STR_PAD_LEFT);
         $tanggalInput = $request->get('tanggal_jurnal');
         if (!$tanggalInput) {
             return response()->json(['error' => 'Tanggal jurnal tidak ditemukan.'], 400);
@@ -796,7 +796,7 @@ class JurnalingControllerOperator
 
     public function cekNomorBuktiBK(Request $request)
     {
-        $nomorTransaksi = str_pad($request->get('nomor_transaksi'), 3, '0', STR_PAD_LEFT);
+        $nomorTransaksi = str_pad($request->get('nomor_transaksi'), 4, '0', STR_PAD_LEFT);
         $tanggalInput = $request->get('tanggal_jurnal');
         if (!$tanggalInput) {
             return response()->json(['error' => 'Tanggal jurnal tidak ditemukan.'], 400);
@@ -871,7 +871,7 @@ class JurnalingControllerOperator
         $bulan = str_pad($tanggal->format('n'), 2, '0', STR_PAD_LEFT);
         $tahun = substr($tanggal->format('Y'), -2);
 
-        $nomorBukti = 'JM-' . str_pad($nomorTransaksi, 3, '0', STR_PAD_LEFT) . '/' . $bulan . '/' . $tahun;
+        $nomorBukti = 'JM-' . str_pad($nomorTransaksi, 4, '0', STR_PAD_LEFT) . '/' . $bulan . '/' . $tahun;
 
         $jurnal = Jurnaling::where('nomor_bukti', $nomorBukti)->get();
 
@@ -931,7 +931,7 @@ class JurnalingControllerOperator
         $bulan = str_pad($tanggal->format('n'), 2, '0', STR_PAD_LEFT);
         $tahun = substr($tanggal->format('Y'), -2);
 
-        $nomorBukti = 'JM-' . str_pad($nomorTransaksi, 3, '0', STR_PAD_LEFT) . '/' . $bulan . '/' . $tahun;
+        $nomorBukti = 'JM-' . str_pad($nomorTransaksi, 4, '0', STR_PAD_LEFT) . '/' . $bulan . '/' . $tahun;
 
         $jurnal = Jurnaling::where('nomor_bukti', $nomorBukti)->get();
 

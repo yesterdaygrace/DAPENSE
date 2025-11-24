@@ -223,7 +223,7 @@
                                 <label for="nomor_bukti" class="form-label">Nomor Bukti</label>
                                 <div class="input-group">
                                     <span class="input-group-text">JM-</span>
-                                    <input type="text" class="form-control" maxlength="3" id="nomor_transaksi" name="nomor_transaksi" required placeholder="Nomor Transaksi">
+                                    <input type="text" class="form-control" maxlength="4" id="nomor_transaksi" name="nomor_transaksi" required placeholder="Nomor Transaksi">
                                     <span class="input-group-text" id="bulan_tahun_bukti">/Bulan/Tahun</span>
                                     <input type="hidden" id="nomor_bukti" name="nomor_bukti">
                                 </div>
@@ -624,7 +624,7 @@
             const nomorTransaksi = nomorTransaksiInput.value;
             const tanggalJurnal = document.getElementById('tanggal_jurnal').value;
 
-            if (nomorTransaksi.length > 2) {
+            if (nomorTransaksi.length > 3) {
                 fetch(`/rootsuperuser/jurnaling/cek-nomor-buktimem?nomor_transaksi=${nomorTransaksi}&tanggal_jurnal=${tanggalJurnal}`)
                     .then(response => response.json())
                     .then(data => {
@@ -644,7 +644,7 @@
                             const dateParts = data.tanggal_jurnal.split('-');
                             const bulan = String(parseInt(dateParts[1], 10)).padStart(2, '0');
                             const tahun = dateParts[0].slice(-2);
-                            const nomorBukti = `JM-${str_pad(nomorTransaksi, 3, '0', 'left')}/${bulan}/${tahun}`;
+                            const nomorBukti = `JM-${str_pad(nomorTransaksi, 4, '0', 'left')}/${bulan}/${tahun}`;
 
                             document.getElementById('nomor_bukti').value = nomorBukti;
 
@@ -822,7 +822,7 @@
         const bulanTahunBukti = document.getElementById('bulan_tahun_bukti');
 
         function updateNomorBukti() {
-            const nomorTransaksi = nomorTransaksiInput.value.padStart(3, '0');
+            const nomorTransaksi = nomorTransaksiInput.value.padStart(4, '0');
             const tanggal = new Date(tanggalJurnalInput.value);
             const bulan = String(tanggal.getMonth() + 1).padStart(2, '0');
             const tahun = tanggal.getFullYear().toString().slice(-2);

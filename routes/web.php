@@ -132,6 +132,7 @@ Route::middleware(['auth', RootSuperuser::class])->group(function () {
     Route::get('/rootsuperuser/bukubesar/searchCoaByFilter', [BukuBesarControllerRootSuperuser::class, 'searchCoaByFilter'])->name('rootsuperuser/bukubesar/searchCoaByFilter');
     Route::get('/rootsuperuser/bukubesar/searchByDate', [BukuBesarControllerRootSuperuser::class, 'searchByDate'])->name('rootsuperuser/bukubesar/searchByDate');
     Route::get('/rootsuperuser/bukubesar/filter', [BukuBesarControllerRootSuperuser::class, 'filterView'])->name('rootsuperuser/bukubesar/filter');
+    Route::get('rootsuperuser/bukubesar/export', [BukuBesarControllerRootSuperuser::class, 'exportExcel'])->name('rootsuperuser/bukubesar/export');
 
     Route::get('/rootsuperuser/saldoawal', [SaldoAwalControllerRootSuperuser::class, 'index'])->name('rootsuperuser/saldoawal');
     Route::get('/rootsuperuser/saldoawal/create', [SaldoAwalControllerRootSuperuser::class, 'create'])->name('rootsuperuser/saldoawal/create');
@@ -231,6 +232,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/bukubesar/searchCoaByFilter', [BukuBesarControllerAdmin::class, 'searchCoaByFilter'])->name('admin/bukubesar/searchCoaByFilter');
     Route::get('/admin/bukubesar/searchByDate', [BukuBesarControllerAdmin::class, 'searchByDate'])->name('admin/bukubesar/searchByDate');
     Route::get('/admin/bukubesar/filter', [BukuBesarControllerAdmin::class, 'filterView'])->name('admin/bukubesar/filter');
+    Route::get('admin/bukubesar/export', [BukuBesarControllerAdmin::class, 'exportExcel'])->name('admin/bukubesar/export');
 
     Route::get('/admin/saldoawal', [SaldoAwalControllerAdmin::class, 'index'])->name('admin/saldoawal');
     Route::get('/admin/saldoawal/create', [SaldoAwalControllerAdmin::class, 'create'])->name('admin/saldoawal/create');
@@ -321,6 +323,7 @@ Route::middleware(['auth', 'operator'])->group(function () {
     Route::get('/operator/bukubesar/searchCoaByFilter', [BukuBesarControllerOperator::class, 'searchCoaByFilter'])->name('operator/bukubesar/searchCoaByFilter');
     Route::get('/operator/bukubesar/searchByDate', [BukuBesarControllerOperator::class, 'searchByDate'])->name('operator/bukubesar/searchByDate');
     Route::get('/operator/bukubesar/filter', [BukuBesarControllerOperator::class, 'filterView'])->name('operator/bukubesar/filter');
+    Route::get('operator/bukubesar/export', [BukuBesarControllerOperator::class, 'exportExcel'])->name('operator/bukubesar/export');
 
     Route::get('/operator/saldoawal', [SaldoAwalControllerOperator::class, 'index'])->name('operator/saldoawal');
     Route::get('/operator/saldoawal/create', [SaldoAwalControllerOperator::class, 'create'])->name('operator/saldoawal/create');
@@ -352,6 +355,7 @@ Route::middleware(['auth', 'bod'])->group(function () {
     Route::get('/bod/bukubesar/searchCoaByFilter', [BukuBesarControllerBOD::class, 'searchCoaByFilter'])->name('bod/bukubesar/searchCoaByFilter');
     Route::get('/bod/bukubesar/searchByDate', [BukuBesarControllerBOD::class, 'searchByDate'])->name('bod/bukubesar/searchByDate');
     Route::get('/bod/bukubesar/filter', [BukuBesarControllerBOD::class, 'filterView'])->name('bod/bukubesar/filter');
+    Route::get('bod/bukubesar/export', [BukuBesarControllerBOD::class, 'exportExcel'])->name('bod/bukubesar/export');
 
     Route::get('/bod/neracasaldo/{periode_id}', [NeracaSaldoControllerBOD::class, 'index'])->name('bod/neracasaldo');
     Route::get('/bod/neracasaldo/', [NeracaSaldoControllerBOD::class, 'indexrecap'])->name('bod/neracasaldo/');

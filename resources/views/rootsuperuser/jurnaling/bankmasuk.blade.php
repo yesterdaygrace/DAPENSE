@@ -250,7 +250,7 @@
                                 <div class="input-group">
                                     <input type="text" class="form-control" maxlength="4" id="nomor_akun" name="nomor_akun" required placeholder="4 Digit Terakhir Akun">
                                     <span class=" input-group-text">-BM-</span>
-                                    <input type="text" class="form-control" maxlength="3" id="nomor_transaksi" name="nomor_transaksi" required placeholder="Nomor Transaksi">
+                                    <input type="text" class="form-control" maxlength="4" id="nomor_transaksi" name="nomor_transaksi" required placeholder="Nomor Transaksi">
                                     <span class="input-group-text" id="bulan_tahun_bukti">/Bulan/Tahun</span>
                                     <input type="hidden" id="nomor_bukti" name="nomor_bukti">
                                 </div>
@@ -674,7 +674,7 @@
 
         function updateNomorBukti() {
             const nomorAkun = nomorAkunInput.value; // Mengambil 4 digit akhir dari nomor akun
-            const nomorTransaksi = nomorTransaksiInput.value.padStart(3, '0');
+            const nomorTransaksi = nomorTransaksiInput.value.padStart(4, '0');
             const tanggal = new Date(tanggalJurnalInput.value);
             const bulan = String(tanggal.getMonth() + 1).padStart(2, '0');
             const tahun = tanggal.getFullYear().toString().slice(-2);
@@ -700,7 +700,7 @@
             const nomorAkun = nomorAkunInput.value;
             const tanggalJurnal = document.getElementById('tanggal_jurnal').value;
 
-            if (nomorTransaksi.length > 2 && nomorAkun.length === 4) {
+            if (nomorTransaksi.length > 3 && nomorAkun.length === 4) {
                 fetch(`/rootsuperuser/jurnaling/cek-nomor-buktibm?nomor_transaksi=${nomorTransaksi}&nomor_akun=${nomorAkun}&tanggal_jurnal=${tanggalJurnal}`)
                     .then(response => response.json())
                     .then(data => {
@@ -719,7 +719,7 @@
                             const dateParts = data.tanggal_jurnal.split('-');
                             const bulan = String(parseInt(dateParts[1], 10)).padStart(2, '0');
                             const tahun = dateParts[0].slice(-2);
-                            const nomorBukti = `${nomorAkun}-BM-${str_pad(nomorTransaksi, 3, '0', 'left')}/${bulan}/${tahun}`;
+                            const nomorBukti = `${nomorAkun}-BM-${str_pad(nomorTransaksi, 4, '0', 'left')}/${bulan}/${tahun}`;
 
                             document.getElementById('nomor_bukti').value = nomorBukti;
 

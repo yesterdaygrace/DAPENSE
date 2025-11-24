@@ -196,6 +196,18 @@
                 </form>
 
                 @if(isset($periodeId) && isset($selectedCoa) && isset($bulan))
+
+                @if(isset($entries) && count($entries) > 0)
+                <div class="mb-3 text-end">
+                    <a href="{{ route('operator/bukubesar/export', [
+                            'periode_id' => $periodeId,
+                            'coa_id' => $selectedCoa->id,
+                            'bulan' => $bulan
+                        ]) }}" class="btn btn-success">
+                        Export Excel
+                    </a>
+                </div>
+                @endif
                 <div class="mb-4 row">
                     <h4>PERINCIAN BUKU BESAR</h4>
                     <p>Periode: {{ $periodes->find($periodeId)->nama_periode ?? 'Tidak ada periode yang dipilih' }}</p>

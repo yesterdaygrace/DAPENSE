@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\bod;
 
+use App\Export\bod\BukuBesar\BukuBesarExportBOD;
 use App\Models\COA;
 use App\Models\Jurnaling;
 use App\Models\Periode;
 use App\Models\SaldoAkhir;
 use App\Models\SaldoAwal;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class BukuBesarControllerBOD
 {
@@ -309,5 +310,108 @@ class BukuBesarControllerBOD
             'runningTotal',
             'keteranganGabungan' // dikirim ke Blade juga kalau mau dipakai di JS
         ))->with('action', 'show_all');
+    }
+
+    public function exportExcel(Request $request)
+    {
+        $request->validate([
+            'coa_id' => 'required|exists:coas,id',
+            'periode_id' => 'required|exists:periodes,id',
+            'bulan' => 'required|integer|min:1|max:12',
+        ]);
+
+        $coaId = $request->coa_id;
+        $periodeId = $request->periode_id;
+        $bulan = $request->bulan;
+
+        $selectedCoa = COA::findOrFail($coaId);
+
+        // Ambil saldo awal hanya jika tanggalnya sesuai dengan bulan yang dipilih
+        $saldoAwal = SaldoAwal::where('coa_id', $coaId)
+            ->where('periode_id', $periodeId)
+            ->whereMonth('tanggal_saldo', $bulan)
+            ->first();
+
+        $runningTotal = $saldoAwal ? $saldoAwal->debit - $saldoAwal->kredit : 0;
+        $entries = collect();
+
+        if ($saldoAwal) {
+            $entries->push([
+                'tanggal'       => $saldoAwal->tanggal_saldo,
+                'nomor_bukti'   => 'Saldo Awal',
+                'keterangan'    => 'Saldo Awal',
+                'debit'         => $saldoAwal->debit,
+                'kredit'        => $saldoAwal->kredit,
+                'running_total' => $runningTotal,
+            ]);
+        }
+
+        // Ambil transaksi jurnal sesuai bulan yang dipilih
+        $journalEntries = Jurnaling::where('coa_id', $coaId)
+            ->where('periode_id', $periodeId)
+            ->whereMonth('tanggal_jurnal', $bulan)
+            ->orderBy('tanggal_jurnal', 'asc')
+            ->orderBy('nomor_bukti', 'asc')
+            ->get(['tanggal_jurnal', 'nomor_bukti', 'keterangan', 'debit', 'kredit']);
+
+        // Buat keterangan gabungan per nomor bukti
+        $keteranganGabungan = Jurnaling::where('periode_id', $periodeId)
+            ->whereMonth('tanggal_jurnal', $bulan)
+            ->whereIn('nomor_bukti', $journalEntries->pluck('nomor_bukti')->unique())
+            ->whereNotNull('keterangan')
+            ->where('keterangan', '!=', '')
+            ->get()
+            ->groupBy('nomor_bukti')
+            ->map(function ($group) {
+                return $group->pluck('keterangan')->unique()->implode(', ');
+            });
+
+        foreach ($journalEntries as $entry) {
+            $runningTotal += $entry->debit - $entry->kredit;
+
+            $keterangan = $entry->keterangan;
+            if (!$keterangan || trim($keterangan) === '') {
+                $keterangan = $keteranganGabungan[$entry->nomor_bukti] ?? '';
+            }
+
+            $entries->push([
+                'tanggal'       => $entry->tanggal_jurnal,
+                'nomor_bukti'   => $entry->nomor_bukti,
+                'keterangan'    => $keterangan,
+                'debit'         => $entry->debit,
+                'kredit'        => $entry->kredit,
+                'running_total' => $runningTotal,
+            ]);
+        }
+
+        // Nama bulan dan tahun
+        $namaBulan = date('F', mktime(0, 0, 0, $bulan, 1));
+        $periode = Periode::find($periodeId);
+        $tahun = $periode && $periode->tanggal_awal
+            ? \Carbon\Carbon::parse($periode->tanggal_awal)->format('Y')
+            : date('Y');
+
+        // Format nama akun agar aman untuk filename
+        $namaAkun = str_replace(['/', '\\'], '-', $selectedCoa->nama_akun);
+
+        // Format nama file
+        $fileName = sprintf(
+            'bukubesar_%s-%s_%s %s.xlsx',
+            $selectedCoa->kode_akun,
+            $namaAkun,
+            $namaBulan,
+            $tahun
+        );
+
+        return Excel::download(
+            new BukuBesarExportBOD(
+                $entries,
+                $tahun,
+                $selectedCoa->kode_akun,
+                $selectedCoa->nama_akun,
+                $namaBulan
+            ),
+            $fileName
+        );
     }
 }
