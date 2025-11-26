@@ -989,6 +989,8 @@
         }
 
         // Initialize custom dropdowns on page load
+        setupCustomDropdown(document.getElementById('opposite-coa'), document.getElementById('opposite-coa-dropdown'), 'opposite-coa-id');
+
         function setDateConstraints() {
             const today = new Date();
             const yyyy = today.getFullYear();

@@ -229,6 +229,17 @@
         const journalTable = document.getElementById('journal-table');
         const sortButton = document.getElementById('sort-tanggal-jurnal');
 
+        const rows = document.querySelectorAll('.journal-row');
+        let previousNomorBukti = null;
+
+        rows.forEach(row => {
+            const nomorBukti = row.querySelector('td:nth-child(2)').innerText.trim();
+            if (previousNomorBukti && previousNomorBukti !== nomorBukti) {
+                row.style.borderTop = "3px solid #000000"; // Garis pemisah saat nomor bukti berubah
+            }
+            previousNomorBukti = nomorBukti;
+        });
+
         // Fungsi Filter
         filterButtons.forEach(button => {
             button.addEventListener('click', function() {
