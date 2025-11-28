@@ -239,7 +239,7 @@
                             </div>
                             <div class="col">
                                 <label for="debit" class="form-label" style="display: inline-block; margin-bottom: 2px;">Debit</label>
-                                <input type="text" class="form-control debit-input" name="debit[]" value="" placeholder="Masukkan Debit" required oninput="toggleHiddenInput(this, 'credit')">
+                                <input type="text" class="form-control debit-input" name="debit[]" value="" placeholder="Masukkan Debit" required oninput="this.value = this.value.replace(/[^0-9]/g, '')" oninput="toggleHiddenInput(this, 'credit')">
                             </div>
                             <div>
                                 <label for="kredit" class="form-label" style="display: inline-block; margin-bottom: 2px;" hidden>Kredit</label>
@@ -260,7 +260,7 @@
                             </div>
                             <div class="col">
                                 <label for="kredit" class="form-label" style="display: inline-block; margin-bottom: 2px;">Kredit</label>
-                                <input type="text" class="form-control kredit-input" name="kredit[]" value="" placeholder="Masukkan Kredit" required oninput="toggleHiddenInput(this, 'debit')">
+                                <input type="text" class="form-control kredit-input" name="kredit[]" value="" placeholder="Masukkan Kredit" required oninput="this.value = this.value.replace(/[^0-9]/g, '')" oninput="toggleHiddenInput(this, 'debit')">
                             </div>
                             <div>
                                 <label for="debit" class="form-label" style="display: inline-block; margin-bottom: 2px;" hidden>Debit</label>
@@ -718,7 +718,7 @@
         </div>
         <div class="col">
             <label for="debit" class="form-label" style="display: inline-block; margin-bottom: 2px;">Debit</label>
-            <input type="text" class="form-control debit-input" name="debit[]" value="${formatNumberValue(coa.debit)}" required placeholder="Masukkan Debit">
+            <input type="text" class="form-control debit-input" name="debit[]" value="${formatNumberValue(coa.debit)}" required placeholder="Masukkan Debit" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
         </div>
         <div>
             <label for="kredit" class="form-label" style="display: inline-block; margin-bottom: 2px;" hidden>Kredit</label>
@@ -764,7 +764,7 @@
         </div>
         <div class="col">
             <label for="kredit" class="form-label" style="display: inline-block; margin-bottom: 2px;">Kredit</label>
-            <input type="text" class="form-control kredit-input" name="kredit[]" value="${formatNumberValue(coa.kredit)}" required placeholder="Masukkan Kredit">
+            <input type="text" class="form-control kredit-input" name="kredit[]" value="${formatNumberValue(coa.kredit)}" required placeholder="Masukkan Kredit" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
         </div>
         <div>
             <label for="debit" class="form-label" style="display: inline-block; margin-bottom: 2px;" hidden>Debit</label>
@@ -855,7 +855,7 @@
     </div>
     <div class="col">
         <label for="kredit" class="form-label" style="display: inline-block; margin-bottom: 2px;">Kredit</label>
-        <input type="text" class="form-control kredit-input" name="kredit[]" required placeholder="Masukkan Kredit" oninput="formatNumberInput(this)">
+        <input type="text" class="form-control kredit-input" name="kredit[]" required placeholder="Masukkan Kredit" oninput="this.value = this.value.replace(/[^0-9]/g, '')" oninput="formatNumberInput(this)">
     </div>
     <div>
         <label for="debit" class="form-label" style="display: inline-block; margin-bottom: 2px;" hidden>Debit</label>
@@ -922,7 +922,7 @@
         </div>
         <div class="col">
             <label for="debit" class="form-label" style="display: inline-block; margin-bottom: 2px;">Debit</label>
-            <input type="text" class="form-control debit-input" name="debit[]" required placeholder="Masukkan Debit" oninput="formatNumberInput(this)">
+            <input type="text" class="form-control debit-input" name="debit[]" required placeholder="Masukkan Debit" oninput="this.value = this.value.replace(/[^0-9]/g, '')" oninput="formatNumberInput(this)">
         </div>
         <div>
             <label for="kredit" class="form-label" style="display: inline-block; margin-bottom: 2px;" hidden>Kredit</label>

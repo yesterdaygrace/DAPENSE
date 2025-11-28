@@ -238,7 +238,7 @@
                             </div>
                             <div class="col">
                                 <label for="kredit" class="form-label">Kredit</label>
-                                <input type="text" class="form-control kredit-input" name="kredit[]" value="" required placeholder="Masukkan Kredit">
+                                <input type="text" class="form-control kredit-input" name="kredit[]" value="" required placeholder="Masukkan Kredit" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                             </div>
                             <div>
                                 <label for="debit" class="form-label" hidden>Debit</label>
@@ -712,7 +712,7 @@
         </div>
         <div class="col">
             <label for="kredit" class="form-label">Kredit</label>
-            <input type="text" class="form-control kredit-input" name="kredit[]" value="${formatNumberValue(coa.kredit)}" required placeholder="Masukkan Kredit" oninput="formatNumberInput(this)">
+            <input type="text" class="form-control kredit-input" name="kredit[]" value="${formatNumberValue(coa.kredit)}" required placeholder="Masukkan Kredit" oninput="this.value = this.value.replace(/[^0-9]/g, '')" oninput="formatNumberInput(this)">
         </div>
         <div>
             <label for="debit" class="form-label" hidden>Debit</label>
@@ -793,7 +793,7 @@
             newCoaGroup.innerHTML = `
         <div class="col">
             <label for="opposite-coa" class="form-label">Akun Kredit</label>
-            <input class="form-control" data-list="coa-options" class="form-control" required oninput="updateHiddenInput(this, 'opposite-coa-id-${Date.now()}')" placeholder="Masukkan Akun">
+            <input class="form-control" data-list="coa-options" class="form-control" required oninput="this.value = this.value.replace(/[^0-9]/g, '')" oninput="updateHiddenInput(this, 'opposite-coa-id-${Date.now()}')" placeholder="Masukkan Akun">
             <input type="hidden" name="coa_id[]" id="opposite-coa-id-${Date.now()}">
             <div class="custom-dropdown"></div>
         </div>
