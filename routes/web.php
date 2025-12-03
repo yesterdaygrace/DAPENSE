@@ -105,6 +105,7 @@ Route::middleware(['auth', RootSuperuser::class])->group(function () {
     Route::post('rootsuperuser/jurnaling/rekap/{periode_id}', [JurnalingControllerRootSuperuser::class, 'rekapJurnal'])->name('rootsuperuser/jurnaling/rekap');
     Route::get('/rootsuperuser/jurnaling/showing', [JurnalingControllerRootSuperuser::class, 'showEntries'])->name('rootsuperuser/jurnaling/showing');
     Route::get('/rootsuperuser/jurnaling/months', [JurnalingControllerRootSuperuser::class, 'showMonths'])->name('rootsuperuser/jurnaling/months');
+    Route::get('/rootsuperuser/jurnaling/export', [JurnalingControllerRootSuperuser::class, 'exportJurnaling'])->name('rootsuperuser/jurnaling/export');
 
     Route::get('/rootsuperuser/jurnaling/cek-nomor-buktikm', [JurnalingControllerRootSuperuser::class, 'cekNomorBuktiKM'])->name('cekNomorBuktiKM');
     Route::get('/rootsuperuser/jurnaling/cek-nomor-buktikk', [JurnalingControllerRootSuperuser::class, 'cekNomorBuktiKK'])->name('cekNomorBuktiKK');
@@ -204,6 +205,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('admin/jurnaling/rekap/{periode_id}', [JurnalingControllerAdmin::class, 'rekapJurnal'])->name('admin/jurnaling/rekap');
     Route::get('/admin/jurnaling/showing', [JurnalingControllerAdmin::class, 'showEntries'])->name('admin/jurnaling/showing');
     Route::get('/admin/jurnaling/months', [JurnalingControllerAdmin::class, 'showMonths'])->name('admin/jurnaling/months');
+    Route::get('/admin/jurnaling/export', [JurnalingControllerAdmin::class, 'exportJurnaling'])->name('admin/jurnaling/export');
 
     Route::get('/admin/jurnaling/cek-nomor-buktikm', [JurnalingControllerAdmin::class, 'cekNomorBuktiKM'])->name('cekNomorBuktiKM');
     Route::get('/admin/jurnaling/cek-nomor-buktikk', [JurnalingControllerAdmin::class, 'cekNomorBuktiKK'])->name('cekNomorBuktiKK');
@@ -294,6 +296,7 @@ Route::middleware(['auth', 'operator'])->group(function () {
     Route::post('operator/jurnaling/rekap/{periode_id}', [JurnalingControllerOperator::class, 'rekapJurnal'])->name('operator/jurnaling/rekap');
     Route::get('/operator/jurnaling/showing', [JurnalingControllerOperator::class, 'showEntries'])->name('operator/jurnaling/showing');
     Route::get('/operator/jurnaling/months', [JurnalingControllerOperator::class, 'showMonths'])->name('operator/jurnaling/months');
+    Route::get('/operator/jurnaling/export', [JurnalingControllerOperator::class, 'exportJurnaling'])->name('operator/jurnaling/export');
 
     Route::get('/operator/jurnaling/cek-nomor-buktikm', [JurnalingControllerOperator::class, 'cekNomorBuktiKM'])->name('cekNomorBuktiKM');
     Route::get('/operator/jurnaling/cek-nomor-buktikk', [JurnalingControllerOperator::class, 'cekNomorBuktiKK'])->name('cekNomorBuktiKK');
@@ -348,6 +351,7 @@ Route::middleware(['auth', 'bod'])->group(function () {
 
     Route::get('/bod/jurnaling/showing', [JurnalingControllerBOD::class, 'showEntries'])->name('bod/jurnaling/showing');
     Route::get('/bod/jurnaling/months', [JurnalingControllerBOD::class, 'showMonths'])->name('bod/jurnaling/months');
+    Route::get('/bod/jurnaling/export', [JurnalingControllerBOD::class, 'exportJurnaling'])->name('bod/jurnaling/export');
 
     Route::get('/bod/bukubesar', [BukuBesarControllerBOD::class, 'showLedgerForm'])->name('bod/bukubesar');
     Route::get('/bod/bukubesar/searchCoaByPeriod', [BukuBesarControllerBOD::class, 'searchCoaByPeriod'])->name('bod/bukubesar/searchCoaByPeriod');

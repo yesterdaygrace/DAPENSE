@@ -154,6 +154,12 @@
                             <button id="show-BK" class="btn btn-secondary" data-category="-BK-">Bank Keluar</button>
                             <button id="show-BK" class="btn btn-secondary" data-category="JM-">Memorial</button>
                         </div>
+                        <div class="d-flex justify-content-end">
+                            <a href="{{ route('admin/jurnaling/export', ['month' => request('month'), 'periode_id' => request('periode_id')]) }}"
+                                class="btn btn-success">
+                                Export Excel
+                            </a>
+                        </div>
                     </div>
                 </div>
 

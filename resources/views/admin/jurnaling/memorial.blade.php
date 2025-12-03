@@ -174,6 +174,8 @@
                 <h5 class="mb-0">Tambah Kolom Jurnal</h5>
             </div>
             <div class="card-body">
+                <div id="form-errors" class="alert alert-danger" style="display:none;"></div>
+                <div id="form-success" class="alert alert-success" style="display:none;"></div>
                 @if (Session::has('success'))
                 <div class="alert alert-success">
                     {{ Session::get('success') }}
@@ -677,8 +679,13 @@
             document.getElementById('opposite-coa').value = '';
             document.getElementById('opposite-coa-id').value = '';
             const editBtn = document.getElementById('edit-btn');
+            const deleteBtn = document.getElementById('delete-btn');
             if (editBtn) {
                 editBtn.style.display = 'none';
+            }
+
+            if (deleteBtn) {
+                deleteBtn.style.display = 'none';
             }
             clearAdditionalCoas();
         }
@@ -1190,6 +1197,50 @@
             }
         }
         setDateConstraints();
+
+        $(document).ready(function() {
+            $('#jurnaling-form').on('submit', function(e) {
+                e.preventDefault(); // cegah reload halaman
+
+                let form = $(this);
+                let url = form.attr('action');
+                let data = form.serialize();
+
+                $('#form-errors').hide().html('');
+                $('#form-success').hide().html('');
+
+                $.ajax({
+                    type: 'POST',
+                    url: url,
+                    data: data,
+                    success: function(response) {
+                        if (response.success) {
+                            $('#form-success').show().html(response.success);
+                            window.location.href = response.redirect;
+                        }
+                    },
+                    error: function(xhr) {
+                        if (xhr.status === 422) {
+                            let errors = xhr.responseJSON.errors;
+                            let errorHtml = '<ul>';
+                            if (Array.isArray(errors)) {
+                                errors.forEach(function(err) {
+                                    errorHtml += '<li>' + err + '</li>';
+                                });
+                            } else if (typeof errors === 'object') {
+                                $.each(errors, function(key, value) {
+                                    errorHtml += '<li>' + value[0] + '</li>';
+                                });
+                            }
+                            errorHtml += '</ul>';
+                            $('#form-errors').show().html(errorHtml);
+                        } else {
+                            $('#form-errors').show().html('Terjadi kesalahan server.');
+                        }
+                    }
+                });
+            });
+        });
     });
 </script>
 

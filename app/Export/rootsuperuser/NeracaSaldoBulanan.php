@@ -204,13 +204,18 @@ class NeracaSaldoBulanan implements FromCollection, WithTitle, WithStyles, WithC
         }
 
         $rows = collect([
-            ['', '', 'NERACA SALDO'],
-            ['', '', 'Periode: ' . $selectedMonth->translatedFormat('F Y')],
+            ['DANA PENSIUN SEKOLAH KRISTEN'],
+            ['SINODE GKJ & GKI JAWA TENGAH SALATIGA'],
+            ['(PROGRAM PENSIUN MANFAAT PASTI)'],
+            ['NERACA SALDO'],
+            ['Periode: ' . $selectedMonth->translatedFormat('F Y')],
             [''],
             [''],
             [''],
             ['Kode Perk', 'Nama Perkiraan', 'Saldo Awal', 'Debit', 'Kredit', 'Saldo Akhir'],
         ]);
+
+
 
         foreach ($headerCoas as $header) {
             $this->renderHeader($header, $rows);
@@ -368,11 +373,24 @@ class NeracaSaldoBulanan implements FromCollection, WithTitle, WithStyles, WithC
 
     public function styles(Worksheet $sheet)
     {
-        $headerRow = 6;
         $highestRow = $sheet->getHighestRow();
         $highestColumn = $sheet->getHighestColumn();
 
-        $sheet->getStyle("A{$headerRow}:{$highestColumn}{$headerRow}")->applyFromArray([
+        // Merge dan center judul
+        foreach ([1, 2, 3, 4, 5] as $row) {
+            $sheet->mergeCells("A{$row}:F{$row}");
+            $sheet->getStyle("A{$row}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle("A{$row}")->getFont()->setBold(true);
+        }
+
+        $sheet->getStyle('A1')->getFont()->setSize(14);
+        $sheet->getStyle('A2')->getFont()->setSize(12);
+        $sheet->getStyle('A3')->getFont()->setSize(11);
+
+        // Baris header tabel (baris ke-9)
+        $headerRow = 9;
+
+        $sheet->getStyle("A{$headerRow}:F{$headerRow}")->applyFromArray([
             'font' => ['bold' => true, 'size' => 11],
             'alignment' => [
                 'horizontal' => Alignment::HORIZONTAL_CENTER,
@@ -380,7 +398,7 @@ class NeracaSaldoBulanan implements FromCollection, WithTitle, WithStyles, WithC
                 'wrapText' => true,
             ],
             'borders' => [
-                'allBorders' => ['borderStyle' => Border::BORDER_THIN],
+                'allBorders' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN],
             ],
             'fill' => [
                 'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
@@ -388,24 +406,26 @@ class NeracaSaldoBulanan implements FromCollection, WithTitle, WithStyles, WithC
             ],
         ]);
 
-        $sheet->getStyle("A{$headerRow}:{$highestColumn}{$highestRow}")->applyFromArray([
+        // Border seluruh isi tabel
+        $sheet->getStyle("A{$headerRow}:F{$highestRow}")->applyFromArray([
             'borders' => [
-                'allBorders' => ['borderStyle' => Border::BORDER_HAIR],
+                'allBorders' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_HAIR],
             ],
         ]);
 
+        // Alignment isi tabel
         $sheet->getStyle("A{$headerRow}:B{$highestRow}")
             ->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
 
         $sheet->getStyle("C{$headerRow}:F{$highestRow}")
             ->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
 
-        $sheet->getStyle('C1')->getFont()->setBold(true)->setSize(14);
-
+        // Proteksi sheet
         $protection = $sheet->getProtection();
         $protection->setSheet(true);
         $protection->setPassword('dapense');
     }
+
 
     public function title(): string
     {

@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers\rootsuperuser;
 
+use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
 use App\Models\Jurnaling;
 use App\Models\COA;
 use App\Models\NeracaSaldo;
 use App\Models\Periode;
 use App\Models\SaldoAwal;
+use App\Export\rootsuperuser\Jurnaling\JurnalingSheet;
+use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
 use DateTime;
 
@@ -209,123 +212,123 @@ class JurnalingControllerRootSuperuser
 
     public function store(Request $request)
     {
-        $request->validate([
-            'tanggal_jurnal' => 'required|date',
-            'nomor_bukti' => 'required|string|max:255',
-            'keterangan' => 'required|array',
-            'keterangan.*' => 'nullable|string|max:255',
-            'coa_id' => 'required|array',
-            'coa_id.*' => 'exists:coas,id',
-            'debit' => 'required|array',
-            'debit.*' => 'numeric|min:0',
-            'kredit' => 'required|array',
-            'kredit.*' => 'numeric|min:0',
-            'periode_id' => 'required|exists:periodes,id',
-            'kategori_jurnal' => 'required|string|max:255',
-        ]);
-
-        $periode = Periode::find($request->periode_id);
-        $tahunPeriode = \Carbon\Carbon::parse($periode->tanggal_awal)->year;
-        $tahunJurnal = \Carbon\Carbon::parse($request->tanggal_jurnal)->year;
-
-        if ($tahunJurnal !== $tahunPeriode) {
-            return back()->withErrors([
-                'tanggal_jurnal' => 'Tahun jurnal (' . $tahunJurnal . ') tidak sesuai dengan tahun periode (' . $tahunPeriode . ').',
-            ])->withInput();
+        try {
+            $validated = $request->validate([
+                'tanggal_jurnal'   => 'required|date',
+                'nomor_bukti'      => 'required|string|max:255|unique:jurnalings,nomor_bukti',
+                'keterangan'       => 'required|array',
+                'keterangan.*'     => 'nullable|string|max:255',
+                'coa_id'           => 'required|array',
+                'coa_id.*'         => 'exists:coas,id',
+                'debit'            => 'required|array',
+                'debit.*'          => 'numeric|min:0',
+                'kredit'           => 'required|array',
+                'kredit.*'         => 'numeric|min:0',
+                'periode_id'       => 'required|exists:periodes,id',
+                'kategori_jurnal'  => 'required|string|max:255',
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 422);
         }
 
-        $nomorBukti = $request->nomor_bukti;
-
-        if (Jurnaling::where('nomor_bukti', $nomorBukti)->exists()) {
-            return back()->withErrors(['message' => 'Nomor bukti sudah ada. Silakan gunakan nomor bukti yang lain.']);
+        $periode = Periode::find($validated['periode_id']);
+        if (!($validated['tanggal_jurnal'] >= $periode->tanggal_awal && $validated['tanggal_jurnal'] <= $periode->tanggal_akhir)) {
+            return response()->json([
+                'errors' => ['Tanggal jurnal harus berada dalam periode yang dipilih.']
+            ], 422);
         }
 
-        $totalDebit = array_sum($request->debit);
-        $totalKredit = array_sum($request->kredit);
-
+        $totalDebit  = array_sum($validated['debit'] ?? []);
+        $totalKredit = array_sum($validated['kredit'] ?? []);
         if (bccomp($totalDebit, $totalKredit, 2) !== 0) {
-            return back()->withErrors(['message' => 'Total Debit dan Kredit harus seimbang.']);
+            return response()->json([
+                'errors' => ['Total Debit dan Kredit harus seimbang.']
+            ], 422);
         }
 
         $debitEntries = [];
         $kreditEntries = [];
-
-        foreach ($request->coa_id as $index => $coa_id) {
+        foreach ($validated['coa_id'] as $index => $coa_id) {
             $entry = [
-                'tanggal_jurnal' => $request->tanggal_jurnal,
-                'nomor_bukti' => $nomorBukti,
-                'keterangan' => $request->keterangan[$index] ?? '',
-                'coa_id' => $coa_id,
-                'debit' => $request->debit[$index] ?? 0,
-                'kredit' => $request->kredit[$index] ?? 0,
-                'periode_id' => $request->periode_id,
-                'kategori_jurnal' => $request->kategori_jurnal,
+                'tanggal_jurnal'  => $validated['tanggal_jurnal'],
+                'nomor_bukti'     => $validated['nomor_bukti'],
+                'keterangan'      => $validated['keterangan'][$index] ?? '',
+                'coa_id'          => $coa_id,
+                'debit'           => $validated['debit'][$index] ?? 0,
+                'kredit'          => $validated['kredit'][$index] ?? 0,
+                'periode_id'      => $validated['periode_id'],
+                'kategori_jurnal' => $validated['kategori_jurnal'],
             ];
-
             if ($entry['debit'] > 0) {
                 $debitEntries[] = $entry;
             } else {
                 $kreditEntries[] = $entry;
             }
         }
-
         $finalEntries = array_merge($debitEntries, $kreditEntries);
-
         foreach ($finalEntries as $entry) {
             Jurnaling::create($entry);
         }
 
-        return redirect()->route('rootsuperuser/jurnaling')
-            ->with([
-                'selectedPeriode' => $request->periode_id,
-                'success' => 'Data berhasil diinputkan!',
-            ]);
+        return response()->json([
+            'success'  => 'Data berhasil diinputkan!',
+            'redirect' => route('rootsuperuser/jurnaling')
+        ]);
     }
 
 
     public function storekaskeluar(Request $request)
     {
-        $request->validate([
-            'tanggal_jurnal' => 'required|date',
-            'nomor_bukti' => 'required|string|max:255',
-            'keterangan' => 'required|array',
-            'keterangan.*' => 'nullable|string|max:255',
-            'coa_id' => 'required|array',
-            'coa_id.*' => 'exists:coas,id',
-            'debit' => 'required|array',
-            'debit.*' => 'numeric|min:0',
-            'kredit' => 'required|array',
-            'kredit.*' => 'numeric|min:0',
-            'periode_id' => 'required|exists:periodes,id',
-            'kategori_jurnal' => 'required|string|max:255',
-        ]);
-
-        $nomorBukti = $request->nomor_bukti;
-
-        if (Jurnaling::where('nomor_bukti', $nomorBukti)->exists()) {
-            return back()->withErrors(['message' => 'Nomor bukti sudah ada. Silakan gunakan nomor bukti yang lain.']);
+        try {
+            $validated = $request->validate([
+                'tanggal_jurnal'   => 'required|date',
+                'nomor_bukti'      => 'required|string|max:255|unique:jurnalings,nomor_bukti',
+                'keterangan'       => 'required|array',
+                'keterangan.*'     => 'nullable|string|max:255',
+                'coa_id'           => 'required|array',
+                'coa_id.*'         => 'exists:coas,id',
+                'debit'            => 'required|array',
+                'debit.*'          => 'numeric|min:0',
+                'kredit'           => 'required|array',
+                'kredit.*'         => 'numeric|min:0',
+                'periode_id'       => 'required|exists:periodes,id',
+                'kategori_jurnal'  => 'required|string|max:255',
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 422);
         }
 
-        $totalDebit = array_sum($request->debit);
-        $totalKredit = array_sum($request->kredit);
+        $periode = Periode::find($validated['periode_id']);
+        $tahunPeriode = \Carbon\Carbon::parse($periode->tanggal_awal)->year;
+        $tahunJurnal  = \Carbon\Carbon::parse($validated['tanggal_jurnal'])->year;
 
+        if ($tahunJurnal !== $tahunPeriode) {
+            return response()->json([
+                'errors' => ['Tahun jurnal (' . $tahunJurnal . ') tidak sesuai dengan tahun periode (' . $tahunPeriode . ').']
+            ], 422);
+        }
+
+        $totalDebit  = array_sum($validated['debit'] ?? []);
+        $totalKredit = array_sum($validated['kredit'] ?? []);
         if (bccomp($totalDebit, $totalKredit, 2) !== 0) {
-            return back()->withErrors(['message' => 'Total Debit dan Kredit harus seimbang.']);
+            return response()->json([
+                'errors' => ['Total Debit dan Kredit harus seimbang.']
+            ], 422);
         }
 
-        $debitEntries = [];
+        $debitEntries  = [];
         $kreditEntries = [];
 
-        foreach ($request->coa_id as $index => $coa_id) {
+        foreach ($validated['coa_id'] as $index => $coa_id) {
             $entry = [
-                'tanggal_jurnal' => $request->tanggal_jurnal,
-                'nomor_bukti' => $nomorBukti,
-                'keterangan' => $request->keterangan[$index] ?? '',
-                'coa_id' => $coa_id,
-                'debit' => $request->debit[$index] ?? 0,
-                'kredit' => $request->kredit[$index] ?? 0,
-                'periode_id' => $request->periode_id,
-                'kategori_jurnal' => $request->kategori_jurnal,
+                'tanggal_jurnal'  => $validated['tanggal_jurnal'],
+                'nomor_bukti'     => $validated['nomor_bukti'],
+                'keterangan'      => $validated['keterangan'][$index] ?? '',
+                'coa_id'          => $coa_id,
+                'debit'           => $validated['debit'][$index] ?? 0,
+                'kredit'          => $validated['kredit'][$index] ?? 0,
+                'periode_id'      => $validated['periode_id'],
+                'kategori_jurnal' => $validated['kategori_jurnal'],
             ];
 
             if ($entry['debit'] > 0) {
@@ -341,66 +344,64 @@ class JurnalingControllerRootSuperuser
             Jurnaling::create($entry);
         }
 
-        return redirect()->route('rootsuperuser/jurnaling/kaskeluar')
-            ->with([
-                'selectedPeriode' => $request->periode_id,
-                'success' => 'Data berhasil diinputkan!',
-            ]);
+        return response()->json([
+            'success'  => 'Data berhasil diinputkan!',
+            'redirect' => route('rootsuperuser/jurnaling/kaskeluar')
+        ]);
     }
 
     public function storebankmasuk(Request $request)
     {
-        $request->validate([
-            'tanggal_jurnal' => 'required|date',
-            'nomor_bukti' => 'required|string|max:255',
-            'keterangan' => 'required|array',
-            'keterangan.*' => 'nullable|string|max:255',
-            'coa_id' => 'required|array',
-            'coa_id.*' => 'exists:coas,id',
-            'debit' => 'required|array',
-            'debit.*' => 'numeric|min:0',
-            'kredit' => 'required|array',
-            'kredit.*' => 'numeric|min:0',
-            'periode_id' => 'required|exists:periodes,id',
-            'kategori_jurnal' => 'required|string|max:255',
-        ]);
+        try {
+            $validated = $request->validate([
+                'tanggal_jurnal'   => 'required|date',
+                'nomor_bukti'      => 'required|string|max:255|unique:jurnalings,nomor_bukti',
+                'keterangan'       => 'required|array',
+                'keterangan.*'     => 'nullable|string|max:255',
+                'coa_id'           => 'required|array',
+                'coa_id.*'         => 'exists:coas,id',
+                'debit'            => 'required|array',
+                'debit.*'          => 'numeric|min:0',
+                'kredit'           => 'required|array',
+                'kredit.*'         => 'numeric|min:0',
+                'periode_id'       => 'required|exists:periodes,id',
+                'kategori_jurnal'  => 'required|string|max:255',
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 422);
+        }
 
-        $periode = Periode::find($request->periode_id);
+        $periode = Periode::find($validated['periode_id']);
         $tahunPeriode = \Carbon\Carbon::parse($periode->tanggal_awal)->year;
-        $tahunJurnal = \Carbon\Carbon::parse($request->tanggal_jurnal)->year;
+        $tahunJurnal  = \Carbon\Carbon::parse($validated['tanggal_jurnal'])->year;
 
         if ($tahunJurnal !== $tahunPeriode) {
-            return back()->withErrors([
-                'tanggal_jurnal' => 'Tahun jurnal (' . $tahunJurnal . ') tidak sesuai dengan tahun periode (' . $tahunPeriode . ').',
-            ])->withInput();
+            return response()->json([
+                'errors' => ['Tahun jurnal (' . $tahunJurnal . ') tidak sesuai dengan tahun periode (' . $tahunPeriode . ').']
+            ], 422);
         }
 
-        $nomorBukti = $request->nomor_bukti;
-
-        if (Jurnaling::where('nomor_bukti', $nomorBukti)->exists()) {
-            return back()->withErrors(['message' => 'Nomor bukti sudah ada. Silakan gunakan nomor bukti yang lain.']);
-        }
-
-        $totalDebit = array_sum($request->debit);
-        $totalKredit = array_sum($request->kredit);
-
+        $totalDebit  = array_sum($validated['debit'] ?? []);
+        $totalKredit = array_sum($validated['kredit'] ?? []);
         if (bccomp($totalDebit, $totalKredit, 2) !== 0) {
-            return back()->withErrors(['message' => 'Total Debit dan Kredit harus seimbang.']);
+            return response()->json([
+                'errors' => ['Total Debit dan Kredit harus seimbang.']
+            ], 422);
         }
 
-        $debitEntries = [];
+        $debitEntries  = [];
         $kreditEntries = [];
 
-        foreach ($request->coa_id as $index => $coa_id) {
+        foreach ($validated['coa_id'] as $index => $coa_id) {
             $entry = [
-                'tanggal_jurnal' => $request->tanggal_jurnal,
-                'nomor_bukti' => $nomorBukti,
-                'keterangan' => $request->keterangan[$index] ?? '',
-                'coa_id' => $coa_id,
-                'debit' => $request->debit[$index] ?? 0,
-                'kredit' => $request->kredit[$index] ?? 0,
-                'periode_id' => $request->periode_id,
-                'kategori_jurnal' => $request->kategori_jurnal,
+                'tanggal_jurnal'  => $validated['tanggal_jurnal'],
+                'nomor_bukti'     => $validated['nomor_bukti'],
+                'keterangan'      => $validated['keterangan'][$index] ?? '',
+                'coa_id'          => $coa_id,
+                'debit'           => $validated['debit'][$index] ?? 0,
+                'kredit'          => $validated['kredit'][$index] ?? 0,
+                'periode_id'      => $validated['periode_id'],
+                'kategori_jurnal' => $validated['kategori_jurnal'],
             ];
 
             if ($entry['debit'] > 0) {
@@ -416,66 +417,64 @@ class JurnalingControllerRootSuperuser
             Jurnaling::create($entry);
         }
 
-        return redirect()->route('rootsuperuser/jurnaling/bankmasuk')
-            ->with([
-                'selectedPeriode' => $request->periode_id,
-                'success' => 'Data berhasil diinputkan!',
-            ]);
+        return response()->json([
+            'success'  => 'Data berhasil diinputkan!',
+            'redirect' => route('rootsuperuser/jurnaling/bankmasuk')
+        ]);
     }
 
     public function storebankkeluar(Request $request)
     {
-        $request->validate([
-            'tanggal_jurnal' => 'required|date',
-            'nomor_bukti' => 'required|string|max:255',
-            'keterangan' => 'required|array',
-            'keterangan.*' => 'nullable|string|max:255',
-            'coa_id' => 'required|array',
-            'coa_id.*' => 'exists:coas,id',
-            'debit' => 'required|array',
-            'debit.*' => 'numeric|min:0',
-            'kredit' => 'required|array',
-            'kredit.*' => 'numeric|min:0',
-            'periode_id' => 'required|exists:periodes,id',
-            'kategori_jurnal' => 'required|string|max:255',
-        ]);
+        try {
+            $validated = $request->validate([
+                'tanggal_jurnal'   => 'required|date',
+                'nomor_bukti'      => 'required|string|max:255|unique:jurnalings,nomor_bukti',
+                'keterangan'       => 'required|array',
+                'keterangan.*'     => 'nullable|string|max:255',
+                'coa_id'           => 'required|array',
+                'coa_id.*'         => 'exists:coas,id',
+                'debit'            => 'required|array',
+                'debit.*'          => 'numeric|min:0',
+                'kredit'           => 'required|array',
+                'kredit.*'         => 'numeric|min:0',
+                'periode_id'       => 'required|exists:periodes,id',
+                'kategori_jurnal'  => 'required|string|max:255',
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 422);
+        }
 
-        $periode = Periode::find($request->periode_id);
+        $periode = Periode::find($validated['periode_id']);
         $tahunPeriode = \Carbon\Carbon::parse($periode->tanggal_awal)->year;
-        $tahunJurnal = \Carbon\Carbon::parse($request->tanggal_jurnal)->year;
+        $tahunJurnal  = \Carbon\Carbon::parse($validated['tanggal_jurnal'])->year;
 
         if ($tahunJurnal !== $tahunPeriode) {
-            return back()->withErrors([
-                'tanggal_jurnal' => 'Tahun jurnal (' . $tahunJurnal . ') tidak sesuai dengan tahun periode (' . $tahunPeriode . ').',
-            ])->withInput();
+            return response()->json([
+                'errors' => ['Tahun jurnal (' . $tahunJurnal . ') tidak sesuai dengan tahun periode (' . $tahunPeriode . ').']
+            ], 422);
         }
 
-        $nomorBukti = $request->nomor_bukti;
-
-        if (Jurnaling::where('nomor_bukti', $nomorBukti)->exists()) {
-            return back()->withErrors(['message' => 'Nomor bukti sudah ada. Silakan gunakan nomor bukti yang lain.']);
-        }
-
-        $totalDebit = array_sum($request->debit);
-        $totalKredit = array_sum($request->kredit);
-
+        $totalDebit  = array_sum($validated['debit'] ?? []);
+        $totalKredit = array_sum($validated['kredit'] ?? []);
         if (bccomp($totalDebit, $totalKredit, 2) !== 0) {
-            return back()->withErrors(['message' => 'Total Debit dan Kredit harus seimbang.']);
+            return response()->json([
+                'errors' => ['Total Debit dan Kredit harus seimbang.']
+            ], 422);
         }
 
-        $debitEntries = [];
+        $debitEntries  = [];
         $kreditEntries = [];
 
-        foreach ($request->coa_id as $index => $coa_id) {
+        foreach ($validated['coa_id'] as $index => $coa_id) {
             $entry = [
-                'tanggal_jurnal' => $request->tanggal_jurnal,
-                'nomor_bukti' => $nomorBukti,
-                'keterangan' => $request->keterangan[$index] ?? '',
-                'coa_id' => $coa_id,
-                'debit' => $request->debit[$index] ?? 0,
-                'kredit' => $request->kredit[$index] ?? 0,
-                'periode_id' => $request->periode_id,
-                'kategori_jurnal' => $request->kategori_jurnal,
+                'tanggal_jurnal'  => $validated['tanggal_jurnal'],
+                'nomor_bukti'     => $validated['nomor_bukti'],
+                'keterangan'      => $validated['keterangan'][$index] ?? '',
+                'coa_id'          => $coa_id,
+                'debit'           => $validated['debit'][$index] ?? 0,
+                'kredit'          => $validated['kredit'][$index] ?? 0,
+                'periode_id'      => $validated['periode_id'],
+                'kategori_jurnal' => $validated['kategori_jurnal'],
             ];
 
             if ($entry['debit'] > 0) {
@@ -491,127 +490,128 @@ class JurnalingControllerRootSuperuser
             Jurnaling::create($entry);
         }
 
-        return redirect()->route('rootsuperuser/jurnaling/bankkeluar')
-            ->with([
-                'selectedPeriode' => $request->periode_id,
-                'success' => 'Data berhasil diinputkan!',
-            ]);
+        return response()->json([
+            'success'  => 'Data berhasil diinputkan!',
+            'redirect' => route('rootsuperuser/jurnaling/bankkeluar')
+        ]);
     }
+
 
     public function storememorial(Request $request)
     {
-        $request->validate([
-            'tanggal_jurnal' => 'required|date',
-            'nomor_bukti' => 'required|string|max:255',
-            'keterangan' => 'required|array',
-            'keterangan.*' => 'string|max:255',
-            'coa_id' => 'required|array',
-            'coa_id.*' => 'exists:coas,id',
-            'debit' => 'required|array',
-            'kredit' => 'required|array',
-            'debit.*' => 'numeric|min:0',
-            'kredit.*' => 'numeric|min:0',
-            'periode_id' => 'required|exists:periodes,id',
-            'kategori_jurnal' => 'required|string|max:255',
-        ]);
+        try {
+            $validated = $request->validate([
+                'tanggal_jurnal'   => 'required|date',
+                'nomor_bukti'      => 'required|string|max:255|unique:jurnalings,nomor_bukti',
+                'keterangan'       => 'required|array',
+                'keterangan.*'     => 'nullable|string|max:255',
+                'coa_id'           => 'required|array',
+                'coa_id.*'         => 'exists:coas,id',
+                'debit'            => 'required|array',
+                'debit.*'          => 'numeric|min:0',
+                'kredit'           => 'required|array',
+                'kredit.*'         => 'numeric|min:0',
+                'periode_id'       => 'required|exists:periodes,id',
+                'kategori_jurnal'  => 'required|string|max:255',
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 422);
+        }
 
-        $periode = Periode::find($request->periode_id);
+        $periode = Periode::find($validated['periode_id']);
         $tahunPeriode = \Carbon\Carbon::parse($periode->tanggal_awal)->year;
-        $tahunJurnal = \Carbon\Carbon::parse($request->tanggal_jurnal)->year;
+        $tahunJurnal  = \Carbon\Carbon::parse($validated['tanggal_jurnal'])->year;
 
         if ($tahunJurnal !== $tahunPeriode) {
-            return back()->withErrors([
-                'tanggal_jurnal' => 'Tahun jurnal (' . $tahunJurnal . ') tidak sesuai dengan tahun periode (' . $tahunPeriode . ').',
-            ])->withInput();
+            return response()->json([
+                'errors' => ['Tahun jurnal (' . $tahunJurnal . ') tidak sesuai dengan tahun periode (' . $tahunPeriode . ').']
+            ], 422);
         }
 
-        $nomorBukti = $request->nomor_bukti;
-        if (Jurnaling::where('nomor_bukti', $nomorBukti)->exists()) {
-            return back()->withErrors(['message' => 'Nomor bukti sudah ada. Silakan gunakan nomor bukti yang lain.']);
+        $totalDebit  = array_sum($validated['debit'] ?? []);
+        $totalKredit = array_sum($validated['kredit'] ?? []);
+        if (bccomp($totalDebit, $totalKredit, 2) !== 0) {
+            return response()->json([
+                'errors' => ['Total Debit dan Kredit harus seimbang.']
+            ], 422);
         }
 
-        $totalDebit = array_sum($request->debit);
-        $totalKredit = array_sum($request->kredit);
-
-        if ($totalDebit !== $totalKredit) {
-            return back()->withErrors(['message' => 'Total Debit and Kredit must be balanced.']);
-        }
-        foreach ($request->coa_id as $index => $coa_id) {
+        foreach ($validated['coa_id'] as $index => $coa_id) {
             Jurnaling::create([
-                'tanggal_jurnal' => $request->tanggal_jurnal,
-                'nomor_bukti' => $request->nomor_bukti,
-                'keterangan' => $request->keterangan[$index] ?? '',
-                'coa_id' => $coa_id,
-                'debit' => $request->debit[$index] ?? 0,
-                'kredit' => $request->kredit[$index] ?? 0,
-                'periode_id' => $request->periode_id,
-                'kategori_jurnal' => $request->kategori_jurnal,
+                'tanggal_jurnal'  => $validated['tanggal_jurnal'],
+                'nomor_bukti'     => $validated['nomor_bukti'],
+                'keterangan'      => $validated['keterangan'][$index] ?? '',
+                'coa_id'          => $coa_id,
+                'debit'           => $validated['debit'][$index] ?? 0,
+                'kredit'          => $validated['kredit'][$index] ?? 0,
+                'periode_id'      => $validated['periode_id'],
+                'kategori_jurnal' => $validated['kategori_jurnal'],
             ]);
         }
 
-        return redirect()->route('rootsuperuser/jurnaling/memorial')
-            ->with([
-                'selectedPeriode' => $request->periode_id,
-                'success' => 'Data berhasil diinputkan!',
-            ]);
+        return response()->json([
+            'success'  => 'Data berhasil diinputkan!',
+            'redirect' => route('rootsuperuser/jurnaling/memorial')
+        ]);
     }
+
 
     public function storememorialpenutup(Request $request)
     {
-        $request->validate([
-            'tanggal_jurnal' => 'required|date',
-            'nomor_bukti' => 'required|string|max:255',
-            'keterangan' => 'required|array',
-            'keterangan.*' => 'string|max:255',
-            'coa_id' => 'required|array',
-            'coa_id.*' => 'exists:coas,id',
-            'debit' => 'required|array',
-            'kredit' => 'required|array',
-            'debit.*' => 'numeric|min:0',
-            'kredit.*' => 'numeric|min:0',
-            'periode_id' => 'required|exists:periodes,id',
-            'kategori_jurnal' => 'required|string|max:255',
-        ]);
+        try {
+            $validated = $request->validate([
+                'tanggal_jurnal'   => 'required|date',
+                'nomor_bukti'      => 'required|string|max:255|unique:jurnalings,nomor_bukti',
+                'keterangan'       => 'required|array',
+                'keterangan.*'     => 'nullable|string|max:255',
+                'coa_id'           => 'required|array',
+                'coa_id.*'         => 'exists:coas,id',
+                'debit'            => 'required|array',
+                'debit.*'          => 'numeric|min:0',
+                'kredit'           => 'required|array',
+                'kredit.*'         => 'numeric|min:0',
+                'periode_id'       => 'required|exists:periodes,id',
+                'kategori_jurnal'  => 'required|string|max:255',
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 422);
+        }
 
-        $periode = Periode::find($request->periode_id);
+        $periode = Periode::find($validated['periode_id']);
         $tahunPeriode = \Carbon\Carbon::parse($periode->tanggal_awal)->year;
-        $tahunJurnal = \Carbon\Carbon::parse($request->tanggal_jurnal)->year;
+        $tahunJurnal  = \Carbon\Carbon::parse($validated['tanggal_jurnal'])->year;
 
         if ($tahunJurnal !== $tahunPeriode) {
-            return back()->withErrors([
-                'tanggal_jurnal' => 'Tahun jurnal (' . $tahunJurnal . ') tidak sesuai dengan tahun periode (' . $tahunPeriode . ').',
-            ])->withInput();
+            return response()->json([
+                'errors' => ['Tahun jurnal (' . $tahunJurnal . ') tidak sesuai dengan tahun periode (' . $tahunPeriode . ').']
+            ], 422);
         }
 
-        $nomorBukti = $request->nomor_bukti;
-        if (Jurnaling::where('nomor_bukti', $nomorBukti)->exists()) {
-            return back()->withErrors(['message' => 'Nomor bukti sudah ada. Silakan gunakan nomor bukti yang lain.']);
+        $totalDebit  = array_sum($validated['debit'] ?? []);
+        $totalKredit = array_sum($validated['kredit'] ?? []);
+        if (bccomp($totalDebit, $totalKredit, 2) !== 0) {
+            return response()->json([
+                'errors' => ['Total Debit dan Kredit harus seimbang.']
+            ], 422);
         }
 
-        $totalDebit = array_sum($request->debit);
-        $totalKredit = array_sum($request->kredit);
-
-        if ($totalDebit !== $totalKredit) {
-            return back()->withErrors(['message' => 'Total Debit and Kredit must be balanced.']);
-        }
-        foreach ($request->coa_id as $index => $coa_id) {
+        foreach ($validated['coa_id'] as $index => $coa_id) {
             Jurnaling::create([
-                'tanggal_jurnal' => $request->tanggal_jurnal,
-                'nomor_bukti' => $request->nomor_bukti,
-                'keterangan' => $request->keterangan[$index] ?? '',
-                'coa_id' => $coa_id,
-                'debit' => $request->debit[$index] ?? 0,
-                'kredit' => $request->kredit[$index] ?? 0,
-                'periode_id' => $request->periode_id,
-                'kategori_jurnal' => $request->kategori_jurnal,
+                'tanggal_jurnal'  => $validated['tanggal_jurnal'],
+                'nomor_bukti'     => $validated['nomor_bukti'],
+                'keterangan'      => $validated['keterangan'][$index] ?? '',
+                'coa_id'          => $coa_id,
+                'debit'           => $validated['debit'][$index] ?? 0,
+                'kredit'          => $validated['kredit'][$index] ?? 0,
+                'periode_id'      => $validated['periode_id'],
+                'kategori_jurnal' => $validated['kategori_jurnal'],
             ]);
         }
 
-        return redirect()->route('rootsuperuser/jurnaling/memorialpenutup')
-            ->with([
-                'selectedPeriode' => $request->periode_id,
-                'success' => 'Data berhasil diinputkan!',
-            ]);
+        return response()->json([
+            'success'  => 'Data berhasil diinputkan!',
+            'redirect' => route('rootsuperuser/jurnaling/memorialpenutup')
+        ]);
     }
 
     public function cekNomorBuktiKM(Request $request)
@@ -1959,12 +1959,10 @@ class JurnalingControllerRootSuperuser
         $month = $request->query('month');
         $periodeId = $request->query('periode_id');
 
-
         if (!$month || !$periodeId) {
             return redirect()->route('rootsuperuser/jurnaling/months')
                 ->withErrors(['error' => 'Please select a valid month and period.']);
         }
-
 
         $selectedPeriode = Periode::find($periodeId);
         if (!$selectedPeriode) {
@@ -1972,10 +1970,8 @@ class JurnalingControllerRootSuperuser
                 ->withErrors(['error' => 'Invalid period selected.']);
         }
 
-
         $year = substr($month, 0, 4);
         $monthNumber = substr($month, 5, 2);
-
 
         $monthEntries = Jurnaling::with('coa')
             ->whereYear('tanggal_jurnal', $year)
@@ -1983,10 +1979,51 @@ class JurnalingControllerRootSuperuser
             ->where('periode_id', $periodeId)
             ->orderBy('tanggal_jurnal', 'asc')
             ->orderBy('nomor_bukti', 'ASC')
-            ->get();
+            ->get()
+            ->map(function ($entry) {
+                if (empty(trim($entry->keterangan))) {
+                    switch (strtolower($entry->kategori_jurnal)) {
+                        case 'kas masuk':
+                            $entry->keterangan = 'Pemasukan Kas';
+                            break;
+                        case 'kas keluar':
+                            $entry->keterangan = 'Pengeluaran Kas';
+                            break;
+                        case 'bank masuk':
+                            $entry->keterangan = 'Pemasukan Bank';
+                            break;
+                        case 'bank keluar':
+                            $entry->keterangan = 'Pengeluaran Bank';
+                            break;
+                        default:
+                            $entry->keterangan = '-';
+                    }
+                }
+                return $entry;
+            });
 
         $monthName = \Carbon\Carbon::createFromFormat('Y-m', $month)->format('F Y');
 
         return view('rootsuperuser.jurnaling.showing', compact('monthEntries', 'monthName'));
+    }
+
+    public function exportJurnaling(Request $request)
+    {
+        $month = $request->query('month');
+        $periodeId = $request->query('periode_id');
+
+        $periode = Periode::find($periodeId);
+        if (!$periode) {
+            return redirect()->route('rootsuperuser/jurnaling/months')
+                ->withErrors(['error' => 'Invalid period selected.']);
+        }
+
+        $monthName = Carbon::createFromFormat('Y-m', $month)->translatedFormat('F');
+
+        $year = Carbon::parse($periode->tanggal_awal)->year;
+
+        $fileName = "jurnaling {$monthName} {$year}.xlsx";
+
+        return Excel::download(new JurnalingSheet($month, $periodeId), $fileName);
     }
 }
