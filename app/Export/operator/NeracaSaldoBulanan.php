@@ -16,6 +16,7 @@ use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
 
 class NeracaSaldoBulanan implements FromCollection, WithTitle, WithStyles, WithColumnWidths
 {
@@ -420,7 +421,17 @@ class NeracaSaldoBulanan implements FromCollection, WithTitle, WithStyles, WithC
         $sheet->getStyle("C{$headerRow}:F{$highestRow}")
             ->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
 
-        // Proteksi sheet
+        $sheet->getPageMargins()->setTop(0.75);
+        $sheet->getPageMargins()->setBottom(0.75);
+        $sheet->getPageMargins()->setLeft(0.25);
+        $sheet->getPageMargins()->setRight(0.25);
+        $sheet->getPageMargins()->setHeader(0.3);
+        $sheet->getPageMargins()->setFooter(0.3);
+        $sheet->getPageSetup()->setFitToWidth(1);
+        $sheet->getPageSetup()->setFitToHeight(0);
+        $sheet->getPageSetup()->setOrientation(PageSetup::ORIENTATION_PORTRAIT);
+        $sheet->getPageSetup()->setPaperSize(PageSetup::PAPERSIZE_FOLIO);
+
         $protection = $sheet->getProtection();
         $protection->setSheet(true);
         $protection->setPassword('dapense');

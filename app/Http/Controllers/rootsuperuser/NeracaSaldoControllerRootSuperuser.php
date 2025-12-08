@@ -375,6 +375,22 @@ class NeracaSaldoControllerRootSuperuser
     {
         $month = $request->query('month');
         $filename = "LAPORAN_KEUANGAN_{$month}.xlsx";
-        return Excel::download(new NeracaSaldoSheet($periode_id, $month), $filename);
+
+        return Excel::download(
+            new NeracaSaldoSheet($periode_id, $month),
+            $filename,
+            \Maatwebsite\Excel\Excel::XLSX
+        );
+    }
+    public function exportPdf(Request $request, $periode_id)
+    {
+        $month = $request->query('month');
+        $filename = "LAPORAN_KEUANGAN_{$month}.pdf";
+
+        return Excel::download(
+            new NeracaSaldoSheet($periode_id, $month),
+            $filename,
+            \Maatwebsite\Excel\Excel::MPDF 
+        );
     }
 }

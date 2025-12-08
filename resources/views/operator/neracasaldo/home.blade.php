@@ -141,9 +141,16 @@
                 @endphp
 
                 <h2>Neraca Saldo Bulan {{ $bulanTahun }}</h2>
-                <a href="{{ route('operator/neracasaldo/export', ['periode_id' => $periode->id]) }}?month={{ request()->query('month') }}" class="btn btn-success">
-                    Export Excel
-                </a>
+                <div class="d-flex gap-2">
+                    <a href="{{ route('operator/neracasaldo/exportexcel', ['periode_id' => $periode->id]) }}?month={{ request()->query('month') }}"
+                        class="btn btn-success">
+                        Export Excel
+                    </a>
+                    <a href="{{ route('operator/neracasaldo/exportpdf', ['periode_id' => $periode->id]) }}?month={{ request()->query('month') }}"
+                        class="btn btn-warning">
+                        Export PDF
+                    </a>
+                </div>
             </div>
             <div class="card-body">
                 <table class="table table-bordered">

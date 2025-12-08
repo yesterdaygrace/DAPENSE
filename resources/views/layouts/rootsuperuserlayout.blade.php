@@ -84,6 +84,15 @@
                                         <div class="dropdown-divider"></div>
                                     </li>
                                     <li>
+                                        <a class="dropdown-item" href="{{ route('rootsuperuser/otorisator/home') }}">
+                                            <i class="bx bx-cog me-2"></i>
+                                            <span class="align-middle">Pengaturan Otorisator</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <div class="dropdown-divider"></div>
+                                    </li>
+                                    <li>
                                         <a class="dropdown-item" href="{{ route('logout') }}">
                                             <i class="bx bx-power-off me-2"></i>
                                             <span class="align-middle">Log Out</span>

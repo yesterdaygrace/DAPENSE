@@ -16,6 +16,7 @@ use App\Http\Controllers\rootsuperuser\BukuBesarControllerRootSuperuser;
 use App\Http\Controllers\rootsuperuser\PostingControlerRootSuperuser;
 use App\Http\Controllers\rootsuperuser\PostingController;
 use App\Http\Controllers\rootsuperuser\SaldoAwalControllerRootSuperuser;
+use App\Http\Controllers\rootsuperuser\OtorisatorControllerRootSuperuser;
 use App\Http\Controllers\admin\ProductControllerAdmin;
 use App\Http\Controllers\admin\PeriodeControllerAdmin;
 use App\Http\Controllers\admin\HeaderCoaControllerAdmin;
@@ -24,6 +25,7 @@ use App\Http\Controllers\admin\HeaderControllerAdmin;
 use App\Http\Controllers\admin\JurnalingControllerAdmin;
 use App\Http\Controllers\admin\SaldoAwalControllerAdmin;
 use App\Http\Controllers\admin\NeracaSaldoControllerAdmin;
+use App\Http\Controllers\admin\OtorisatorControllerAdmin;
 use App\Http\Controllers\bod\BukuBesarControllerBOD;
 use App\Http\Controllers\bod\JurnalingControllerBOD;
 use App\Http\Controllers\bod\NeracaSaldoControllerBOD;
@@ -35,6 +37,7 @@ use App\Http\Controllers\operator\JurnalingControllerOperator;
 use App\Http\Controllers\operator\SaldoAwalControllerOperator;
 use App\Http\Controllers\operator\NeracaSaldoControllerOperator;
 use App\Http\Controllers\operator\PeriodeControllerOperator;
+use App\Http\Controllers\operator\OtorisatorControllerOperator;
 use App\Http\Middleware\RootSuperuser;
 use App\Models\NeracaSaldo;
 use Illuminate\Support\Facades\Auth;
@@ -152,7 +155,15 @@ Route::middleware(['auth', RootSuperuser::class])->group(function () {
     Route::get('/rootsuperuser/neracasaldo/months/{periode?}', [JurnalingControllerRootSuperuser::class, 'showPerMonth'])->name('rootsuperuser/neracasaldo/months');
     Route::get('/rootsuperuser/neracasaldo/monthstampil/{periode?}', [NeracaSaldoControllerRootSuperuser::class, 'showPerMonthNeraca'])->name('rootsuperuser/neracasaldo/monthstampil');
     Route::get('/rootsuperuser/neracasaldo/rekap/{periode_id}', [JurnalingControllerRootSuperuser::class, 'rekapJurnalMonth'])->name('rootsuperuser/neracasaldo/rekap');
-    Route::get('rootsuperuser/neracasaldo/export/{periode_id}', [NeracaSaldoControllerRootSuperuser::class, 'exportExcel'])->name('rootsuperuser/neracasaldo/export');
+    Route::get('/rootsuperuser/neracasaldo/exportexcel/{periode_id}', [NeracaSaldoControllerRootSuperuser::class, 'exportExcel'])->name('rootsuperuser/neracasaldo/exportexcel');
+    Route::get('/rootsuperuser/neracasaldo/exportpdf/{periode_id}', [NeracaSaldoControllerRootSuperuser::class, 'exportPdf'])->name('rootsuperuser/neracasaldo/exportpdf');
+
+    Route::get('/rootsuperuser/otorisator/home', [OtorisatorControllerRootSuperuser::class, 'index'])->name('rootsuperuser/otorisator/home');
+    Route::get('/rootsuperuser/otorisator/create', [OtorisatorControllerRootSuperuser::class, 'create'])->name('rootsuperuser/otorisator/create');
+    Route::post('/rootsuperuser/otorisator/save', [OtorisatorControllerRootSuperuser::class, 'store'])->name('rootsuperuser/otorisator/save');
+    Route::get('/rootsuperuser/otorisator/edit/{id}', [OtorisatorControllerRootSuperuser::class, 'edit'])->name('rootsuperuser/otorisator/edit');
+    Route::put('/rootsuperuser/otorisator/update/{id}', [OtorisatorControllerRootSuperuser::class, 'update'])->name('rootsuperuser/otorisator/update');
+    Route::delete('/rootsuperuser/otorisator/delete/{id}', [OtorisatorControllerRootSuperuser::class, 'destroy'])->name('rootsuperuser/otorisator/delete');
 });
 
 Route::middleware(['auth', 'admin'])->group(function () {
@@ -249,7 +260,15 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/neracasaldo/months/{periode?}', [JurnalingControllerAdmin::class, 'showPerMonth'])->name('admin/neracasaldo/months');
     Route::get('/admin/neracasaldo/monthstampil/{periode?}', [NeracaSaldoControllerAdmin::class, 'showPerMonthNeraca'])->name('admin/neracasaldo/monthstampil');
     Route::get('/admin/neracasaldo/rekap/{periode_id}', [JurnalingControllerAdmin::class, 'rekapJurnalMonth'])->name('admin/neracasaldo/rekap');
-    Route::get('admin/neracasaldo/export/{periode_id}', [NeracaSaldoControllerAdmin::class, 'exportExcel'])->name('admin/neracasaldo/export');
+    Route::get('/admin/neracasaldo/exportexcel/{periode_id}', [NeracaSaldoControllerAdmin::class, 'exportExcel'])->name('admin/neracasaldo/exportexcel');
+    Route::get('/admin/neracasaldo/exportpdf/{periode_id}', [NeracaSaldoControllerAdmin::class, 'exportPdf'])->name('admin/neracasaldo/exportpdf');
+
+    Route::get('/admin/otorisator/home', [OtorisatorControllerAdmin::class, 'index'])->name('admin/otorisator/home');
+    Route::get('/admin/otorisator/create', [OtorisatorControllerAdmin::class, 'create'])->name('admin/otorisator/create');
+    Route::post('/admin/otorisator/save', [OtorisatorControllerAdmin::class, 'store'])->name('admin/otorisator/save');
+    Route::get('/admin/otorisator/edit/{id}', [OtorisatorControllerAdmin::class, 'edit'])->name('admin/otorisator/edit');
+    Route::put('/admin/otorisator/update/{id}', [OtorisatorControllerAdmin::class, 'update'])->name('admin/otorisator/update');
+    Route::delete('/admin/otorisator/delete/{id}', [OtorisatorControllerAdmin::class, 'destroy'])->name('admin/otorisator/delete');
 });
 
 Route::middleware(['auth', 'operator'])->group(function () {
@@ -341,7 +360,15 @@ Route::middleware(['auth', 'operator'])->group(function () {
     Route::get('/operator/neracasaldo/months/{periode?}', [JurnalingControllerOperator::class, 'showPerMonth'])->name('operator/neracasaldo/months');
     Route::get('/operator/neracasaldo/monthstampil/{periode?}', [NeracaSaldoControllerOperator::class, 'showPerMonthNeraca'])->name('operator/neracasaldo/monthstampil');
     Route::get('/operator/neracasaldo/rekap/{periode_id}', [JurnalingControllerOperator::class, 'rekapJurnalMonth'])->name('operator/neracasaldo/rekap');
-    Route::get('operator/neracasaldo/export/{periode_id}', [NeracaSaldoControllerOperator::class, 'exportExcel'])->name('operator/neracasaldo/export');
+    Route::get('/operator/neracasaldo/exportexcel/{periode_id}', [NeracaSaldoControllerOperator::class, 'exportExcel'])->name('operator/neracasaldo/exportexcel');
+    Route::get('/operator/neracasaldo/exportpdf/{periode_id}', [NeracaSaldoControllerOperator::class, 'exportPdf'])->name('operator/neracasaldo/exportpdf');
+
+    Route::get('/operator/otorisator/home', [OtorisatorControllerOperator::class, 'index'])->name('operator/otorisator/home');
+    Route::get('/operator/otorisator/create', [OtorisatorControllerOperator::class, 'create'])->name('operator/otorisator/create');
+    Route::post('/operator/otorisator/save', [OtorisatorControllerOperator::class, 'store'])->name('operator/otorisator/save');
+    Route::get('/operator/otorisator/edit/{id}', [OtorisatorControllerOperator::class, 'edit'])->name('operator/otorisator/edit');
+    Route::put('/operator/otorisator/update/{id}', [OtorisatorControllerOperator::class, 'update'])->name('operator/otorisator/update');
+    Route::delete('/operator/otorisator/delete/{id}', [OtorisatorControllerOperator::class, 'destroy'])->name('operator/otorisator/delete');
 });
 
 
@@ -367,7 +394,8 @@ Route::middleware(['auth', 'bod'])->group(function () {
     Route::get('/bod/neracasaldo/months/{periode?}', [JurnalingControllerBOD::class, 'showPerMonth'])->name('bod/neracasaldo/months');
     Route::get('/bod/neracasaldo/monthstampil/{periode?}', [NeracaSaldoControllerBOD::class, 'showPerMonthNeraca'])->name('bod/neracasaldo/monthstampil');
     Route::get('/bod/neracasaldo/rekap/{periode_id}', [JurnalingControllerBOD::class, 'rekapJurnalMonth'])->name('bod/neracasaldo/rekap');
-    Route::get('bod/neracasaldo/export/{periode_id}', [NeracaSaldoControllerBOD::class, 'exportExcel'])->name('bod/neracasaldo/export');
+    Route::get('/bod/neracasaldo/exportexcel/{periode_id}', [NeracaSaldoControllerBOD::class, 'exportExcel'])->name('bod/neracasaldo/exportexcel');
+    Route::get('/bod/neracasaldo/exportpdf/{periode_id}', [NeracaSaldoControllerBOD::class, 'exportPdf'])->name('bod/neracasaldo/exportpdf');
 });
 
 

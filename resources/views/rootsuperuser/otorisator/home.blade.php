@@ -125,7 +125,7 @@
                 <div data-i18n="Analytics">Buku Besar</div>
             </a>
         </li>
-        <li class="menu-item active">
+        <li class="menu-item">
             <a href="{{ route('rootsuperuser/neracasaldo/') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-calculator"></i>
                 <div data-i18n="Analytics">Neraca Saldo</div>
@@ -134,141 +134,93 @@
     </ul>
 </aside>
 
+<!-- Content wrapper -->
 <div class="content-wrapper">
+    <!-- Content -->
     <div class="container-xxl flex-grow-1 container-p-y">
         <div class="card">
             <div class="card-header d-flex align-items-center justify-content-between">
-                @php
-                use Illuminate\Support\Carbon;
-
-                $monthParam = request()->query('month'); // Contoh: '2025-07'
-                $bulanTahun = $monthParam ? Carbon::parse($monthParam)->translatedFormat('F Y') : '-';
-                @endphp
-
-                <h2>Neraca Saldo Bulan {{ $bulanTahun }}</h2>
-                <div class="d-flex gap-2">
-                    <a href="{{ route('rootsuperuser/neracasaldo/exportexcel', ['periode_id' => $periode->id]) }}?month={{ request()->query('month') }}"
-                        class="btn btn-success">
-                        Export Excel
-                    </a>
-                    <a href="{{ route('rootsuperuser/neracasaldo/exportpdf', ['periode_id' => $periode->id]) }}?month={{ request()->query('month') }}"
-                        class="btn btn-warning">
-                        Export PDF
-                    </a>
-                </div>
+                <h5 class="mb-0">List Otorisator</h5>
+                <!-- <a href="{{ route('rootsuperuser/otorisator/create') }}" class="btn btn-primary">Tambah Otorisator</a> -->
             </div>
+
             <div class="card-body">
-                <table class="table table-bordered">
-                    <thead>
+                @if(Session::has('success'))
+                <div class="alert alert-success" role="alert">
+                    {{ Session::get('success') }}
+                </div>
+                @endif
+
+                <table class="table table-hover">
+                    <thead class="table-primary">
                         <tr>
-                            <th>Kode Perk</th>
-                            <th>Nama Perkiraan</th>
-                            <th>Saldo Awal</th>
-                            <th>Debit</th>
-                            <th>Kredit</th>
-                            <th>Saldo Akhir</th>
+                            <th>Nama Otorisator</th>
+                            <th>Jabatan Otorisator</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @php
-                        function formatSaldo($angka) {
-                        $formatted = number_format(abs($angka), 2);
-                        return $angka < 0 ? "($formatted)" : $formatted;
-                            }
+                        @forelse ($otorisators as $otorisator)
+                        <tr>
+                            <td class="align-middle">{{ $otorisator->nama_otorisator }}</td>
+                            <td class="align-middle">{{ $otorisator->jabatan_otorisator }}</td>
+                            <td class="align-middle">
+                                <a href="{{ route('rootsuperuser/otorisator/edit', $otorisator->id) }}" class="btn btn-warning">Edit</a>
 
-                            function renderHeader($header, $level=0) {
-                            $excludedHeaders=[
-                            ['kode'=> '121100', 'nama' => 'Aktiva Lancar'],
-                            ['kode' => '131100'],
-                            ['kode' => '20000'],
-                            ['kode' => '200000'],
-                            ['kode' => '250000'],
-                            ['kode' => '70110'],
-                            ['kode' => '701100'],
-                            ['kode' => '704100'],
-                            ['kode' => '81210'],
-                            ['kode' => '812100'],
-                            ['kode' => '812400'],
-                            ];
-
-                            $isExcluded = false;
-                            foreach ($excludedHeaders as $excluded) {
-                            if (
-                            $header->kode_header == $excluded['kode'] &&
-                            (!isset($excluded['nama']) || $header->nama_header == $excluded['nama'])
-                            ) {
-                            $isExcluded = true;
-                            break;
-                            }
-                            }
-
-                            if (!$isExcluded) {
-                            $overrideToZero = in_array($header->kode_header, ['100', '1001']);
-                            $saldoAwal = $overrideToZero ? 0 : ($header->total_saldo_awal_debit - $header->total_saldo_awal_kredit);
-                            $saldoAkhir = $overrideToZero ? 0 : $header->total_saldo_akhir;
-
-                            if (
-                            $saldoAwal == 0 &&
-                            $header->total_debit == 0 &&
-                            $header->total_kredit == 0 &&
-                            $saldoAkhir == 0
-                            ) {
-                            return;
-                            }
-
-                            $indent = str_repeat('&nbsp;', $level * 4);
-                            echo "<tr>";
-                                echo "<td><strong>{$indent}{$header->kode_header}</strong></td>";
-                                echo "<td><strong>{$header->nama_header}</strong></td>";
-                                echo "<td><strong>" . formatSaldo($saldoAwal) . "</strong></td>";
-                                echo "<td><strong>" . formatSaldo($header->total_debit) . "</strong></td>";
-                                echo "<td><strong>" . formatSaldo($header->total_kredit) . "</strong></td>";
-                                echo "<td><strong>" . formatSaldo($saldoAkhir) . "</strong></td>";
-                                echo "</tr>";
-
-                            $skipCoa = $header->nama_header === 'PEMBELIAN-PENJUALAN AKT.OPRNL';
-
-                            if (
-                            (strlen($header->kode_header) == 7 || strlen($header->kode_header) == 8) &&
-                            !$skipCoa
-                            ) {
-                            foreach ($header->coas as $coa) {
-                            if (
-                            $coa->saldo_awal_debit == 0 && $coa->saldo_awal_kredit == 0 &&
-                            $coa->total_debit == 0 && $coa->total_kredit == 0 &&
-                            $coa->saldo_akhir == 0
-                            ) {
-                            continue;
-                            }
-
-                            echo "<tr>";
-                                echo "<td>{$indent}&nbsp;&nbsp;&nbsp;{$coa->kode_akun}</td>";
-                                echo "<td>&nbsp;&nbsp;{$coa->nama_akun}</td>";
-                                echo "<td>" . formatSaldo($coa->saldo_awal_debit - $coa->saldo_awal_kredit) . "</td>";
-                                echo "<td>" . formatSaldo($coa->total_debit) . "</td>";
-                                echo "<td>" . formatSaldo($coa->total_kredit) . "</td>";
-                                echo "<td>" . formatSaldo($coa->saldo_akhir) . "</td>";
-                                echo "</tr>";
-                            }
-                            }
-                            }
-
-                            foreach ($header->children as $child) {
-                            renderHeader($child, $level + 1);
-                            }
-                            }
-                            @endphp
-
-                            @foreach($headerCoas as $header)
-                            @php renderHeader($header); @endphp
-                            @endforeach
+                                <!-- <form action="{{ route('rootsuperuser/otorisator/delete', $otorisator->id) }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger">Hapus</button>
+                                </form> -->
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td class="text-center" colspan="3">Tidak ada Otorisator ditemukan</td>
+                        </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
 </div>
+<!-- / Content -->
+<div class="content-backdrop fade"></div>
 
+<!-- Toast Confirm Delete -->
+<!-- <div class="p-3 toast-container position-fixed top-50 start-50 translate-middle" style="z-index: 1050;">
+    <div id="deleteToast" class="text-white toast bg-warning" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <i class="bx bx-bell me-2"></i>
+            <strong class="me-auto">Konfirmasi Hapus</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            Apakah Anda yakin ingin menghapus Otorisator ini?
+            <div class="pt-2 mt-4 d-flex justify-content-end border-top">
+                <button type="button" class="btn btn-light btn-sm me-2" data-bs-dismiss="toast">Batal</button>
+                <button type="button" class="btn btn-danger btn-sm" id="confirmDeleteBtn">Hapus</button>
+            </div>
+        </div>
+    </div>
+</div>
 
+<script>
+    let deleteUrl = '';
+
+    function confirmDelete(url) {
+        deleteUrl = url;
+        var toastEl = document.getElementById('deleteToast');
+        var toast = new bootstrap.Toast(toastEl);
+        toast.show();
+    }
+
+    document.getElementById('confirmDeleteBtn').onclick = function() {
+        if (deleteUrl) {
+            window.location.href = deleteUrl;
+        }
+    }; -->
+</script>
 
 @endsection

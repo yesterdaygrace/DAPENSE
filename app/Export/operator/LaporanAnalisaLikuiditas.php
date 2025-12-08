@@ -3,6 +3,7 @@
 namespace App\Export\operator;
 
 use Illuminate\Support\Facades\Log;
+use App\Models\Otorisator;
 use App\Models\Jurnaling;
 use App\Models\SaldoAwal;
 use Illuminate\Support\Collection;
@@ -14,6 +15,7 @@ use Maatwebsite\Excel\Concerns\{
     WithColumnWidths
 };
 use Maatwebsite\Excel\Events\AfterSheet;
+use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
 use Carbon\Carbon;
 
 class LaporanAnalisaLikuiditas implements WithTitle, FromCollection, WithHeadings, WithEvents, WithColumnWidths
@@ -219,6 +221,7 @@ class LaporanAnalisaLikuiditas implements WithTitle, FromCollection, WithHeading
     {
         return [
             AfterSheet::class => function (AfterSheet $event) {
+                $otorisators = Otorisator::orderBy('id', 'asc')->get();
                 $sheet = $event->sheet;
                 $selectedMonth = Carbon::parse($this->month . '-01');
                 $previousMonth = $selectedMonth->copy()->subMonth();
@@ -252,6 +255,81 @@ class LaporanAnalisaLikuiditas implements WithTitle, FromCollection, WithHeading
                         $sheet->getStyle("A$row:C$row")->getFont()->setBold(true);
                     }
                 }
+
+
+                $footerRow = $highestRow + 5;
+
+                $endOfMonthDate = $selectedMonth->copy()->endOfMonth();
+
+                $sheet->mergeCells("A$footerRow:C$footerRow");
+                $sheet->setCellValue("A$footerRow", 'Salatiga, ' . $endOfMonthDate->translatedFormat('d F Y'));
+                $sheet->getStyle("A$footerRow")->applyFromArray([
+                    'alignment' => ['horizontal' => 'center'],
+                    'font' => ['size' => 11],
+                ]);
+
+                $sheet->getRowDimension($footerRow)->setRowHeight(25);
+                $footerRow++;
+
+                $sheet->mergeCells("A$footerRow:C$footerRow");
+                $sheet->setCellValue("A$footerRow", 'Pengurus Dana Pensiun Sekolah Kristen');
+                $sheet->getStyle("A$footerRow")->applyFromArray([
+                    'alignment' => ['horizontal' => 'center'],
+                    'font' => ['size' => 11],
+                ]);
+                $sheet->getRowDimension($footerRow)->setRowHeight(25);
+                $footerRow++;
+
+                $sheet->setCellValue("A$footerRow", '');
+                $sheet->getRowDimension($footerRow)->setRowHeight(40);
+                $footerRow++;
+
+                $left = $otorisators[0] ?? null;
+                $right = $otorisators[1] ?? null;
+
+                if ($left) {
+                    $sheet->setCellValue("A$footerRow", $left->nama_otorisator);
+                    $sheet->getStyle("A$footerRow")->applyFromArray([
+                        'font' => ['underline' => true, 'size' => 11],
+                        'alignment' => ['horizontal' => 'center'],
+                    ]);
+                    $sheet->getRowDimension($footerRow)->setRowHeight(30);
+                }
+                if ($right) {
+                    $sheet->setCellValue("C$footerRow", $right->nama_otorisator);
+                    $sheet->getStyle("C$footerRow")->applyFromArray([
+                        'font' => ['underline' => true, 'size' => 11],
+                        'alignment' => ['horizontal' => 'center'],
+                    ]);
+                    $sheet->getRowDimension($footerRow)->setRowHeight(30);
+                }
+                $footerRow++;
+
+                if ($left) {
+                    $sheet->setCellValue("A$footerRow", $left->jabatan_otorisator);
+                }
+                if ($right) {
+                    $sheet->setCellValue("C$footerRow", $right->jabatan_otorisator);
+                }
+                $footerRow += 5;
+
+                $sheet->getStyle("A" . ($highestRow + 3) . ":C$footerRow")->applyFromArray([
+                    'font' => ['size' => 11],
+                    'alignment' => ['horizontal' => 'center'],
+                ]);
+
+                $delegate = $event->sheet->getDelegate();
+                $delegate->getPageMargins()->setTop(0.75);
+                $delegate->getPageMargins()->setBottom(2);
+                $delegate->getPageMargins()->setLeft(0.25);
+                $delegate->getPageMargins()->setRight(0.25);
+                $delegate->getPageMargins()->setHeader(0.3);
+                $delegate->getPageMargins()->setFooter(0.3);
+                $delegate->getPageSetup()->setFitToWidth(1);
+                $delegate->getPageSetup()->setFitToHeight(1);
+                $delegate->getPageSetup()->setOrientation(PageSetup::ORIENTATION_PORTRAIT);
+                $delegate->getPageSetup()->setPaperSize(PageSetup::PAPERSIZE_FOLIO);
+
                 $protection = $sheet->getProtection();
                 $protection->setSheet(true);
                 $protection->setPassword('dapense');

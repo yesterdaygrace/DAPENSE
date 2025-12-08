@@ -2,6 +2,7 @@
 
 namespace App\Export\operator;
 
+use App\Models\Otorisator;
 use App\Models\Jurnaling;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
@@ -13,6 +14,7 @@ use Maatwebsite\Excel\Concerns\{
     WithColumnWidths
 };
 use Maatwebsite\Excel\Events\AfterSheet;
+use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
 
 class LaporanBulanHasilInvestasi implements WithTitle, FromCollection, WithHeadings, WithEvents, WithColumnWidths
 {
@@ -141,7 +143,7 @@ class LaporanBulanHasilInvestasi implements WithTitle, FromCollection, WithHeadi
     {
         $periodeId = $this->resolvePeriodeId($date);
 
-        $query = Jurnaling::where('periode_id', $periodeId)
+        $query = Jurnaling::where('periode_id', $this->periode_id)
             ->whereMonth('tanggal_jurnal', $date->month)
             ->whereYear('tanggal_jurnal', $date->year)
             ->whereHas('coa', function ($q) use ($range) {
@@ -207,6 +209,7 @@ class LaporanBulanHasilInvestasi implements WithTitle, FromCollection, WithHeadi
     {
         return [
             AfterSheet::class => function (AfterSheet $event) {
+                $otorisators = Otorisator::orderBy('id', 'asc')->get();
                 $sheet = $event->sheet;
                 $selectedMonth = Carbon::parse($this->month . '-01');
                 $previousMonth = $selectedMonth->copy()->subMonth();
@@ -243,6 +246,75 @@ class LaporanBulanHasilInvestasi implements WithTitle, FromCollection, WithHeadi
                         'startColor' => ['rgb' => 'E2EFDA']
                     ]
                 ]);
+
+                $footerRow = $highestRow + 5;
+                $endOfMonthDate = $selectedMonth->copy()->endOfMonth();
+
+                $sheet->mergeCells("A$footerRow:I$footerRow");
+                $sheet->setCellValue("A$footerRow", 'Salatiga, ' . $endOfMonthDate->translatedFormat('d F Y'));
+                $sheet->getStyle("A$footerRow")->applyFromArray([
+                    'alignment' => ['horizontal' => 'center'],
+                    'font' => ['size' => 11],
+                ]);
+                $footerRow++;
+
+                $sheet->mergeCells("A$footerRow:I$footerRow");
+                $sheet->setCellValue("A$footerRow", 'Pengurus Dana Pensiun Sekolah Kristen');
+                $sheet->getStyle("A$footerRow")->applyFromArray([
+                    'alignment' => ['horizontal' => 'center'],
+                    'font' => ['size' => 11],
+                ]);
+                $sheet->getRowDimension($footerRow)->setRowHeight(25);
+                $footerRow++;
+
+                $sheet->setCellValue("A$footerRow", '');
+                $sheet->getRowDimension($footerRow)->setRowHeight(40);
+                $footerRow++;
+
+                $left = $otorisators[0] ?? null;
+                $right = $otorisators[1] ?? null;
+
+                if ($left) {
+                    $sheet->setCellValue("C$footerRow", $left->nama_otorisator);
+                    $sheet->getStyle("C$footerRow")->applyFromArray([
+                        'font' => ['underline' => true, 'size' => 11],
+                        'alignment' => ['horizontal' => 'center'],
+                    ]);
+                }
+                if ($right) {
+                    $sheet->setCellValue("F$footerRow", $right->nama_otorisator);
+                    $sheet->getStyle("F$footerRow")->applyFromArray([
+                        'font' => ['underline' => true, 'size' => 11],
+                        'alignment' => ['horizontal' => 'center'],
+                    ]);
+                }
+                $footerRow++;
+
+                if ($left) {
+                    $sheet->setCellValue("C$footerRow", $left->jabatan_otorisator);
+                }
+                if ($right) {
+                    $sheet->setCellValue("F$footerRow", $right->jabatan_otorisator);
+                }
+                $footerRow += 5;
+
+                $sheet->getStyle("C" . ($highestRow + 3) . ":F$footerRow")->applyFromArray([
+                    'font' => ['size' => 11],
+                    'alignment' => ['horizontal' => 'center'],
+                ]);
+
+                $delegate = $event->sheet->getDelegate();
+                $delegate->getPageMargins()->setTop(0.75);
+                $delegate->getPageMargins()->setBottom(2);
+                $delegate->getPageMargins()->setLeft(0.25);
+                $delegate->getPageMargins()->setRight(0.25);
+                $delegate->getPageMargins()->setHeader(0.3);
+                $delegate->getPageMargins()->setFooter(0.3);
+                $delegate->getPageSetup()->setFitToWidth(1);
+                $delegate->getPageSetup()->setFitToHeight(1);
+                $delegate->getPageSetup()->setOrientation(PageSetup::ORIENTATION_PORTRAIT);
+                $delegate->getPageSetup()->setPaperSize(PageSetup::PAPERSIZE_FOLIO);
+
                 $protection = $sheet->getProtection();
                 $protection->setSheet(true);
                 $protection->setPassword('dapense');
