@@ -32,6 +32,7 @@ class JurnalingSheetExport implements
         $this->month = $month;
         $this->periodeId = $periodeId;
         $this->kategori = $kategori;
+        Carbon::setLocale('id');
     }
 
     public function collection()

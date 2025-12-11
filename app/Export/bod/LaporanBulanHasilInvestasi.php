@@ -24,6 +24,7 @@ class LaporanBulanHasilInvestasi implements WithTitle, FromCollection, WithHeadi
     {
         $this->periode_id = $periode_id;
         $this->month = $month;
+        Carbon::setLocale('id');
     }
 
     public function collection()

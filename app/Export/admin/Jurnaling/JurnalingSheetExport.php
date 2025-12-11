@@ -32,6 +32,7 @@ class JurnalingSheetExport implements
         $this->month = $month;
         $this->periodeId = $periodeId;
         $this->kategori = $kategori;
+        Carbon::setLocale('id');
     }
 
     public function collection()
@@ -162,7 +163,7 @@ class JurnalingSheetExport implements
         $protection = $sheet->getProtection();
         $protection->setSheet(true);
         $protection->setPassword('dapense');
-        
+
         return [];
     }
 

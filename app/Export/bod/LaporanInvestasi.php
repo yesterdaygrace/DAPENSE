@@ -26,6 +26,7 @@ class LaporanInvestasi implements WithTitle, FromCollection, WithHeadings, WithE
     {
         $this->periode_id = $periode_id;
         $this->month = $month;
+        Carbon::setLocale('id');
     }
     public function collection()
     {
@@ -192,10 +193,10 @@ class LaporanInvestasi implements WithTitle, FromCollection, WithHeadings, WithE
 
         return [
             'ASET',
-            'Saldo Akhir (' . $previousMonth->translatedFormat('F Y') . ')',
-            '% (' . $previousMonth->translatedFormat('F Y') . ')',
-            'Saldo Akhir (' . $selectedMonth->translatedFormat('F Y') . ')',
-            '% (' . $selectedMonth->translatedFormat('F Y') . ')',
+            $previousMonth->translatedFormat('F Y'),
+            ' ',
+            $selectedMonth->translatedFormat('F Y'),
+            ' ',
         ];
     }
 
@@ -226,16 +227,23 @@ class LaporanInvestasi implements WithTitle, FromCollection, WithHeadings, WithE
 
                 $sheet->insertNewRowBefore(1, 7);
 
+                $sheet->mergeCells('A1:C1');
+                $sheet->setCellValue('A1', '6');
+                $sheet->getStyle('A1')->applyFromArray([
+                    'alignment' => ['horizontal' => 'center'],
+                    'font' => ['size' => 20],
+                ]);
+
                 $titles = [
-                    'A1' => 'DANA PENSIUN SEKOLAH KRISTEN',
-                    'A2' => 'SINODE GKJ & GKI JAWA TENGAH SALATIGA',
-                    'A3' => '(PROGRAM PENSIUM MANFAAT PASTI)',
-                    'A4' => 'LAPORAN INVESTASI',
-                    'A5' => 'Per ' . $previousMonth->translatedFormat('F Y') . ' & ' . $selectedMonth->translatedFormat('F Y')
+                    'A2' => 'DANA PENSIUN SEKOLAH KRISTEN',
+                    'A3' => 'SINODE GKJ & GKI JAWA TENGAH SALATIGA',
+                    'A4' => '(PROGRAM PENSIUM MANFAAT PASTI)',
+                    'A5' => 'LAPORAN INVESTASI',
+                    'A6' => 'Per ' . $previousMonth->translatedFormat('F Y') . ' & ' . $selectedMonth->translatedFormat('F Y')
                 ];
 
-                $sheet->setCellValue('A6', '');
                 $sheet->setCellValue('A7', '');
+                $sheet->setCellValue('A8', '');
 
                 foreach ($titles as $cell => $text) {
                     $sheet->mergeCells($cell . ':C' . substr($cell, 1));
@@ -264,7 +272,28 @@ class LaporanInvestasi implements WithTitle, FromCollection, WithHeadings, WithE
                     }
 
                     if (stripos($val, 'Total') !== false) {
-                        $sheet->getStyle("A$row:E$row")->getFont()->setBold(true);
+                        // Double line BEFORE
+                        $sheet->getStyle("B" . ($row - 1) . ":E" . ($row - 1))->applyFromArray([
+                            'borders' => [
+                                'bottom' => [
+                                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_DOUBLE,
+                                    'color' => ['rgb' => '000000'],
+                                ],
+                            ],
+                        ]);
+
+                        // Bold the text
+                        $sheet->getStyle("A$row:C$row")->getFont()->setBold(true);
+
+                        // Double line AFTER
+                        $sheet->getStyle("B" . ($row + 1) . ":E" . ($row + 1))->applyFromArray([
+                            'borders' => [
+                                'top' => [
+                                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_DOUBLE,
+                                    'color' => ['rgb' => '000000'],
+                                ],
+                            ],
+                        ]);
                     }
                 }
 

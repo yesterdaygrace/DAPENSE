@@ -27,6 +27,7 @@ class LaporanAsetNeto implements WithTitle, FromCollection, WithHeadings, WithEv
     {
         $this->periode_id = $periode_id;
         $this->month = $month;
+        Carbon::setLocale('id');
     }
 
     public function collection()
@@ -273,8 +274,8 @@ class LaporanAsetNeto implements WithTitle, FromCollection, WithHeadings, WithEv
 
         return [
             'ASET',
-            'Saldo Akhir (' . $previousMonth->translatedFormat('F Y') . ')',
-            'Saldo Akhir (' . $selectedMonth->translatedFormat('F Y') . ')',
+            $previousMonth->translatedFormat('F Y'),
+            $selectedMonth->translatedFormat('F Y'),
         ];
     }
     public function columnWidths(): array
@@ -298,16 +299,23 @@ class LaporanAsetNeto implements WithTitle, FromCollection, WithHeadings, WithEv
 
                 $sheet->insertNewRowBefore(1, 7);
 
+                $sheet->mergeCells('A1:C1');
+                $sheet->setCellValue('A1', '1');
+                $sheet->getStyle('A1')->applyFromArray([
+                    'alignment' => ['horizontal' => 'center'],
+                    'font' => ['size' => 20],
+                ]);
+
                 $titles = [
-                    'A1' => 'DANA PENSIUN SEKOLAH KRISTEN',
-                    'A2' => 'SINODE GKJ & GKI JAWA TENGAH SALATIGA',
-                    'A3' => '(PROGRAM PENSIUM MANFAAT PASTI)',
-                    'A4' => 'LAPORAN ASET NETO',
-                    'A5' => 'Per ' . $previousMonth->translatedFormat('F Y') . ' & ' . $selectedMonth->translatedFormat('F Y')
+                    'A2' => 'DANA PENSIUN SEKOLAH KRISTEN',
+                    'A3' => 'SINODE GKJ & GKI JAWA TENGAH SALATIGA',
+                    'A4' => '(PROGRAM PENSIUM MANFAAT PASTI)',
+                    'A5' => 'LAPORAN ASET NETO',
+                    'A6' => 'Per ' . $previousMonth->translatedFormat('F Y') . ' & ' . $selectedMonth->translatedFormat('F Y')
                 ];
 
-                $sheet->setCellValue('A6', '');
                 $sheet->setCellValue('A7', '');
+                $sheet->setCellValue('A8', '');
 
                 foreach ($titles as $cell => $text) {
                     $sheet->mergeCells($cell . ':C' . substr($cell, 1));
@@ -336,7 +344,44 @@ class LaporanAsetNeto implements WithTitle, FromCollection, WithHeadings, WithEv
                     }
 
                     if (stripos($val, 'Total') !== false) {
+                        // Bold text for Total row
                         $sheet->getStyle("A$row:C$row")->getFont()->setBold(true);
+
+                        // Add thick TOP border before Total row
+                        $sheet->getStyle("B" . ($row - 1) . ":C" . ($row - 1))->applyFromArray([
+                            'borders' => [
+                                'bottom' => [
+                                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
+                                    'color' => ['rgb' => '000000'],
+                                ],
+                            ],
+                        ]);
+                    }
+
+                    if (trim(strtoupper($val)) === 'ASET NETO') {
+
+                        // Double line BEFORE
+                        $sheet->getStyle("B" . ($row - 1) . ":C" . ($row - 1))->applyFromArray([
+                            'borders' => [
+                                'bottom' => [
+                                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_DOUBLE,
+                                    'color' => ['rgb' => '000000'],
+                                ],
+                            ],
+                        ]);
+
+                        // Bold the text
+                        $sheet->getStyle("A$row:C$row")->getFont()->setBold(true);
+
+                        // Double line AFTER
+                        $sheet->getStyle("B" . ($row + 1) . ":C" . ($row + 1))->applyFromArray([
+                            'borders' => [
+                                'top' => [
+                                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_DOUBLE,
+                                    'color' => ['rgb' => '000000'],
+                                ],
+                            ],
+                        ]);
                     }
                 }
 
@@ -413,6 +458,7 @@ class LaporanAsetNeto implements WithTitle, FromCollection, WithHeadings, WithEv
                 $delegate->getPageSetup()->setFitToHeight(1);
                 $delegate->getPageSetup()->setOrientation(PageSetup::ORIENTATION_PORTRAIT);
                 $delegate->getPageSetup()->setPaperSize(PageSetup::PAPERSIZE_FOLIO);
+                $delegate->getHeaderFooter()->setOddHeader('&CPage &P of &N');
 
                 $protection = $sheet->getProtection();
                 $protection->setSheet(true);

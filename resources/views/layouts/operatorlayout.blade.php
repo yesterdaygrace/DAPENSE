@@ -83,7 +83,7 @@
                                     <li>
                                         <div class="dropdown-divider"></div>
                                     </li>
-                                    <li>
+                                    <!-- <li>
                                         <a class="dropdown-item" href="{{ route('operator/otorisator/home') }}">
                                             <i class="bx bx-cog me-2"></i>
                                             <span class="align-middle">Pengaturan Otorisator</span>
@@ -91,7 +91,7 @@
                                     </li>
                                     <li>
                                         <div class="dropdown-divider"></div>
-                                    </li>
+                                    </li> -->
                                     <li>
                                         <a class="dropdown-item" href="{{ route('logout') }}">
                                             <i class="bx bx-power-off me-2"></i>

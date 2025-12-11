@@ -26,6 +26,7 @@ class LaporanAnalisaLikuiditas implements WithTitle, FromCollection, WithHeading
     {
         $this->periode_id = $periode_id;
         $this->month = $month;
+        Carbon::setLocale('id');
     }
 
     public function collection()
@@ -37,10 +38,10 @@ class LaporanAnalisaLikuiditas implements WithTitle, FromCollection, WithHeading
 
         $result = [];
 
-        foreach (['^LIQUIDITAS BULANAN', '^LIQUIDITAS AKUMULATIF'] as $sectionTitle) {
+        foreach (['LIQUIDITAS BULANAN', 'LIQUIDITAS AKUMULATIF'] as $sectionTitle) {
             $result[] = ['Investasi Nilai Buku' => $sectionTitle, 'Saldo Akhir (Current)' => '', 'Saldo Akhir (Last)' => ''];
 
-            $isAkumulatif = $sectionTitle === '^LIQUIDITAS AKUMULATIF';
+            $isAkumulatif = $sectionTitle === 'LIQUIDITAS AKUMULATIF';
             $sectionTotalCurrent = $sectionTotalLast = 0;
             $asetLancarTotal = $biayaTotal = 0;
 
@@ -64,7 +65,7 @@ class LaporanAnalisaLikuiditas implements WithTitle, FromCollection, WithHeading
             }
             $result[] = [
                 'Investasi Nilai Buku' => '        Total ASET LANCAR',
-                'Saldo Akhir (Last)' => $this->formatSaldo($sectionTitle === '^LIQUIDITAS BULANAN' ? $this->getAsetLancarLast($asetLancarItems, $previousMonth) : $asetLancarTotal),
+                'Saldo Akhir (Last)' => $this->formatSaldo($sectionTitle === 'LIQUIDITAS BULANAN' ? $this->getAsetLancarLast($asetLancarItems, $previousMonth) : $asetLancarTotal),
                 'Saldo Akhir (Current)' => $this->formatSaldo($asetLancarTotal),
             ];
 
@@ -93,7 +94,7 @@ class LaporanAnalisaLikuiditas implements WithTitle, FromCollection, WithHeading
 
             $result[] = [
                 'Investasi Nilai Buku' => '        Total BIAYA INVESTASI DAN OPERASIONAL',
-                'Saldo Akhir (Last)' => $this->formatSaldo($sectionTitle === '^LIQUIDITAS BULANAN' ? $this->getBiayaLast($biayaItems, $previousMonth) : $biayaTotal),
+                'Saldo Akhir (Last)' => $this->formatSaldo($sectionTitle === 'LIQUIDITAS BULANAN' ? $this->getBiayaLast($biayaItems, $previousMonth) : $biayaTotal),
                 'Saldo Akhir (Current)' => $this->formatSaldo($biayaTotal),
             ];
 
@@ -116,7 +117,7 @@ class LaporanAnalisaLikuiditas implements WithTitle, FromCollection, WithHeading
                     'Saldo Akhir (Last)' => '-',
                     'Saldo Akhir (Current)' => number_format($rasio, 2),
                 ];
-            } elseif ($sectionTitle === '^LIQUIDITAS BULANAN') {
+            } elseif ($sectionTitle === 'LIQUIDITAS BULANAN') {
                 $rasio = $biayaTotal != 0 ? $asetLancarTotal / $biayaTotal : 0;
                 $result[] = [
                     'Investasi Nilai Buku' => 'Rasio Aset Lancar terhadap Biaya',
@@ -202,8 +203,8 @@ class LaporanAnalisaLikuiditas implements WithTitle, FromCollection, WithHeading
 
         return [
             'ASET',
-            'Saldo Akhir (' . $previousMonth->translatedFormat('F Y') . ')',
-            'Saldo Akhir (' . $selectedMonth->translatedFormat('F Y') . ')',
+            $previousMonth->translatedFormat('F Y'),
+            $selectedMonth->translatedFormat('F Y'),
         ];
     }
 

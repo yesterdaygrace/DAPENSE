@@ -24,6 +24,7 @@ class LaporanPerhitunganHasilUsaha implements WithTitle, FromCollection, WithHea
     {
         $this->periode_id = $periode_id;
         $this->month = $month;
+        Carbon::setLocale('id');
     }
 
     public function collection()
@@ -139,7 +140,7 @@ class LaporanPerhitunganHasilUsaha implements WithTitle, FromCollection, WithHea
                 $hasilUsahaSetelahPajakCurrent = $hasilInvestasiCurrent - $totals['BEBAN OPERASIONAL'][0];
                 $hasilUsahaSetelahPajakLast = $hasilInvestasiLast - $totals['BEBAN OPERASIONAL'][1];
                 $result[] = [
-                    'HASIL USAHA SETELAH PAJAK',
+                    'HASIL USAHA SEBELUM PAJAK',
                     $this->formatSaldo($hasilUsahaSetelahPajakLast),
                     $this->formatSaldo($hasilUsahaSetelahPajakCurrent),
                 ];
@@ -147,7 +148,7 @@ class LaporanPerhitunganHasilUsaha implements WithTitle, FromCollection, WithHea
                 $hasilUsahaSebelumPajakCurrent = $hasilUsahaSetelahPajakCurrent + $totals['PENDAPATAN DAN BEBAN LAIN-LAIN'][0];
                 $hasilUsahaSebelumPajakLast = $hasilUsahaSetelahPajakLast + $totals['PENDAPATAN DAN BEBAN LAIN-LAIN'][1];
                 $result[] = [
-                    'HASIL USAHA SEBELUM PAJAK',
+                    'HASIL USAHA SETELAH PAJAK',
                     $this->formatSaldo($hasilUsahaSebelumPajakLast),
                     $this->formatSaldo($hasilUsahaSebelumPajakCurrent)
                 ];
@@ -213,8 +214,8 @@ class LaporanPerhitunganHasilUsaha implements WithTitle, FromCollection, WithHea
 
         return [
             'ASET',
-            'Saldo Akhir (' . $previousMonth->translatedFormat('F Y') . ')',
-            'Saldo Akhir (' . $selectedMonth->translatedFormat('F Y') . ')',
+            $previousMonth->translatedFormat('F Y'),
+            $selectedMonth->translatedFormat('F Y'),
         ];
     }
 
@@ -239,12 +240,19 @@ class LaporanPerhitunganHasilUsaha implements WithTitle, FromCollection, WithHea
 
                 $sheet->insertNewRowBefore(1, 7);
 
+                $sheet->mergeCells('A1:C1');
+                $sheet->setCellValue('A1', '4');
+                $sheet->getStyle('A1')->applyFromArray([
+                    'alignment' => ['horizontal' => 'center'],
+                    'font' => ['size' => 20],
+                ]);
+
                 $titles = [
-                    'A1' => 'DANA PENSIUN SEKOLAH KRISTEN',
-                    'A2' => 'SINODE GKJ & GKI JAWA TENGAH SALATIGA',
-                    'A3' => '(PROGRAM PENSIUM MANFAAT PASTI)',
-                    'A4' => 'LAPORAN PERHITUNGAN HASIL USAHA',
-                    'A5' => 'Per ' . $previousMonth->translatedFormat('F Y') . ' & ' . $selectedMonth->translatedFormat('F Y'),
+                    'A2' => 'DANA PENSIUN SEKOLAH KRISTEN',
+                    'A3' => 'SINODE GKJ & GKI JAWA TENGAH SALATIGA',
+                    'A4' => '(PROGRAM PENSIUM MANFAAT PASTI)',
+                    'A5' => 'LAPORAN PERHITUNGAN HASIL USAHA',
+                    'A6' => 'Per ' . $previousMonth->translatedFormat('F Y') . ' & ' . $selectedMonth->translatedFormat('F Y')
                 ];
 
                 foreach ($titles as $cell => $text) {
@@ -256,6 +264,10 @@ class LaporanPerhitunganHasilUsaha implements WithTitle, FromCollection, WithHea
                     ]);
                 }
 
+                $sheet->setCellValue('A7', '');
+                $sheet->setCellValue('A8', '');
+
+
                 $highestRow = $sheet->getHighestRow();
 
                 $sheet->getStyle("A8:A$highestRow")->getAlignment()->setHorizontal('left');
@@ -263,9 +275,45 @@ class LaporanPerhitunganHasilUsaha implements WithTitle, FromCollection, WithHea
 
                 for ($row = 8; $row <= $highestRow; $row++) {
                     $val = trim((string)$sheet->getCell("A$row")->getValue());
-
-                    if (stripos($val, 'Total') !== false || stripos($val, 'HASIL') !== false) {
+                    if (stripos($val, 'Total') !== false) {
+                        // Bold text for Total row
                         $sheet->getStyle("A$row:C$row")->getFont()->setBold(true);
+
+                        // Add thick TOP border before Total row
+                        $sheet->getStyle("B" . ($row - 1) . ":C" . ($row - 1))->applyFromArray([
+                            'borders' => [
+                                'bottom' => [
+                                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
+                                    'color' => ['rgb' => '000000'],
+                                ],
+                            ],
+                        ]);
+                    }
+
+                    if (trim(strtoupper($val)) === 'HASIL USAHA SETELAH PAJAK') {
+
+                        // Double line BEFORE
+                        $sheet->getStyle("B" . ($row - 1) . ":C" . ($row - 1))->applyFromArray([
+                            'borders' => [
+                                'bottom' => [
+                                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_DOUBLE,
+                                    'color' => ['rgb' => '000000'],
+                                ],
+                            ],
+                        ]);
+
+                        // Bold the text
+                        $sheet->getStyle("A$row:C$row")->getFont()->setBold(true);
+
+                        // Double line AFTER
+                        $sheet->getStyle("B" . ($row + 1) . ":C" . ($row + 1))->applyFromArray([
+                            'borders' => [
+                                'top' => [
+                                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_DOUBLE,
+                                    'color' => ['rgb' => '000000'],
+                                ],
+                            ],
+                        ]);
                     }
                 }
 

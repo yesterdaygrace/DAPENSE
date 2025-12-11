@@ -15,6 +15,7 @@ use Maatwebsite\Excel\Concerns\{
     WithCustomStartCell
 };
 use Maatwebsite\Excel\Events\AfterSheet;
+use Carbon\Carbon;
 
 class BukuBesarExportOperator implements
     FromCollection,
@@ -38,6 +39,7 @@ class BukuBesarExportOperator implements
         $this->kodeAkun  = $kodeAkun;
         $this->namaAkun  = $namaAkun;
         $this->bulan     = $bulan;
+        Carbon::setLocale('id');
     }
 
     public function title(): string

@@ -26,6 +26,7 @@ class LaporanNeraca implements WithTitle, FromCollection, WithHeadings, WithEven
     {
         $this->periode_id = $periode_id;
         $this->month = $month;
+        Carbon::setLocale('id');
     }
 
     public function collection()
@@ -232,8 +233,8 @@ class LaporanNeraca implements WithTitle, FromCollection, WithHeadings, WithEven
 
         return [
             'ASET',
-            'Saldo Akhir (' . $previousMonth->translatedFormat('F Y') . ')',
-            'Saldo Akhir (' . $selectedMonth->translatedFormat('F Y') . ')',
+            $previousMonth->translatedFormat('F Y'),
+            $selectedMonth->translatedFormat('F Y'),
         ];
     }
 
@@ -258,16 +259,23 @@ class LaporanNeraca implements WithTitle, FromCollection, WithHeadings, WithEven
 
                 $sheet->insertNewRowBefore(1, 7);
 
+                $sheet->mergeCells('A1:C1');
+                $sheet->setCellValue('A1', '3');
+                $sheet->getStyle('A1')->applyFromArray([
+                    'alignment' => ['horizontal' => 'center'],
+                    'font' => ['size' => 20],
+                ]);
+
                 $titles = [
-                    'A1' => 'DANA PENSIUN SEKOLAH KRISTEN',
-                    'A2' => 'SINODE GKJ & GKI JAWA TENGAH SALATIGA',
-                    'A3' => '(PROGRAM PENSIUM MANFAAT PASTI)',
-                    'A4' => 'LAPORAN NERACA',
-                    'A5' => 'Per ' . $previousMonth->translatedFormat('F Y') . ' & ' . $selectedMonth->translatedFormat('F Y')
+                    'A2' => 'DANA PENSIUN SEKOLAH KRISTEN',
+                    'A3' => 'SINODE GKJ & GKI JAWA TENGAH SALATIGA',
+                    'A4' => '(PROGRAM PENSIUM MANFAAT PASTI)',
+                    'A5' => 'LAPORAN NERACA',
+                    'A6' => 'Per ' . $previousMonth->translatedFormat('F Y') . ' & ' . $selectedMonth->translatedFormat('F Y')
                 ];
 
-                $sheet->setCellValue('A6', '');
                 $sheet->setCellValue('A7', '');
+                $sheet->setCellValue('A8', '');
 
                 foreach ($titles as $cell => $text) {
                     $sheet->mergeCells($cell . ':C' . substr($cell, 1));
@@ -296,7 +304,18 @@ class LaporanNeraca implements WithTitle, FromCollection, WithHeadings, WithEven
                     }
 
                     if (stripos($val, 'Total') !== false) {
+                        // Bold text for Total row
                         $sheet->getStyle("A$row:C$row")->getFont()->setBold(true);
+
+                        // Add thick TOP border before Total row
+                        $sheet->getStyle("B" . ($row - 1) . ":C" . ($row - 1))->applyFromArray([
+                            'borders' => [
+                                'bottom' => [
+                                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
+                                    'color' => ['rgb' => '000000'],
+                                ],
+                            ],
+                        ]);
                     }
                 }
 

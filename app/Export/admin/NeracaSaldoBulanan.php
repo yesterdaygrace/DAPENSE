@@ -165,6 +165,7 @@ class NeracaSaldoBulanan implements FromCollection, WithTitle, WithStyles, WithC
     {
         $this->periode_id = $periode_id;
         $this->month = $month;
+        Carbon::setLocale('id');
     }
 
     public function collection(): Collection

@@ -127,8 +127,8 @@
                     <tfoot>
                         <tr>
                             <th colspan="5" align="right">Total:</th>
-                            <th>{{ number_format($totalDebit, 2) }}</th>
-                            <th>{{ number_format($totalCredit, 2) }}</th>
+                            <th id="total-debit">{{ number_format($totalDebit, 2) }}</th>
+                            <th id="total-credit">{{ number_format($totalCredit, 2) }}</th>
                         </tr>
                     </tfoot>
                 </table>
@@ -158,11 +158,35 @@
             previousNomorBukti = nomorBukti;
         });
 
+        // Fungsi update total sesuai baris yang tampil
+        function updateTotals() {
+            const rows = journalTable.querySelectorAll('tbody tr.journal-row');
+            let totalDebit = 0;
+            let totalCredit = 0;
+
+            rows.forEach(row => {
+                if (row.style.display !== 'none') {
+                    const debit = parseFloat(row.querySelector('td:nth-child(6)').innerText.replace(/,/g, '')) || 0;
+                    const kredit = parseFloat(row.querySelector('td:nth-child(7)').innerText.replace(/,/g, '')) || 0;
+                    totalDebit += debit;
+                    totalCredit += kredit;
+                }
+            });
+
+            document.getElementById('total-debit').innerText = totalDebit.toLocaleString(undefined, {
+                minimumFractionDigits: 2
+            });
+            document.getElementById('total-credit').innerText = totalCredit.toLocaleString(undefined, {
+                minimumFractionDigits: 2
+            });
+        }
+
         // Fungsi Filter
         filterButtons.forEach(button => {
             button.addEventListener('click', function() {
                 const category = this.getAttribute('data-category') || 'all';
                 filterByCategory(category);
+                updateTotals();
             });
         });
 
@@ -194,6 +218,8 @@
 
                 row.style.display = (nomorBukti.includes(query) || coa.includes(query) || keterangan.includes(query)) ? '' : 'none';
             });
+
+            updateTotals();
         });
 
         // Fungsi Sorting
@@ -204,6 +230,7 @@
             icon.className = order === 'asc' ? 'sort-icon bx bx-sort-up' : 'sort-icon bx bx-sort-down';
 
             sortTable(order);
+            updateTotals();
         });
 
         function sortTable(order) {
@@ -216,6 +243,9 @@
             });
             rows.forEach(row => tbody.appendChild(row));
         }
+
+        // Inisialisasi total pertama kali
+        updateTotals();
     });
 </script>
 

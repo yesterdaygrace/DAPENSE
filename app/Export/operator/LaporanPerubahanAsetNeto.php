@@ -25,6 +25,7 @@ class LaporanPerubahanAsetNeto implements WithTitle, FromCollection, WithHeading
     {
         $this->periode_id = $periode_id;
         $this->month = $month;
+        Carbon::setLocale('id');
     }
 
     public function collection()
@@ -282,8 +283,8 @@ class LaporanPerubahanAsetNeto implements WithTitle, FromCollection, WithHeading
 
         return [
             'ASET',
-            'Saldo Akhir (' . $previousMonth->translatedFormat('F Y') . ')',
-            'Saldo Akhir (' . $selectedMonth->translatedFormat('F Y') . ')',
+            $previousMonth->translatedFormat('F Y'),
+            $selectedMonth->translatedFormat('F Y'),
         ];
     }
 
@@ -308,16 +309,23 @@ class LaporanPerubahanAsetNeto implements WithTitle, FromCollection, WithHeading
 
                 $sheet->insertNewRowBefore(1, 7);
 
+                $sheet->mergeCells('A1:C1');
+                $sheet->setCellValue('A1', '2');
+                $sheet->getStyle('A1')->applyFromArray([
+                    'alignment' => ['horizontal' => 'center'],
+                    'font' => ['size' => 20],
+                ]);
+
                 $titles = [
-                    'A1' => 'DANA PENSIUN SEKOLAH KRISTEN',
-                    'A2' => 'SINODE GKJ & GKI JAWA TENGAH SALATIGA',
-                    'A3' => '(PROGRAM PENSIUM MANFAAT PASTI)',
-                    'A4' => 'LAPORAN PERUBAHAN HASIL USAHA',
-                    'A5' => 'Per ' . $previousMonth->translatedFormat('F Y') . ' & ' . $selectedMonth->translatedFormat('F Y')
+                    'A2' => 'DANA PENSIUN SEKOLAH KRISTEN',
+                    'A3' => 'SINODE GKJ & GKI JAWA TENGAH SALATIGA',
+                    'A4' => '(PROGRAM PENSIUM MANFAAT PASTI)',
+                    'A5' => 'LAPORAN PERUBAHAN HASIL USAHA',
+                    'A6' => 'Per ' . $previousMonth->translatedFormat('F Y') . ' & ' . $selectedMonth->translatedFormat('F Y')
                 ];
 
-                $sheet->setCellValue('A6', '');
                 $sheet->setCellValue('A7', '');
+                $sheet->setCellValue('A8', '');
 
                 foreach ($titles as $cell => $text) {
                     $sheet->mergeCells($cell . ':C' . substr($cell, 1));
@@ -345,11 +353,45 @@ class LaporanPerubahanAsetNeto implements WithTitle, FromCollection, WithHeading
                         ]);
                     }
 
-                    if (
-                        stripos($val, 'Total') !== false ||
-                        stripos($val, 'KENAIKKAN ASET NETO') !== false
-                    ) {
+                    if (stripos($val, 'Total') !== false) {
+                        // Bold text for Total row
                         $sheet->getStyle("A$row:C$row")->getFont()->setBold(true);
+
+                        // Add thick TOP border before Total row
+                        $sheet->getStyle("B" . ($row - 1) . ":C" . ($row - 1))->applyFromArray([
+                            'borders' => [
+                                'bottom' => [
+                                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
+                                    'color' => ['rgb' => '000000'],
+                                ],
+                            ],
+                        ]);
+                    }
+
+                    if (trim(strtoupper($val)) === 'ASET NETO AKHIR PERIODE') {
+
+                        // Double line BEFORE
+                        $sheet->getStyle("B" . ($row - 1) . ":C" . ($row - 1))->applyFromArray([
+                            'borders' => [
+                                'bottom' => [
+                                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_DOUBLE,
+                                    'color' => ['rgb' => '000000'],
+                                ],
+                            ],
+                        ]);
+
+                        // Bold the text
+                        $sheet->getStyle("A$row:C$row")->getFont()->setBold(true);
+
+                        // Double line AFTER
+                        $sheet->getStyle("B" . ($row + 1) . ":C" . ($row + 1))->applyFromArray([
+                            'borders' => [
+                                'top' => [
+                                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_DOUBLE,
+                                    'color' => ['rgb' => '000000'],
+                                ],
+                            ],
+                        ]);
                     }
                 }
 
