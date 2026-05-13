@@ -165,14 +165,14 @@
 
         <!-- Debit Field -->
         <div class="mb-3" id="debit-group">
-            <label for="debit" class="form-label">Debit</label>
+            <label for="debit" class="form-label">Saldo Awal</label>
             <input type="text" class="form-control" id="debit" name="debit" value="{{ number_format($saldo_awal->debit, 2) }}" required>
         </div>
 
         <!-- Kredit Field -->
         <div class="mb-3" id="kredit-group">
-            <label for="kredit" class="form-label">Kredit</label>
-            <input type="text" class="form-control" id="kredit" name="kredit" value="{{ number_format($saldo_awal->kredit, 2) }}">
+            <label for="kredit" class="form-label" hidden>Kredit</label>
+            <input type="text" class="form-control" id="kredit" name="kredit" value="{{ number_format($saldo_awal->kredit, 2) }}" hidden>
         </div>
 
         <!-- Periode -->

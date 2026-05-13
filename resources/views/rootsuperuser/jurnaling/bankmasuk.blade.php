@@ -1097,9 +1097,9 @@
             const tanggalJurnalInput = document.getElementById('tanggal_jurnal');
             tanggalJurnalInput.setAttribute('max', todayISO);
 
-            const firstDayOfLastMonth = new Date(yyyy, today.getMonth() - 1, 1);
-            const minISO = firstDayOfLastMonth.toISOString().split('T')[0];
-            tanggalJurnalInput.setAttribute('min', minISO);
+            // const firstDayOfLastMonth = new Date(yyyy, today.getMonth() - 1, 1);
+            // const minISO = firstDayOfLastMonth.toISOString().split('T')[0];
+            // tanggalJurnalInput.setAttribute('min', minISO);
 
             tanggalJurnalInput.addEventListener('input', function() {
                 validateDate(this);
