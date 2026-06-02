@@ -21,8 +21,10 @@ return new class extends Migration
             $table->foreignId('header_coa_id')->constrained('header_coas')->onDelete('cascade');
             $table->timestamps();
 
+            $table->unique('kode_akun');
             $table->unique(['kode_akun', 'nama_akun']);
-        });    }
+        });
+    }
 
     /**
      * Reverse the migrations.
