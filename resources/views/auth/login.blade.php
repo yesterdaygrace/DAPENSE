@@ -70,11 +70,11 @@
                             </div>
                         </form>
 
-                        <!-- <p class="text-center">
+                         <p class="text-center">
                             <a href="{{ route('register') }}">
                                 <span>Register</span>
                             </a>
-                        </p> -->
+                        </p>
                     </div>
                 </div>
             </div>

@@ -149,8 +149,6 @@
                         <p class="card-text">Start Date: {{ \Carbon\Carbon::parse($periode->tanggal_awal)->format('d M, Y') }}</p>
                         <p class="card-text">End Date: {{ \Carbon\Carbon::parse($periode->tanggal_akhir)->format('d M, Y') }}</p>
                         <div class="d-flex justify-content-between align-items-center demo-inline-spacing">
-                            {{-- Initially show only the "Rekap Jurnal" and "View Journal" buttons --}}
-                            @if(!$periode->is_rekap)
                             <form method="GET" action="{{ route('rootsuperuser/neracasaldo/months', ['periode' => $periode->id]) }}">
                                 @csrf
                                 <button type="submit" class="btn btn-primary">Rekap Bulan</button>
@@ -159,16 +157,6 @@
                                 @csrf
                                 <button type="submit" class="btn btn-primary">Tampilkan Neraca</button>
                             </form>
-                            @else
-                            <form method="POST" action="{{ route('rootsuperuser/jurnaling/unrekap', $periode->id) }}">
-                                @csrf
-                                <button type="submit" class="btn btn-warning">Unrekap</button>
-                            </form>
-                            <form method="GET" action="{{ route('rootsuperuser/neracasaldo/monthstampil', ['periode' => $periode->id]) }}">
-                                @csrf
-                                <button type="submit" class="btn btn-primary">Tampilkan Neraca</button>
-                            </form>
-                            @endif
                         </div>
                     </div>
                 </div>
