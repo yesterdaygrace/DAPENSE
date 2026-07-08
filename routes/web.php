@@ -33,6 +33,7 @@ use App\Http\Controllers\rootsuperuser\JurnalingControllerRootSuperuser;
 use App\Http\Controllers\rootsuperuser\NeracaSaldoControllerRootSuperuser;
 use App\Http\Controllers\rootsuperuser\OtorisatorControllerRootSuperuser;
 use App\Http\Controllers\rootsuperuser\PeriodeControllerRootSuperuser;
+use App\Http\Controllers\rootsuperuser\PostingControllerRootSuperuser;
 use App\Http\Controllers\rootsuperuser\ProductControllerRootSuperuser;
 use App\Http\Controllers\rootsuperuser\SaldoAwalControllerRootSuperuser;
 use App\Http\Middleware\RootSuperuser;
