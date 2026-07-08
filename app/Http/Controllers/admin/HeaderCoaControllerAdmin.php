@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers\admin;
 
-use App\Models\HeaderCOA;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Base\HeaderCoaController;
 
-class HeaderCoaControllerAdmin
+class HeaderCoaControllerAdmin extends HeaderCoaController
 {
-    public function index()
+    protected function viewPrefix(): string
     {
-        $headerCoas = HeaderCOA::paginate(10);
-        return view('admin.account.headercoa.home', compact('headerCoas'));
+        return 'admin';
     }
 }

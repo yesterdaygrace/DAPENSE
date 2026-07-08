@@ -16,24 +16,16 @@ class NeracaSaldo extends Model
         'debit',
         'kredit',
         'balance',
-        'saldo_awal', // Ensure this is included
-
+        'saldo_awal',
     ];
 
     public function coa()
     {
         return $this->belongsTo(COA::class, 'coa_id', 'kode_akun');
-        
     }
-
 
     public function periode()
     {
-        return $this->belongsTo(Periode::class, 'periode_id'); // Relasi ke tabel periode
-    }
-
-    public function neracaSaldo()
-    {
-        return $this->hasMany(NeracaSaldo::class);
+        return $this->belongsTo(Periode::class, 'periode_id');
     }
 }

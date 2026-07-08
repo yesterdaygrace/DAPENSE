@@ -7,7 +7,7 @@ use App\Models\Periode;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
-class PostingControlerRootSuperuser
+class PostingControllerRootSuperuser
 {
     public function index(Request $request)
     {
@@ -69,10 +69,9 @@ class PostingControlerRootSuperuser
             'months' => $months,
             'periodeId' => $periodeId,
             'selectedPeriode' => Periode::find($periodeId),
-            'jurnalings' => $jurnalings
+            'jurnalings' => $jurnalings,
         ]);
     }
-
 
     // Handle journal posting
     public function postJurnal(Request $request)
@@ -85,6 +84,7 @@ class PostingControlerRootSuperuser
             $entry->posted = true;
             $entry->save();
         }    // Redirect back to the posting page with the selected period pre-selected
+
         return redirect()->route('rootsuperuser/posting/post', ['periode_id' => $periodeId])
             ->with('success', 'Journal entries successfully posted!');
     }

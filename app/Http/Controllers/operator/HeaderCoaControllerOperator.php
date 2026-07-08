@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers\operator;
 
-use App\Models\HeaderCOA;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Base\HeaderCoaController;
 
-class HeaderCoaControllerOperator
+class HeaderCoaControllerOperator extends HeaderCoaController
 {
-    public function index()
+    protected function viewPrefix(): string
     {
-        $headerCoas = HeaderCOA::paginate(10);
-        return view('operator.account.headercoa.home', compact('headerCoas'));
+        return 'operator';
     }
 }

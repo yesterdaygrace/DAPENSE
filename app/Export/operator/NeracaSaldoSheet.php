@@ -2,13 +2,12 @@
 
 namespace App\Export\operator;
 
-use App\Export\operator\LaporanAsetNetoExport;
-use App\Models\NeracaSaldo;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 
 class NeracaSaldoSheet implements WithMultipleSheets
 {
     protected $periode_id;
+
     protected $month;
 
     public function __construct($periode_id, $month)

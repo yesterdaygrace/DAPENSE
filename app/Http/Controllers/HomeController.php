@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Periode;
-use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
@@ -14,10 +13,10 @@ class HomeController extends Controller
 
     public function homeRootSuperuser()
     {
-        $periodes = Periode::orderBy('tanggal_awal', 'asc')->get();;
+        $periodes = Periode::orderBy('tanggal_awal', 'asc')->get();
+
         return view('rootsuperuser.dashboard', compact('periodes'));
     }
-
 
     public function homeOperator()
     {

@@ -2,80 +2,17 @@
 
 namespace App\Http\Controllers\rootsuperuser;
 
-use App\Models\Otorisator;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Base\OtorisatorController;
 
-class OtorisatorControllerRootSuperuser
+class OtorisatorControllerRootSuperuser extends OtorisatorController
 {
-
-    public function index()
+    protected function viewPrefix(): string
     {
-        $otorisators = Otorisator::orderBy('id', 'asc')->get();
-        return view('rootsuperuser.otorisator.home', compact('otorisators'));
+        return 'rootsuperuser';
     }
 
-
-    /**
-     * Form tambah otorisator
-     */
-    public function create()
+    protected function routePrefix(): string
     {
-        return view('rootsuperuser.otorisator.create');
-    }
-
-    /**
-     * Simpan otorisator baru
-     */
-    public function store(Request $request)
-    {
-        $request->validate([
-            'nama_otorisator' => 'required|string|max:255',
-            'jabatan_otorisator' => 'required|string|max:255',
-        ]);
-
-        Otorisator::create($request->only(['nama_otorisator', 'jabatan_otorisator']));
-
-        return redirect()->route('rootsuperuser/otorisator/home')
-            ->with('success', 'Otorisator berhasil ditambahkan.');
-    }
-
-    /**
-     * Form edit otorisator
-     */
-    public function edit($id)
-    {
-        $otorisator = Otorisator::findOrFail($id);
-        return view('rootsuperuser.otorisator.update', compact('otorisator'));
-    }
-
-
-    /**
-     * Update otorisator
-     */
-    public function update(Request $request, $id)
-    {
-        $request->validate([
-            'nama_otorisator' => 'required|string|max:255',
-            'jabatan_otorisator' => 'required|string|max:255',
-        ]);
-
-        $otorisator = Otorisator::findOrFail($id);
-        $otorisator->update($request->only(['nama_otorisator', 'jabatan_otorisator']));
-
-        return redirect()->route('rootsuperuser/otorisator/home')
-            ->with('success', 'Otorisator berhasil diperbarui.');
-    }
-
-
-    /**
-     * Hapus otorisator
-     */
-    public function destroy($id)
-    {
-        $otorisator = Otorisator::findOrFail($id);
-        $otorisator->delete();
-
-        return redirect()->route('rootsuperuser/otorisator/home')
-            ->with('success', 'Otorisator berhasil dihapus.');
+        return 'rootsuperuser';
     }
 }

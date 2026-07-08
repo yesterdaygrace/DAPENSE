@@ -1,45 +1,41 @@
 <?php
 
 use App\Http\Controllers\admin\BukuBesarControllerAdmin;
-use App\Http\Controllers\Auth\AuthenticatedSessionController;
-use App\Http\Controllers\Auth\PeriodeController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\rootsuperuser\CoaControllerRootSuperuser;
-use App\Http\Controllers\rootsuperuser\HeaderCoaControllerRootSuperuser;
-use App\Http\Controllers\rootsuperuser\HeaderControllerRootSuperuser;
-use App\Http\Controllers\rootsuperuser\JurnalingControllerRootSuperuser;
-use App\Http\Controllers\rootsuperuser\NeracaSaldoControllerRootSuperuser;
-use App\Http\Controllers\rootsuperuser\PeriodeControllerRootSuperuser;
-use App\Http\Controllers\rootsuperuser\ProductControllerRootSuperuser;
-use App\Http\Controllers\rootsuperuser\BukuBesarControllerRootSuperuser;
-use App\Http\Controllers\rootsuperuser\PostingControlerRootSuperuser;
-use App\Http\Controllers\rootsuperuser\PostingController;
-use App\Http\Controllers\rootsuperuser\SaldoAwalControllerRootSuperuser;
-use App\Http\Controllers\rootsuperuser\OtorisatorControllerRootSuperuser;
-use App\Http\Controllers\admin\ProductControllerAdmin;
-use App\Http\Controllers\admin\PeriodeControllerAdmin;
-use App\Http\Controllers\admin\HeaderCoaControllerAdmin;
 use App\Http\Controllers\admin\CoaControllerAdmin;
+use App\Http\Controllers\admin\HeaderCoaControllerAdmin;
 use App\Http\Controllers\admin\HeaderControllerAdmin;
 use App\Http\Controllers\admin\JurnalingControllerAdmin;
-use App\Http\Controllers\admin\SaldoAwalControllerAdmin;
 use App\Http\Controllers\admin\NeracaSaldoControllerAdmin;
 use App\Http\Controllers\admin\OtorisatorControllerAdmin;
+use App\Http\Controllers\admin\PeriodeControllerAdmin;
+use App\Http\Controllers\admin\ProductControllerAdmin;
+use App\Http\Controllers\admin\SaldoAwalControllerAdmin;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\bod\BukuBesarControllerBOD;
 use App\Http\Controllers\bod\JurnalingControllerBOD;
 use App\Http\Controllers\bod\NeracaSaldoControllerBOD;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\operator\BukuBesarControllerOperator;
 use App\Http\Controllers\operator\CoaControllerOperator;
 use App\Http\Controllers\operator\HeaderCoaControllerOperator;
 use App\Http\Controllers\operator\HeaderControllerOperator;
 use App\Http\Controllers\operator\JurnalingControllerOperator;
-use App\Http\Controllers\operator\SaldoAwalControllerOperator;
 use App\Http\Controllers\operator\NeracaSaldoControllerOperator;
-use App\Http\Controllers\operator\PeriodeControllerOperator;
 use App\Http\Controllers\operator\OtorisatorControllerOperator;
+use App\Http\Controllers\operator\PeriodeControllerOperator;
+use App\Http\Controllers\operator\SaldoAwalControllerOperator;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\rootsuperuser\BukuBesarControllerRootSuperuser;
+use App\Http\Controllers\rootsuperuser\CoaControllerRootSuperuser;
+use App\Http\Controllers\rootsuperuser\HeaderCoaControllerRootSuperuser;
+use App\Http\Controllers\rootsuperuser\HeaderControllerRootSuperuser;
+use App\Http\Controllers\rootsuperuser\JurnalingControllerRootSuperuser;
+use App\Http\Controllers\rootsuperuser\NeracaSaldoControllerRootSuperuser;
+use App\Http\Controllers\rootsuperuser\OtorisatorControllerRootSuperuser;
+use App\Http\Controllers\rootsuperuser\PeriodeControllerRootSuperuser;
+use App\Http\Controllers\rootsuperuser\ProductControllerRootSuperuser;
+use App\Http\Controllers\rootsuperuser\SaldoAwalControllerRootSuperuser;
 use App\Http\Middleware\RootSuperuser;
-use App\Models\NeracaSaldo;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -48,9 +44,8 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    return view(Auth::user()->usertype . '.dashboard');
+    return view(Auth::user()->usertype.'.dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
-
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -145,9 +140,8 @@ Route::middleware(['auth', RootSuperuser::class])->group(function () {
     Route::put('/rootsuperuser/saldoawal/{id}', [SaldoAwalControllerRootSuperuser::class, 'update'])->name('rootsuperuser.saldoawal.update');
     Route::delete('/rootsuperuser/saldoawal/{id}', [SaldoAwalControllerRootSuperuser::class, 'destroy'])->name('rootsuperuser.saldoawal.destroy');
 
-
-    Route::get('rootsuperuser/posting', [PostingControlerRootSuperuser::class, 'index'])->name('rootsuperuser/posting');
-    Route::post('/rootsuperuser/posting', [PostingControlerRootSuperuser::class, 'postJurnal'])->name('rootsuperuser/posting/post');
+    Route::get('rootsuperuser/posting', [PostingControllerRootSuperuser::class, 'index'])->name('rootsuperuser/posting');
+    Route::post('/rootsuperuser/posting', [PostingControllerRootSuperuser::class, 'postJurnal'])->name('rootsuperuser/posting/post');
 
     Route::get('/rootsuperuser/neracasaldo/{periode_id}', [NeracaSaldoControllerRootSuperuser::class, 'index'])->name('rootsuperuser/neracasaldo');
     Route::get('/rootsuperuser/neracasaldo/', [NeracaSaldoControllerRootSuperuser::class, 'indexrecap'])->name('rootsuperuser/neracasaldo/');
@@ -237,7 +231,6 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::delete('/admin/jurnaling/deletebm/{id}', [JurnalingControllerAdmin::class, 'deletebm'])->name('admin/jurnaling/deletebm');
     Route::delete('/admin/jurnaling/deletemem/{id}', [JurnalingControllerAdmin::class, 'deletemem'])->name('admin/jurnaling/deletemem');
     Route::delete('/admin/jurnaling/deletemempenutup/{id}', [JurnalingControllerAdmin::class, 'deletemempenutup'])->name('admin/jurnaling/deletemempenutup');
-
 
     Route::get('/admin/bukubesar', [BukuBesarControllerAdmin::class, 'showLedgerForm'])->name('admin/bukubesar');
     Route::get('/admin/bukubesar/searchCoaByPeriod', [BukuBesarControllerAdmin::class, 'searchCoaByPeriod'])->name('admin/bukubesar/searchCoaByPeriod');
@@ -338,7 +331,6 @@ Route::middleware(['auth', 'operator'])->group(function () {
     Route::delete('/operator/jurnaling/deletemem/{id}', [JurnalingControllerOperator::class, 'deletemem'])->name('operator/jurnaling/deletemem');
     Route::delete('/operator/jurnaling/deletemempenutup/{id}', [JurnalingControllerOperator::class, 'deletemempenutup'])->name('operator/jurnaling/deletemempenutup');
 
-
     Route::get('/operator/bukubesar', [BukuBesarControllerOperator::class, 'showLedgerForm'])->name('operator/bukubesar');
     Route::get('/operator/bukubesar/searchCoaByPeriod', [BukuBesarControllerOperator::class, 'searchCoaByPeriod'])->name('operator/bukubesar/searchCoaByPeriod');
     Route::get('operator/bukubesar/showAll', [BukuBesarControllerOperator::class, 'showAll'])->name('operator/bukubesar/showAll');
@@ -371,10 +363,9 @@ Route::middleware(['auth', 'operator'])->group(function () {
     Route::delete('/operator/otorisator/delete/{id}', [OtorisatorControllerOperator::class, 'destroy'])->name('operator/otorisator/delete');
 });
 
-
 Route::middleware(['auth', 'bod'])->group(function () {
 
-    Route::get('bod/dashboard', [HomeController::class, 'homeBod'])->name('bod/dashboard');;
+    Route::get('bod/dashboard', [HomeController::class, 'homeBod'])->name('bod/dashboard');
 
     Route::get('/bod/jurnaling/showing', [JurnalingControllerBOD::class, 'showEntries'])->name('bod/jurnaling/showing');
     Route::get('/bod/jurnaling/months', [JurnalingControllerBOD::class, 'showMonths'])->name('bod/jurnaling/months');
@@ -398,5 +389,4 @@ Route::middleware(['auth', 'bod'])->group(function () {
     Route::get('/bod/neracasaldo/exportpdf/{periode_id}', [NeracaSaldoControllerBOD::class, 'exportPdf'])->name('bod/neracasaldo/exportpdf');
 });
 
-
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';

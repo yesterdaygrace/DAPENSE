@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers\rootsuperuser;
 
-use App\Models\HeaderCOA;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Base\HeaderCoaController;
 
-class HeaderCoaControllerRootSuperuser
+class HeaderCoaControllerRootSuperuser extends HeaderCoaController
 {
-    public function index()
+    protected function viewPrefix(): string
     {
-        $headerCoas = HeaderCOA::paginate(10);
-        return view('rootsuperuser.account.headercoa.home', compact('headerCoas'));
+        return 'rootsuperuser';
     }
 }
