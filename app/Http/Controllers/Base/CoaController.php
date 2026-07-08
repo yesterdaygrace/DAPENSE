@@ -6,11 +6,17 @@ use App\Models\COA;
 use App\Models\HeaderCOA;
 use Illuminate\Http\Request;
 
-abstract class CoaController
+class CoaController
 {
-    abstract protected function viewPrefix(): string;
+    protected function viewPrefix(): string
+    {
+        return \Illuminate\Support\Facades\Auth::user()->usertype;
+    }
 
-    abstract protected function routePrefix(): string;
+    protected function routePrefix(): string
+    {
+        return \Illuminate\Support\Facades\Auth::user()->usertype;
+    }
 
     public function index()
     {
@@ -62,7 +68,6 @@ abstract class CoaController
             'nama_akun' => 'required|string|max:255',
             'saldo_normal' => 'required|in:Debit,Kredit',
             'kategori' => 'required|string|max:255',
-            'level' => 'required|integer',
             'header_coa_id' => 'required|exists:header_coas,id',
         ], [
             'kode_akun.unique' => 'Kode akun sudah ada, silakan gunakan kode lain.',

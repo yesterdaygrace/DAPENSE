@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title>Dapense | Root Superuser</title>
+    <title>Dapense | {{ ucfirst(Auth::user()->usertype === 'rootsuperuser' ? 'Root Superuser' : (Auth::user()->usertype === 'bod' ? 'BOD' : Auth::user()->usertype)) }}</title>
 
     <meta name="description" content="" />
 
@@ -80,15 +80,17 @@
                                             <span class="align-middle">Profile</span>
                                         </a>
                                     </li>
+                                    @if (in_array(Auth::user()->usertype, ['admin', 'rootsuperuser']))
                                     <li>
                                         <div class="dropdown-divider"></div>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" href="{{ route('rootsuperuser/otorisator/home') }}">
+                                        <a class="dropdown-item" href="{{ route(Auth::user()->usertype . '/otorisator/home') }}">
                                             <i class="bx bx-cog me-2"></i>
                                             <span class="align-middle">Pengaturan Otorisator</span>
                                         </a>
                                     </li>
+                                    @endif
                                     <li>
                                         <div class="dropdown-divider"></div>
                                     </li>

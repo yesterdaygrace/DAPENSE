@@ -1,4 +1,4 @@
-@extends('layouts.operatorlayout')
+@extends('layouts.applayout')
 @section('content')
 
 <!-- Menu -->

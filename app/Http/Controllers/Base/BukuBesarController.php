@@ -8,13 +8,20 @@ use App\Models\Periode;
 use App\Models\SaldoAwal;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 
-abstract class BukuBesarController
+class BukuBesarController
 {
-    abstract protected function viewPrefix(): string;
+    protected function viewPrefix(): string
+    {
+        return Auth::user()->usertype;
+    }
 
-    abstract protected function routePrefix(): string;
+    protected function routePrefix(): string
+    {
+        return Auth::user()->usertype;
+    }
 
     protected function bukuBesarExportClass(): string
     {

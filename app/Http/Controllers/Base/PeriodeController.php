@@ -7,12 +7,19 @@ use App\Models\Jurnaling;
 use App\Models\Periode;
 use App\Models\SaldoAwal;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
-abstract class PeriodeController extends Controller
+class PeriodeController extends Controller
 {
-    abstract protected function viewPrefix(): string;
+    protected function viewPrefix(): string
+    {
+        return Auth::user()->usertype;
+    }
 
-    abstract protected function routePrefix(): string;
+    protected function routePrefix(): string
+    {
+        return Auth::user()->usertype;
+    }
 
     public function index()
     {

@@ -4,9 +4,12 @@ namespace App\Http\Controllers\Base;
 
 use App\Models\HeaderCOA;
 
-abstract class HeaderCoaController
+class HeaderCoaController
 {
-    abstract protected function viewPrefix(): string;
+    protected function viewPrefix(): string
+    {
+        return \Illuminate\Support\Facades\Auth::user()->usertype;
+    }
 
     public function index()
     {

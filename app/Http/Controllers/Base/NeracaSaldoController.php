@@ -11,12 +11,19 @@ use App\Models\SaldoAwal;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Auth;
 
-abstract class NeracaSaldoController
+class NeracaSaldoController
 {
-    abstract protected function viewPrefix(): string;
+    protected function viewPrefix(): string
+    {
+        return Auth::user()->usertype;
+    }
 
-    abstract protected function routePrefix(): string;
+    protected function routePrefix(): string
+    {
+        return Auth::user()->usertype;
+    }
 
     protected function neracaSaldoSheetClass(): string
     {

@@ -12,12 +12,19 @@ use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Auth;
 
-abstract class JurnalingController
+class JurnalingController
 {
-    abstract protected function viewPrefix(): string;
+    protected function viewPrefix(): string
+    {
+        return Auth::user()->usertype;
+    }
 
-    abstract protected function routePrefix(): string;
+    protected function routePrefix(): string
+    {
+        return Auth::user()->usertype;
+    }
 
     protected function jurnalingSheetClass(): string
     {
