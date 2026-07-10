@@ -1,4 +1,0 @@
-# Context Index
-
-| Reference | Location |
-|-----------|----------|
