@@ -134,7 +134,6 @@
     </ul>
 </aside>
 
-@section('content')
 <!-- Content wrapper -->
 <div class="content-wrapper">
 

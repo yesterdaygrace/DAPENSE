@@ -10,9 +10,9 @@ use App\Models\SaldoAwal;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
-use Illuminate\Support\Facades\Auth;
 
 class JurnalingController
 {
@@ -685,7 +685,7 @@ class JurnalingController
             &$neracaSaldoBatch, &$saldoAwalBatch
         ) {
             foreach ($coas as $coa) {
-                if (in_array($coa->kode_akun, ['30020002', '30020001'])) {
+                if (in_array($coa->kode_akun, ['3202', '3201'])) {
                     continue;
                 }
 
@@ -720,13 +720,13 @@ class JurnalingController
             }
         });
 
-        $totalDebit = collect($neracaSaldoBatch)->whereBetween('coa_id', ['40010001', '50030010'])->sum('debit');
-        $totalKredit = collect($neracaSaldoBatch)->whereBetween('coa_id', ['40010001', '50030010'])->sum('kredit');
+        $totalDebit = collect($neracaSaldoBatch)->whereBetween('coa_id', ['4101', '5310'])->sum('debit');
+        $totalKredit = collect($neracaSaldoBatch)->whereBetween('coa_id', ['4101', '5310'])->sum('kredit');
         $selisih = abs($totalDebit - $totalKredit);
         $isDebitGreater = $totalDebit > $totalKredit;
 
-        $coa3202 = COA::where('kode_akun', '30020002')->first();
-        $coa3201 = COA::where('kode_akun', '30020001')->first();
+        $coa3202 = COA::where('kode_akun', '3202')->first();
+        $coa3201 = COA::where('kode_akun', '3201')->first();
 
         if ($coa3202 && $coa3201) {
             $saldoAwal3202 = $allSaldoAwal->get($coa3202->id);
@@ -744,7 +744,7 @@ class JurnalingController
             $saldoAkhir3202 = ($saldoAwal3202?->debit ?? 0 - $saldoAwal3202?->kredit ?? 0) + ($debit3202 - $kredit3202);
 
             $neracaSaldoBatch[] = [
-                'coa_id' => '30020002',
+                'coa_id' => '3202',
                 'periode_id' => $periode_id,
                 'month' => $selectedMonthDate->toDateString(),
                 'debit' => $debit3202,
@@ -767,7 +767,7 @@ class JurnalingController
             $saldoAkhir3201 = ($saldoAwal3201?->debit ?? 0 - $saldoAwal3201?->kredit ?? 0) + ($debit3201 - $kredit3201);
 
             $neracaSaldoBatch[] = [
-                'coa_id' => '30020001',
+                'coa_id' => '3201',
                 'periode_id' => $periode_id,
                 'month' => $selectedMonthDate->toDateString(),
                 'debit' => $debit3201,
@@ -899,7 +899,7 @@ class JurnalingController
 
             NeracaSaldo::updateOrCreate(
                 [
-                    'coa_id' => $coa->id,
+                    'coa_id' => (string) $coa->kode_akun,
                     'periode_id' => $periode_id,
                 ],
                 [

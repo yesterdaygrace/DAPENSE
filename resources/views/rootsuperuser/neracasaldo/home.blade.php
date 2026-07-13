@@ -229,7 +229,7 @@
                             $skipCoa = $header->nama_header === 'PEMBELIAN-PENJUALAN AKT.OPRNL';
 
                             if (
-                            (strlen($header->kode_header) == 7 || strlen($header->kode_header) == 8) &&
+                            (strlen($header->kode_header) == 3) &&
                             !$skipCoa
                             ) {
                             foreach ($header->coas as $coa) {

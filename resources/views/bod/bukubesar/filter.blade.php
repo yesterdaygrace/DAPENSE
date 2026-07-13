@@ -1,47 +1,7 @@
 @extends('layouts.applayout')
 @section('content')
-<!-- Menu -->
-<aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
-    <div class="app-brand demo">
-        <a href="{{ route('bod/dashboard') }}" class="app-brand-link">
-            <span class="app-brand-text demo menu-text fw-bolder ms-2">{{ Auth::user()->name }}</span>
-        </a>
-    </div>
+@include('components.admin-sidebar', ['activeMenu' => 'bukubesar'])
 
-    <div class="menu-inner-shadow"></div>
-
-    <ul class="py-1 menu-inner">
-        <!-- Dashboard -->
-        <li class="menu-item active">
-            <a href="{{ route('bod/dashboard') }}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-home-circle"></i>
-                <div data-i18n="Analytics">Dashboard</div>
-            </a>
-        </li>
-        <li class="menu-item active open">
-            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-notepad"></i>
-                <div data-i18n="Layouts">Jurnaling</div>
-            </a>
-            <ul class="menu-sub">
-                <li class="menu-item">
-                    <a href="{{ route('bod/jurnaling/showing') }}" class="menu-link">
-                        <div data-i18n="Without menu">Tampil</div>
-                    </a>
-                </li>
-            </ul>
-        </li>
-        <li class="menu-item">
-            <a href="{{ route('bod/bukubesar') }}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-book"></i>
-                <div data-i18n="Analytics">Buku Besar</div>
-            </a>
-        </li>
-
-    </ul>
-</aside>
-
-@section('content')
 <div class="content-wrapper">
     <div class="container-xxl flex-grow-1 container-p-y">
         <div class="card">

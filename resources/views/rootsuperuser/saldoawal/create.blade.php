@@ -134,7 +134,6 @@
     </ul>
 </aside>
 
-@section('content')
 <div class="container mt-5">
     <h2>Tambah Saldo Awal</h2>
     @if (session()->has('error'))

@@ -10,8 +10,8 @@ use App\Models\Periode;
 use App\Models\SaldoAwal;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 
 class NeracaSaldoController
 {
@@ -161,23 +161,23 @@ class NeracaSaldoController
     }
 
     private $headerAccountRanges = [
-        '1' => ['min' => 10000001, 'max' => 10999999],
-        '1.1' => ['min' => 10010001, 'max' => 10019999],
-        '1.2' => ['min' => 10020001, 'max' => 10029999],
-        '1.3' => ['min' => 10030001, 'max' => 10039999],
-        '2' => ['min' => 20000001, 'max' => 20999999],
-        '2.1' => ['min' => 20010001, 'max' => 20019999],
-        '2.2' => ['min' => 20020001, 'max' => 20029999],
-        '3' => ['min' => 30000001, 'max' => 30999999],
-        '3.1' => ['min' => 30010001, 'max' => 30019999],
-        '3.2' => ['min' => 30020001, 'max' => 30029999],
-        '4' => ['min' => 40000001, 'max' => 40999999],
-        '4.1' => ['min' => 40010001, 'max' => 40019999],
-        '4.2' => ['min' => 40020001, 'max' => 40029999],
-        '5' => ['min' => 50000001, 'max' => 50999999],
-        '5.1' => ['min' => 50010001, 'max' => 50019999],
-        '5.2' => ['min' => 50020001, 'max' => 50029999],
-        '5.3' => ['min' => 50030001, 'max' => 50039999],
+        '1' => ['min' => 1101, 'max' => 1304],
+        '1.1' => ['min' => 1101, 'max' => 1116],
+        '1.2' => ['min' => 1201, 'max' => 1210],
+        '1.3' => ['min' => 1301, 'max' => 1304],
+        '2' => ['min' => 2101, 'max' => 2204],
+        '2.1' => ['min' => 2101, 'max' => 2113],
+        '2.2' => ['min' => 2201, 'max' => 2204],
+        '3' => ['min' => 3101, 'max' => 3203],
+        '3.1' => ['min' => 3101, 'max' => 3104],
+        '3.2' => ['min' => 3201, 'max' => 3203],
+        '4' => ['min' => 4101, 'max' => 4204],
+        '4.1' => ['min' => 4101, 'max' => 4108],
+        '4.2' => ['min' => 4201, 'max' => 4204],
+        '5' => ['min' => 5101, 'max' => 5310],
+        '5.1' => ['min' => 5101, 'max' => 5114],
+        '5.2' => ['min' => 5201, 'max' => 5210],
+        '5.3' => ['min' => 5301, 'max' => 5310],
     ];
 
     private $headerAccountRangesByIndex = [
