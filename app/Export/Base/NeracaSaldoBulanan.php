@@ -57,7 +57,7 @@ class NeracaSaldoBulanan implements FromCollection, WithColumnWidths, WithStyles
 
     public function collection(): Collection
     {
-        $selectedMonth = Carbon::parse($this->month.'-01');
+        $selectedMonth = Carbon::parse($this->month . '-01');
 
         $neracaByCoa = collect();
         NeracaSaldo::where('periode_id', $this->periode_id)
@@ -97,7 +97,7 @@ class NeracaSaldoBulanan implements FromCollection, WithColumnWidths, WithStyles
             ['SINODE GKJ & GKI JAWA TENGAH SALATIGA'],
             ['(PROGRAM PENSIUN MANFAAT PASTI)'],
             ['NERACA SALDO'],
-            ['Periode: '.$selectedMonth->translatedFormat('F Y')],
+            ['Periode: ' . $selectedMonth->translatedFormat('F Y')],
             [''],
             [''],
             [''],
@@ -120,7 +120,7 @@ class NeracaSaldoBulanan implements FromCollection, WithColumnWidths, WithStyles
         $header->total_saldo_akhir = 0;
         $header->coas = collect();
 
-        $combinedKey = $header->kode_header.'|'.$header->nama_header;
+        $combinedKey = $header->kode_header . '|' . $header->nama_header;
 
         $range = $this->headerAccountRanges[$combinedKey]
             ?? $this->headerAccountRanges[$header->kode_header]
@@ -204,7 +204,7 @@ class NeracaSaldoBulanan implements FromCollection, WithColumnWidths, WithStyles
         }
 
         $rows->push([
-            $indent.$header->kode_header,
+            $indent . $header->kode_header,
             $header->nama_header,
             $this->formatAngka($saldoAwal),
             $this->formatAngka($header->total_debit),
@@ -225,8 +225,8 @@ class NeracaSaldoBulanan implements FromCollection, WithColumnWidths, WithStyles
                 }
 
                 $rows->push([
-                    $indent.'   '.$coa->kode_akun,
-                    $indent.'   '.$coa->nama_akun,
+                    $indent . '   ' . $coa->kode_akun,
+                    $indent . '   ' . $coa->nama_akun,
                     $this->formatAngka($coa->saldo_awal_debit - $coa->saldo_awal_kredit),
                     $this->formatAngka($coa->total_debit),
                     $this->formatAngka($coa->total_kredit),

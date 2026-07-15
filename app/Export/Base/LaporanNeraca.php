@@ -32,7 +32,7 @@ class LaporanNeraca implements FromCollection, WithColumnWidths, WithEvents, Wit
     public function collection()
     {
         $cleanMonth = preg_replace('/[^0-9\-]/', '', $this->month);
-        $selectedMonth = Carbon::parse($cleanMonth.'-01');
+        $selectedMonth = Carbon::parse($cleanMonth . '-01');
         $previousMonth = $selectedMonth->copy()->subMonth();
 
         $sections = [
@@ -138,7 +138,7 @@ class LaporanNeraca implements FromCollection, WithColumnWidths, WithEvents, Wit
                 }
             }
 
-            $result[] = ['Total '.str_replace('^', '', $section), $this->formatSaldo($currentTotal), $this->formatSaldo($lastTotal)];
+            $result[] = ['Total ' . str_replace('^', '', $section), $this->formatSaldo($currentTotal), $this->formatSaldo($lastTotal)];
             if (str_contains($section, 'LIABILITAS')) {
                 $asetNeto['last'] -= $lastTotal;
                 $asetNeto['current'] -= $currentTotal;
@@ -199,11 +199,11 @@ class LaporanNeraca implements FromCollection, WithColumnWidths, WithEvents, Wit
         $final = $saldoAwalBersih + ($jurnal->total_debit - $jurnal->total_kredit);
 
         if (! empty($addAccounts)) {
-            $final += $this->getSaldoAkhir($addAccounts, $date, $label.' (Add)', $pos, 0);
+            $final += $this->getSaldoAkhir($addAccounts, $date, $label . ' (Add)', $pos, 0);
         }
 
         if (! empty($offsetAccounts)) {
-            $final -= $this->getSaldoAkhir($offsetAccounts, $date, $label.' (Offset)', $pos, 0);
+            $final -= $this->getSaldoAkhir($offsetAccounts, $date, $label . ' (Offset)', $pos, 0);
         }
 
         return $final;
@@ -228,7 +228,7 @@ class LaporanNeraca implements FromCollection, WithColumnWidths, WithEvents, Wit
 
     public function headings(): array
     {
-        $selectedMonth = Carbon::parse($this->month.'-01');
+        $selectedMonth = Carbon::parse($this->month . '-01');
         $previousMonth = $selectedMonth->copy()->subMonth();
 
         return [
@@ -254,7 +254,7 @@ class LaporanNeraca implements FromCollection, WithColumnWidths, WithEvents, Wit
             AfterSheet::class => function (AfterSheet $event) {
                 $otorisators = Otorisator::orderBy('id', 'asc')->get();
                 $sheet = $event->sheet;
-                $selectedMonth = Carbon::parse($this->month.'-01');
+                $selectedMonth = Carbon::parse($this->month . '-01');
                 $previousMonth = $selectedMonth->copy()->subMonth();
 
                 $sheet->insertNewRowBefore(1, 7);
@@ -271,14 +271,14 @@ class LaporanNeraca implements FromCollection, WithColumnWidths, WithEvents, Wit
                     'A3' => 'SINODE GKJ & GKI JAWA TENGAH SALATIGA',
                     'A4' => '(PROGRAM PENSIUM MANFAAT PASTI)',
                     'A5' => 'LAPORAN NERACA',
-                    'A6' => 'Per '.$previousMonth->translatedFormat('F Y').' & '.$selectedMonth->translatedFormat('F Y'),
+                    'A6' => 'Per ' . $previousMonth->translatedFormat('F Y') . ' & ' . $selectedMonth->translatedFormat('F Y'),
                 ];
 
                 $sheet->setCellValue('A7', '');
                 $sheet->setCellValue('A8', '');
 
                 foreach ($titles as $cell => $text) {
-                    $sheet->mergeCells($cell.':C'.substr($cell, 1));
+                    $sheet->mergeCells($cell . ':C' . substr($cell, 1));
                     $sheet->setCellValue($cell, $text);
                     $sheet->getStyle($cell)->applyFromArray([
                         'font' => ['bold' => true, 'size' => 12],
@@ -308,7 +308,7 @@ class LaporanNeraca implements FromCollection, WithColumnWidths, WithEvents, Wit
                         $sheet->getStyle("A$row:C$row")->getFont()->setBold(true);
 
                         // Add thick TOP border before Total row
-                        $sheet->getStyle('B'.($row - 1).':C'.($row - 1))->applyFromArray([
+                        $sheet->getStyle('B' . ($row - 1) . ':C' . ($row - 1))->applyFromArray([
                             'borders' => [
                                 'bottom' => [
                                     'borderStyle' => Border::BORDER_THICK,
@@ -324,7 +324,7 @@ class LaporanNeraca implements FromCollection, WithColumnWidths, WithEvents, Wit
                 $endOfMonthDate = $selectedMonth->copy()->endOfMonth();
 
                 $sheet->mergeCells("A$footerRow:C$footerRow");
-                $sheet->setCellValue("A$footerRow", 'Salatiga, '.$endOfMonthDate->translatedFormat('d F Y'));
+                $sheet->setCellValue("A$footerRow", 'Salatiga, ' . $endOfMonthDate->translatedFormat('d F Y'));
                 $sheet->getStyle("A$footerRow")->applyFromArray([
                     'alignment' => ['horizontal' => 'center'],
                     'font' => ['size' => 11],
@@ -375,7 +375,7 @@ class LaporanNeraca implements FromCollection, WithColumnWidths, WithEvents, Wit
                 }
                 $footerRow += 5;
 
-                $sheet->getStyle('A'.($highestRow + 3).":C$footerRow")->applyFromArray([
+                $sheet->getStyle('A' . ($highestRow + 3) . ":C$footerRow")->applyFromArray([
                     'font' => ['size' => 11],
                     'alignment' => ['horizontal' => 'center'],
                 ]);

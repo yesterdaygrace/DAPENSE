@@ -36,7 +36,7 @@ class NeracaSaldoController
     {
         $periodes = Periode::orderBy('tanggal_awal', 'desc')->get();
 
-        return view($this->viewPrefix().'.neracasaldo.recap', compact('periodes'));
+        return view($this->viewPrefix() . '.neracasaldo.recap', compact('periodes'));
     }
 
     public function showPerMonthNeraca(Request $request, $periode = null)
@@ -63,13 +63,13 @@ class NeracaSaldoController
                 foreach ($activeMonths as $ym) {
                     $months[] = [
                         'id' => $ym,
-                        'name' => date('F Y', strtotime($ym.'-01')),
+                        'name' => date('F Y', strtotime($ym . '-01')),
                     ];
                 }
             }
         }
 
-        return view($this->viewPrefix().'/neracasaldo/monthstampil', [
+        return view($this->viewPrefix() . '/neracasaldo/monthstampil', [
             'periodes' => $periodes,
             'selectedPeriode' => $selectedPeriode,
             'months' => collect($months),
@@ -85,7 +85,7 @@ class NeracaSaldoController
 
         $periode = Periode::findOrFail($periode_id);
 
-        $selectedMonth = Carbon::parse($month.'-01');
+        $selectedMonth = Carbon::parse($month . '-01');
 
         $saldoAwalByCoa = SaldoAwal::where('periode_id', $periode_id)
             ->whereMonth('tanggal_saldo', $selectedMonth->month)
@@ -138,7 +138,7 @@ class NeracaSaldoController
             $this->processHeader($header, $neracaByCoa, $saldoAwalByCoa, $allCoas);
         }
 
-        return view($this->viewPrefix().'.neracasaldo.home', compact('periode', 'headerCoas', 'month'));
+        return view($this->viewPrefix() . '.neracasaldo.home', compact('periode', 'headerCoas', 'month'));
     }
 
     private function initializeSaldoAwal($currentPeriodeId, $previousPeriodeId)
@@ -197,7 +197,7 @@ class NeracaSaldoController
         $header->total_saldo_akhir = 0;
         $header->coas = collect();
 
-        $combinedKey = $header->kode_header.'|'.$header->nama_header;
+        $combinedKey = $header->kode_header . '|' . $header->nama_header;
 
         $range = $this->headerAccountRanges[$combinedKey]
             ?? $this->headerAccountRanges[$header->kode_header]

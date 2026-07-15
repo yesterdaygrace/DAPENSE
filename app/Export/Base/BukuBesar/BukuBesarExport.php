@@ -110,7 +110,7 @@ class BukuBesarExport implements FromCollection, ShouldAutoSize, WithCustomStart
                 ]);
 
                 $sheet->mergeCells('A2:F2');
-                $sheet->setCellValue('A2', 'Periode: '.$this->tahun);
+                $sheet->setCellValue('A2', 'Periode: ' . $this->tahun);
                 $sheet->getStyle('A2')->applyFromArray([
                     'alignment' => [
                         'horizontal' => Alignment::HORIZONTAL_CENTER,
@@ -118,9 +118,9 @@ class BukuBesarExport implements FromCollection, ShouldAutoSize, WithCustomStart
                     ],
                 ]);
 
-                $sheet->setCellValue('A4', 'Account: '.$this->kodeAkun);
-                $sheet->setCellValue('C4', 'Keterangan: '.$this->namaAkun);
-                $sheet->setCellValue('A5', 'Bulan: '.$this->bulan);
+                $sheet->setCellValue('A4', 'Account: ' . $this->kodeAkun);
+                $sheet->setCellValue('C4', 'Keterangan: ' . $this->namaAkun);
+                $sheet->setCellValue('A5', 'Bulan: ' . $this->bulan);
 
                 // ================================
                 // 🔵 Styling Tabel

@@ -1,23 +1,20 @@
 <x-guest-layout>
 <x-auth-card-layout>
-    {{-- Header --}}
     <div class="text-center mb-8">
-        <div class="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-[#EEF2FF]">
-            <svg class="h-7 w-7 text-[#1E3A8A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+        <div class="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-primary-50">
+            <svg class="h-7 w-7 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
             </svg>
         </div>
-        <h1 class="text-2xl font-bold text-[#0F172A] tracking-tight">Daftar</h1>
-        <p class="mt-2 text-sm text-[#64748B]">Buat akun baru untuk memulai.</p>
+        <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Daftar</h1>
+        <p class="mt-2 text-sm text-gray-500">Buat akun baru untuk memulai.</p>
     </div>
 
-    {{-- Form --}}
     <form method="POST" action="{{ route('register') }}" class="space-y-5">
         @csrf
 
-        {{-- Name --}}
         <div>
-            <label for="name" class="block text-sm font-medium text-[#334155] mb-1.5">Nama</label>
+            <label for="name" class="label">Nama</label>
             <input
                 id="name"
                 type="text"
@@ -26,19 +23,16 @@
                 required
                 autofocus
                 autocomplete="name"
-                class="block w-full rounded-xl border border-[#E2E8F0] bg-white px-4 py-3 text-sm text-[#0F172A] placeholder:text-[#64748B] shadow-sm transition-colors focus:border-[#2563EB] focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20"
+                class="input-field @error('name') border-danger @enderror"
                 placeholder="Nama lengkap"
-                aria-invalid="{{ $errors->has('name') ? 'true' : 'false' }}"
-                aria-describedby="{{ $errors->has('name') ? 'name-error' : '' }}"
             />
             @error('name')
-                <p id="name-error" class="mt-1.5 text-sm text-red-600" role="alert">{{ $message }}</p>
+            <p class="text-xs text-danger mt-1.5" role="alert">{{ $message }}</p>
             @enderror
         </div>
 
-        {{-- Email --}}
         <div>
-            <label for="email" class="block text-sm font-medium text-[#334155] mb-1.5">Email</label>
+            <label for="email" class="label">Email</label>
             <input
                 id="email"
                 type="email"
@@ -46,19 +40,16 @@
                 value="{{ old('email') }}"
                 required
                 autocomplete="email"
-                class="block w-full rounded-xl border border-[#E2E8F0] bg-white px-4 py-3 text-sm text-[#0F172A] placeholder:text-[#64748B] shadow-sm transition-colors focus:border-[#2563EB] focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20"
+                class="input-field @error('email') border-danger @enderror"
                 placeholder="nama@perusahaan.com"
-                aria-invalid="{{ $errors->has('email') ? 'true' : 'false' }}"
-                aria-describedby="{{ $errors->has('email') ? 'email-error' : '' }}"
             />
             @error('email')
-                <p id="email-error" class="mt-1.5 text-sm text-red-600" role="alert">{{ $message }}</p>
+            <p class="text-xs text-danger mt-1.5" role="alert">{{ $message }}</p>
             @enderror
         </div>
 
-        {{-- Password --}}
         <div x-data="{ show: false }">
-            <label for="password" class="block text-sm font-medium text-[#334155] mb-1.5">Kata Sandi</label>
+            <label for="password" class="label">Kata Sandi</label>
             <div class="relative">
                 <input
                     id="password"
@@ -66,14 +57,12 @@
                     name="password"
                     required
                     autocomplete="new-password"
-                    class="block w-full rounded-xl border border-[#E2E8F0] bg-white px-4 py-3 text-sm text-[#0F172A] placeholder:text-[#64748B] shadow-sm transition-colors focus:border-[#2563EB] focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20 pr-11"
+                    class="input-field pr-11 @error('password') border-danger @enderror"
                     placeholder="Minimal 8 karakter"
-                    aria-invalid="{{ $errors->has('password') ? 'true' : 'false' }}"
-                    aria-describedby="{{ $errors->has('password') ? 'password-error' : '' }}"
                 />
                 <button
                     type="button"
-                    class="absolute right-3 top-1/2 -translate-y-1/2 text-[#64748B] hover:text-[#334155] transition-colors focus:outline-none focus:text-[#1E3A8A]"
+                    class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                     @click="show = !show"
                     :aria-label="show ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'"
                     aria-controls="password"
@@ -88,40 +77,34 @@
                 </button>
             </div>
             @error('password')
-                <p id="password-error" class="mt-1.5 text-sm text-red-600" role="alert">{{ $message }}</p>
+            <p class="text-xs text-danger mt-1.5" role="alert">{{ $message }}</p>
             @enderror
         </div>
 
-        {{-- Password Confirmation --}}
         <div>
-            <label for="password_confirmation" class="block text-sm font-medium text-[#334155] mb-1.5">Konfirmasi Kata Sandi</label>
+            <label for="password_confirmation" class="label">Konfirmasi Kata Sandi</label>
             <input
                 id="password_confirmation"
                 type="password"
                 name="password_confirmation"
                 required
                 autocomplete="new-password"
-                class="block w-full rounded-xl border border-[#E2E8F0] bg-white px-4 py-3 text-sm text-[#0F172A] placeholder:text-[#64748B] shadow-sm transition-colors focus:border-[#2563EB] focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20"
+                class="input-field @error('password_confirmation') border-danger @enderror"
                 placeholder="Ulangi kata sandi"
             />
             @error('password_confirmation')
-                <p class="mt-1.5 text-sm text-red-600" role="alert">{{ $message }}</p>
+            <p class="text-xs text-danger mt-1.5" role="alert">{{ $message }}</p>
             @enderror
         </div>
 
-        {{-- Submit Button --}}
-        <button
-            type="submit"
-            class="flex w-full items-center justify-center rounded-xl bg-[#1E3A8A] px-4 py-3.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-[#15255A] focus:outline-none focus:ring-2 focus:ring-[#1E3A8A] focus:ring-offset-2 active:scale-[0.98] h-[52px]"
-        >
+        <button type="submit" class="btn-primary w-full h-[52px]">
             Daftar
         </button>
     </form>
 
-    {{-- Login Link --}}
-    <p class="mt-8 text-center text-sm text-[#64748B]">
+    <p class="mt-8 text-center text-sm text-gray-500">
         Sudah punya akun?
-        <a href="{{ route('login') }}" class="font-medium text-[#2563EB] hover:text-[#1E3A8A] transition-colors focus:outline-none focus:underline">Masuk</a>
+        <a href="{{ route('login') }}" class="font-semibold text-primary hover:text-primary-700 transition-colors">Masuk</a>
     </p>
 </x-auth-card-layout>
 </x-guest-layout>

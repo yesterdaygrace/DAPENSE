@@ -1,43 +1,46 @@
 @extends('layouts.applayout')
+@section('title', 'Neraca Saldo - Rekap')
 @section('content')
-@include('components.admin-sidebar', ['activeMenu' => 'neracasaldo'])
 
-<div class="content-wrapper">
-    <!-- Content -->
-    <div class="container-xxl flex-grow-1 container-p-y">
+<x-dashboard.page-header
+    title="Rekap Neraca Saldo"
+    description="Ringkasan neraca saldo seluruh periode"
+/>
 
-        @if(isset($periodes) && $periodes->count())
-        <!-- Period Cards -->
-        <div class="row">
-            @foreach($periodes as $periode)
-            <div class="mb-4 col-md-6 col-lg-3 d-flex">
-                <div class="card flex-fill">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ $periode->nama_periode }}</h5>
-                        <p class="card-text">Start Date: {{ \Carbon\Carbon::parse($periode->tanggal_awal)->format('d M, Y') }}</p>
-                        <p class="card-text">End Date: {{ \Carbon\Carbon::parse($periode->tanggal_akhir)->format('d M, Y') }}</p>
-                        <div class="d-flex justify-content-between align-items-center demo-inline-spacing">
-                            <form method="GET" action="{{ route('admin/neracasaldo/months', ['periode' => $periode->id]) }}">
-                                @csrf
-                                <button type="submit" class="btn btn-primary">Rekap Bulan</button>
-                            </form>
-                            <form method="GET" action="{{ route('admin/neracasaldo/monthstampil', ['periode' => $periode->id]) }}">
-                                @csrf
-                                <button type="submit" class="btn btn-primary">Tampilkan Neraca</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+@if(isset($periodes) && $periodes->count())
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+    @foreach($periodes as $periode)
+    <div class="card rounded-card border border-gray-100 shadow-card flex flex-col hover:shadow-card-hover transition-shadow">
+        <div class="card-body flex-1 flex flex-col p-5">
+            <div class="w-12 h-12 rounded-2xl bg-primary-50 flex items-center justify-center mb-4">
+                <i data-lucide="calendar" class="w-6 h-6 text-primary"></i>
             </div>
-            @endforeach
+            <h5 class="text-base font-bold text-gray-900 mb-1">{{ $periode->nama_periode }}</h5>
+            <p class="text-sm text-gray-500 mb-1">{{ \Carbon\Carbon::parse($periode->tanggal_awal)->format('d M, Y') }} — {{ \Carbon\Carbon::parse($periode->tanggal_akhir)->format('d M, Y') }}</p>
+            <div class="flex items-center gap-2 mt-3">
+                <form method="GET" action="{{ route('admin/neracasaldo/months', ['periode' => $periode->id]) }}" class="contents">
+                    @csrf
+                    <button type="submit" class="btn-primary btn-sm flex-1">Rekap Bulan</button>
+                </form>
+                <form method="GET" action="{{ route('admin/neracasaldo/monthstampil', ['periode' => $periode->id]) }}" class="contents">
+                    @csrf
+                    <button type="submit" class="btn-secondary btn-sm flex-1">Tampilkan Neraca</button>
+                </form>
+            </div>
         </div>
-        <!-- /Period Cards -->
-        @else
-        <p>Tidak ada periode yang tersedia.</p>
-        @endif
     </div>
-    <!-- / Content -->
-
-    <div class="content-backdrop fade"></div>
+    @endforeach
 </div>
+@else
+<div class="card rounded-card border border-gray-100 shadow-card">
+    <div class="card-body">
+        <x-dashboard.empty-state
+            icon="folder-open"
+            title="Tidak ada periode"
+            description="Tidak ada periode yang tersedia."
+        />
+    </div>
+</div>
+@endif
+
 @endsection

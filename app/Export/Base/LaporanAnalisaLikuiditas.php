@@ -31,7 +31,7 @@ class LaporanAnalisaLikuiditas implements FromCollection, WithColumnWidths, With
     public function collection()
     {
         $cleanMonth = preg_replace('/[^0-9\-]/', '', $this->month);
-        $selectedMonth = Carbon::parse($cleanMonth.'-01');
+        $selectedMonth = Carbon::parse($cleanMonth . '-01');
         $previousMonth = $selectedMonth->copy()->subMonth();
         $monthNumber = (int) $selectedMonth->format('n');
 
@@ -125,7 +125,7 @@ class LaporanAnalisaLikuiditas implements FromCollection, WithColumnWidths, With
             }
 
             $result[] = [
-                'Investasi Nilai Buku' => 'TOTAL '.str_replace('^', '', $sectionTitle),
+                'Investasi Nilai Buku' => 'TOTAL ' . str_replace('^', '', $sectionTitle),
                 'Saldo Akhir (Last)' => $this->formatSaldo($asetLancarTotal + $biayaTotal),
                 'Saldo Akhir (Current)' => $this->formatSaldo($asetLancarTotal + $biayaTotal),
             ];
@@ -201,7 +201,7 @@ class LaporanAnalisaLikuiditas implements FromCollection, WithColumnWidths, With
 
     public function headings(): array
     {
-        $selectedMonth = Carbon::parse($this->month.'-01');
+        $selectedMonth = Carbon::parse($this->month . '-01');
         $previousMonth = $selectedMonth->copy()->subMonth();
 
         return [
@@ -227,7 +227,7 @@ class LaporanAnalisaLikuiditas implements FromCollection, WithColumnWidths, With
             AfterSheet::class => function (AfterSheet $event) {
                 $otorisators = Otorisator::orderBy('id', 'asc')->get();
                 $sheet = $event->sheet;
-                $selectedMonth = Carbon::parse($this->month.'-01');
+                $selectedMonth = Carbon::parse($this->month . '-01');
                 $previousMonth = $selectedMonth->copy()->subMonth();
 
                 $sheet->insertNewRowBefore(1, 7);
@@ -237,11 +237,11 @@ class LaporanAnalisaLikuiditas implements FromCollection, WithColumnWidths, With
                     'A2' => 'SINODE GKJ & GKI JAWA TENGAH SALATIGA',
                     'A3' => '(PROGRAM PENSIUM MANFAAT PASTI)',
                     'A4' => 'LAPORAN ANALISA LIKUIDITAS',
-                    'A5' => 'Per '.$previousMonth->translatedFormat('F Y').' & '.$selectedMonth->translatedFormat('F Y'),
+                    'A5' => 'Per ' . $previousMonth->translatedFormat('F Y') . ' & ' . $selectedMonth->translatedFormat('F Y'),
                 ];
 
                 foreach ($titles as $cell => $text) {
-                    $sheet->mergeCells($cell.':C'.substr($cell, 1));
+                    $sheet->mergeCells($cell . ':C' . substr($cell, 1));
                     $sheet->setCellValue($cell, $text);
                     $sheet->getStyle($cell)->applyFromArray([
                         'font' => ['bold' => true, 'size' => 12],
@@ -265,7 +265,7 @@ class LaporanAnalisaLikuiditas implements FromCollection, WithColumnWidths, With
                 $endOfMonthDate = $selectedMonth->copy()->endOfMonth();
 
                 $sheet->mergeCells("A$footerRow:C$footerRow");
-                $sheet->setCellValue("A$footerRow", 'Salatiga, '.$endOfMonthDate->translatedFormat('d F Y'));
+                $sheet->setCellValue("A$footerRow", 'Salatiga, ' . $endOfMonthDate->translatedFormat('d F Y'));
                 $sheet->getStyle("A$footerRow")->applyFromArray([
                     'alignment' => ['horizontal' => 'center'],
                     'font' => ['size' => 11],
@@ -316,7 +316,7 @@ class LaporanAnalisaLikuiditas implements FromCollection, WithColumnWidths, With
                 }
                 $footerRow += 5;
 
-                $sheet->getStyle('A'.($highestRow + 3).":C$footerRow")->applyFromArray([
+                $sheet->getStyle('A' . ($highestRow + 3) . ":C$footerRow")->applyFromArray([
                     'font' => ['size' => 11],
                     'alignment' => ['horizontal' => 'center'],
                 ]);

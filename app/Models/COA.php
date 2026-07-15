@@ -12,7 +12,7 @@ class COA extends Model
     protected $table = 'coas'; // Ensure this matches your table name
 
     protected $fillable = [
-        'kode_akun', 'nama_akun', 'saldo_normal', 'kategori', 'level', 'header_coa_id'
+        'kode_akun', 'nama_akun', 'saldo_normal', 'kategori', 'level', 'header_coa_id',
     ];
 
     public function headerCoa()

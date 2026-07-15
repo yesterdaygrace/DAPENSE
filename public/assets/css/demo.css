@@ -8,17 +8,17 @@
 }
 
 .page-item.active .page-link {
-    background-color: #007bff;
-    border-color: #007bff;
+    background-color: #1E3A8A;
+    border-color: #1E3A8A;
     color: white;
 }
 
 .page-link {
-    color: #007bff;
+    color: #1E3A8A;
 }
 
 .page-link:hover {
-    color: #0056b3;
+    color: #15255A;
     text-decoration: none;
 }
 

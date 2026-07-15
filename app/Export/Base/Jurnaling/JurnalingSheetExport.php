@@ -95,7 +95,7 @@ class JurnalingSheetExport implements FromCollection, WithColumnWidths, WithCust
             $entry->nomor_bukti,
             $entry->keterangan,
             $entry->kategori_jurnal,
-            $entry->coa->kode_akun.' - '.$entry->coa->nama_akun,
+            $entry->coa->kode_akun . ' - ' . $entry->coa->nama_akun,
             number_format($entry->debit, 2),
             number_format($entry->kredit, 2),
         ];

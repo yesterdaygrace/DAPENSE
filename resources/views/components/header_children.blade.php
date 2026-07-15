@@ -1,21 +1,19 @@
 @foreach($children as $child)
-    <div class="card accordion-item">
-        <h2 class="accordion-header" id="heading{{ $child->id }}">
+    <div class="card accordion-item" x-data="{ open: false }">
+        <h2 class="accordion-header">
             <button
                 type="button"
-                class="accordion-button collapsed"
-                data-bs-toggle="collapse"
-                data-bs-target="#collapse{{ $child->id }}"
-                aria-expanded="false"
-                aria-controls="collapse{{ $child->id }}"
+                class="accordion-button"
+                :class="{ 'collapsed': !open }"
+                @click="open = !open"
+                :aria-expanded="open"
             >
                 {{ $child->nama_header }} (Level {{ $child->level }})
             </button>
         </h2>
         <div
-            id="collapse{{ $child->id }}"
-            class="accordion-collapse collapse"
-            aria-labelledby="heading{{ $child->id }}"
+            x-show="open"
+            x-collapse.duration.200ms
         >
             <div class="accordion-body">
                 @if($child->children->count())

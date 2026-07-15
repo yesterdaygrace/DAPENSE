@@ -47,12 +47,12 @@ class JurnalingController
     {
         $suffix = $this->viewSuffix($type);
 
-        return $suffix === 'home' ? 'jurnaling' : 'jurnaling/'.$suffix;
+        return $suffix === 'home' ? 'jurnaling' : 'jurnaling/' . $suffix;
     }
 
     public function create()
     {
-        return view($this->viewPrefix().'.jurnaling.create');
+        return view($this->viewPrefix() . '.jurnaling.create');
     }
 
     public function save(Request $request)
@@ -64,7 +64,7 @@ class JurnalingController
             'tanggal_akhir' => 'required|date|after_or_equal:tanggal_awal',
         ]);
 
-        return redirect()->route($this->routePrefix().'/jurnaling', ['periode_id' => $periode->id])
+        return redirect()->route($this->routePrefix() . '/jurnaling', ['periode_id' => $periode->id])
             ->with('successPeriode', 'Periode created successfully.');
     }
 
@@ -112,7 +112,7 @@ class JurnalingController
         }
         session(['selectedPeriode' => $periodeId]);
 
-        return view($this->viewPrefix().'.jurnaling.'.$this->viewSuffix($type), [
+        return view($this->viewPrefix() . '.jurnaling.' . $this->viewSuffix($type), [
             'jurnalings' => $jurnalings,
             'coas' => $coas,
             'periodes' => $periodes,
@@ -250,7 +250,7 @@ class JurnalingController
             $tahunJurnal = Carbon::parse($validated['tanggal_jurnal'])->year;
 
             if ($tahunJurnal !== $tahunPeriode) {
-                return response()->json(['errors' => ['Tahun jurnal ('.$tahunJurnal.') tidak sesuai dengan tahun periode ('.$tahunPeriode.').']], 422);
+                return response()->json(['errors' => ['Tahun jurnal (' . $tahunJurnal . ') tidak sesuai dengan tahun periode (' . $tahunPeriode . ').']], 422);
             }
         }
 
@@ -281,7 +281,7 @@ class JurnalingController
 
         return response()->json([
             'success' => 'Data berhasil diinputkan!',
-            'redirect' => route($this->routePrefix().'/'.$this->routeSuffix($type)),
+            'redirect' => route($this->routePrefix() . '/' . $this->routeSuffix($type)),
         ]);
     }
 
@@ -333,11 +333,11 @@ class JurnalingController
         $tahun = substr($tanggal->format('Y'), -2);
 
         $nomorBukti = match ($type) {
-            'km' => 'KM-'.str_pad($nomorTransaksi, 4, '0', STR_PAD_LEFT).'/'.$bulan.'/'.$tahun,
-            'kk' => 'KK-'.str_pad($nomorTransaksi, 4, '0', STR_PAD_LEFT).'/'.$bulan.'/'.$tahun,
-            'bm' => substr($request->get('nomor_akun'), -4).'-BM-'.str_pad($nomorTransaksi, 4, '0', STR_PAD_LEFT).'/'.$bulan.'/'.$tahun,
-            'bk' => substr($request->get('nomor_akun'), -4).'-BK-'.str_pad($nomorTransaksi, 4, '0', STR_PAD_LEFT).'/'.$bulan.'/'.$tahun,
-            'mem', 'mempenutup' => 'JM-'.str_pad($nomorTransaksi, 4, '0', STR_PAD_LEFT).'/'.$bulan.'/'.$tahun,
+            'km' => 'KM-' . str_pad($nomorTransaksi, 4, '0', STR_PAD_LEFT) . '/' . $bulan . '/' . $tahun,
+            'kk' => 'KK-' . str_pad($nomorTransaksi, 4, '0', STR_PAD_LEFT) . '/' . $bulan . '/' . $tahun,
+            'bm' => substr($request->get('nomor_akun'), -4) . '-BM-' . str_pad($nomorTransaksi, 4, '0', STR_PAD_LEFT) . '/' . $bulan . '/' . $tahun,
+            'bk' => substr($request->get('nomor_akun'), -4) . '-BK-' . str_pad($nomorTransaksi, 4, '0', STR_PAD_LEFT) . '/' . $bulan . '/' . $tahun,
+            'mem', 'mempenutup' => 'JM-' . str_pad($nomorTransaksi, 4, '0', STR_PAD_LEFT) . '/' . $bulan . '/' . $tahun,
         };
 
         $jurnal = Jurnaling::where('nomor_bukti', $nomorBukti)->get();
@@ -503,7 +503,7 @@ class JurnalingController
             }
         }
 
-        return redirect()->route($this->routePrefix().'/'.$this->routeSuffix($type))
+        return redirect()->route($this->routePrefix() . '/' . $this->routeSuffix($type))
             ->with([
                 'selectedPeriode' => $request->periode_id,
                 'success' => 'Data berhasil diperbarui!',
@@ -547,7 +547,7 @@ class JurnalingController
             $jurnal = Jurnaling::where('nomor_bukti', $nomorBukti)->first();
 
             if (! $jurnal) {
-                return redirect()->route($this->routePrefix().'/'.$this->routeSuffix($type))
+                return redirect()->route($this->routePrefix() . '/' . $this->routeSuffix($type))
                     ->with([
                         'selectedPeriode' => $request->periode_id,
                         'error' => 'Jurnal dengan nomor bukti tersebut tidak ditemukan.',
@@ -556,16 +556,16 @@ class JurnalingController
 
             Jurnaling::where('nomor_bukti', $nomorBukti)->delete();
 
-            return redirect()->route($this->routePrefix().'/'.$this->routeSuffix($type))
+            return redirect()->route($this->routePrefix() . '/' . $this->routeSuffix($type))
                 ->with([
                     'selectedPeriode' => $request->periode_id,
                     'success' => 'Data berhasil dihapus!',
                 ]);
         } catch (\Exception $e) {
-            return redirect()->route($this->routePrefix().'/'.$this->routeSuffix($type))
+            return redirect()->route($this->routePrefix() . '/' . $this->routeSuffix($type))
                 ->with([
                     'selectedPeriode' => $request->periode_id,
-                    'error' => 'Terjadi kesalahan saat menghapus jurnal: '.$e->getMessage(),
+                    'error' => 'Terjadi kesalahan saat menghapus jurnal: ' . $e->getMessage(),
                 ]);
         }
     }
@@ -602,7 +602,7 @@ class JurnalingController
             }
         }
 
-        return view($this->viewPrefix().'/neracasaldo/months', [
+        return view($this->viewPrefix() . '/neracasaldo/months', [
             'periodes' => $periodes,
             'selectedPeriode' => $selectedPeriode,
             'months' => collect($months),
@@ -641,7 +641,7 @@ class JurnalingController
             }
         }
 
-        return view($this->viewPrefix().'/jurnaling/months', compact('periodes', 'selectedPeriode', 'months'));
+        return view($this->viewPrefix() . '/jurnaling/months', compact('periodes', 'selectedPeriode', 'months'));
     }
 
     public function rekapJurnalMonth(Request $request, $periode_id)
@@ -788,7 +788,7 @@ class JurnalingController
         $existingNeraca = NeracaSaldo::where('periode_id', $periode_id)
             ->where('month', $selectedMonthDate->toDateString())
             ->get()
-            ->keyBy(fn ($item) => $item->coa_id.'-'.(int) $item->periode_id.'-'.Carbon::parse($item->month)->toDateString());
+            ->keyBy(fn ($item) => $item->coa_id . '-' . (int) $item->periode_id . '-' . Carbon::parse($item->month)->toDateString());
 
         $existingSaldoAwal = SaldoAwal::whereIn('tanggal_saldo', [
             $selectedMonthDate->copy()->addMonth()->startOfMonth()->toDateString(),
@@ -796,10 +796,10 @@ class JurnalingController
         ])
             ->whereIn('periode_id', [$periode_id, optional($nextPeriode)->id])
             ->get()
-            ->keyBy(fn ($item) => $item->coa_id.'-'.(int) $item->periode_id.'-'.Carbon::parse($item->tanggal_saldo)->toDateString());
+            ->keyBy(fn ($item) => $item->coa_id . '-' . (int) $item->periode_id . '-' . Carbon::parse($item->tanggal_saldo)->toDateString());
 
         $neracaSaldoBatch = collect($neracaSaldoBatch)->filter(function ($item) use ($existingNeraca) {
-            $key = $item['coa_id'].'-'.(int) $item['periode_id'].'-'.Carbon::parse($item['month'])->toDateString();
+            $key = $item['coa_id'] . '-' . (int) $item['periode_id'] . '-' . Carbon::parse($item['month'])->toDateString();
             $existing = $existingNeraca->get($key);
 
             return ! $existing || (
@@ -811,7 +811,7 @@ class JurnalingController
         })->values()->all();
 
         $saldoAwalBatch = collect($saldoAwalBatch)->filter(function ($item) use ($existingSaldoAwal) {
-            $key = $item['coa_id'].'-'.(int) $item['periode_id'].'-'.Carbon::parse($item['tanggal_saldo'])->toDateString();
+            $key = $item['coa_id'] . '-' . (int) $item['periode_id'] . '-' . Carbon::parse($item['tanggal_saldo'])->toDateString();
             $existing = $existingSaldoAwal->get($key);
 
             return ! $existing || (
@@ -823,7 +823,7 @@ class JurnalingController
         $seenSaldoAwal = [];
         $finalSaldoAwalBatch = [];
         foreach ($saldoAwalBatch as $row) {
-            $key = $row['coa_id'].'-'.(int) $row['periode_id'].'-'.Carbon::parse($row['tanggal_saldo'])->toDateString();
+            $key = $row['coa_id'] . '-' . (int) $row['periode_id'] . '-' . Carbon::parse($row['tanggal_saldo'])->toDateString();
             if (! isset($seenSaldoAwal[$key])) {
                 $seenSaldoAwal[$key] = true;
                 $finalSaldoAwalBatch[] = $row;
@@ -833,7 +833,7 @@ class JurnalingController
         $seenNeraca = [];
         $finalNeracaSaldoBatch = [];
         foreach ($neracaSaldoBatch as $row) {
-            $key = $row['coa_id'].'-'.(int) $row['periode_id'].'-'.Carbon::parse($row['month'])->toDateString();
+            $key = $row['coa_id'] . '-' . (int) $row['periode_id'] . '-' . Carbon::parse($row['month'])->toDateString();
             if (! isset($seenNeraca[$key])) {
                 $seenNeraca[$key] = true;
                 $finalNeracaSaldoBatch[] = $row;
@@ -862,7 +862,7 @@ class JurnalingController
             }
         });
 
-        return redirect()->route($this->routePrefix().'/neracasaldo/showing', [
+        return redirect()->route($this->routePrefix() . '/neracasaldo/showing', [
             'periode_id' => $periode_id,
             'month' => $selectedMonthDate->format('Y-m'),
         ])->with('success', 'Neraca Saldo berhasil direkap untuk bulan ini.');
@@ -929,7 +929,7 @@ class JurnalingController
         $periode->is_rekap = true;
         $periode->save();
 
-        return redirect()->route($this->routePrefix().'/neracasaldo', ['periode_id' => $periode_id])
+        return redirect()->route($this->routePrefix() . '/neracasaldo', ['periode_id' => $periode_id])
             ->with('success', 'Jurnal berhasil direkap.');
     }
 
@@ -956,7 +956,7 @@ class JurnalingController
             ->orderBy('tanggal_jurnal', 'asc')
             ->get();
 
-        return view($this->viewPrefix().'.jurnaling.showing', [
+        return view($this->viewPrefix() . '.jurnaling.showing', [
             'periodes' => $periodes,
             'coas' => $coas,
             'jurnalings' => $jurnalings,
@@ -970,13 +970,13 @@ class JurnalingController
         $periodeId = $request->query('periode_id');
 
         if (! $month || ! $periodeId) {
-            return redirect()->route($this->routePrefix().'/jurnaling/months')
+            return redirect()->route($this->routePrefix() . '/jurnaling/months')
                 ->withErrors(['error' => 'Please select a valid month and period.']);
         }
 
         $selectedPeriode = Periode::find($periodeId);
         if (! $selectedPeriode) {
-            return redirect()->route($this->routePrefix().'/jurnaling/months')
+            return redirect()->route($this->routePrefix() . '/jurnaling/months')
                 ->withErrors(['error' => 'Invalid period selected.']);
         }
 
@@ -1010,7 +1010,7 @@ class JurnalingController
 
         $monthName = Carbon::createFromFormat('Y-m', $month)->format('F Y');
 
-        return view($this->viewPrefix().'.jurnaling.showing', compact('monthEntries', 'monthName'));
+        return view($this->viewPrefix() . '.jurnaling.showing', compact('monthEntries', 'monthName'));
     }
 
     public function exportJurnaling(Request $request)
@@ -1020,7 +1020,7 @@ class JurnalingController
 
         $periode = Periode::find($periodeId);
         if (! $periode) {
-            return redirect()->route($this->routePrefix().'/jurnaling/months')
+            return redirect()->route($this->routePrefix() . '/jurnaling/months')
                 ->withErrors(['error' => 'Invalid period selected.']);
         }
 

@@ -31,7 +31,7 @@ class LaporanBulanHasilInvestasi implements FromCollection, WithColumnWidths, Wi
     public function collection()
     {
         $cleanMonth = preg_replace('/[^0-9\-]/', '', $this->month);
-        $selectedMonth = Carbon::parse($cleanMonth.'-01');
+        $selectedMonth = Carbon::parse($cleanMonth . '-01');
 
         $data = [
             'Surat Berharga Negara' => [],
@@ -209,7 +209,7 @@ class LaporanBulanHasilInvestasi implements FromCollection, WithColumnWidths, Wi
             AfterSheet::class => function (AfterSheet $event) {
                 $otorisators = Otorisator::orderBy('id', 'asc')->get();
                 $sheet = $event->sheet;
-                $selectedMonth = Carbon::parse($this->month.'-01');
+                $selectedMonth = Carbon::parse($this->month . '-01');
                 $previousMonth = $selectedMonth->copy()->subMonth();
 
                 $sheet->insertNewRowBefore(1, 7);
@@ -219,14 +219,14 @@ class LaporanBulanHasilInvestasi implements FromCollection, WithColumnWidths, Wi
                     'A2' => 'SINODE GKJ & GKI JAWA TENGAH SALATIGA',
                     'A3' => '(PROGRAM PENSIUM MANFAAT PASTI)',
                     'A4' => 'LAPORAN HASIL INVESTASI BULANAN',
-                    'A5' => 'Per '.$previousMonth->translatedFormat('F Y').' s/d '.$selectedMonth->translatedFormat('F Y'),
+                    'A5' => 'Per ' . $previousMonth->translatedFormat('F Y') . ' s/d ' . $selectedMonth->translatedFormat('F Y'),
                 ];
 
                 $sheet->setCellValue('A6', '');
                 $sheet->setCellValue('A7', '');
 
                 foreach ($titles as $cell => $text) {
-                    $sheet->mergeCells($cell.':I'.substr($cell, 1));
+                    $sheet->mergeCells($cell . ':I' . substr($cell, 1));
                     $sheet->setCellValue($cell, $text);
                     $sheet->getStyle($cell)->applyFromArray([
                         'font' => ['bold' => true, 'size' => 12],
@@ -249,7 +249,7 @@ class LaporanBulanHasilInvestasi implements FromCollection, WithColumnWidths, Wi
                 $endOfMonthDate = $selectedMonth->copy()->endOfMonth();
 
                 $sheet->mergeCells("A$footerRow:I$footerRow");
-                $sheet->setCellValue("A$footerRow", 'Salatiga, '.$endOfMonthDate->translatedFormat('d F Y'));
+                $sheet->setCellValue("A$footerRow", 'Salatiga, ' . $endOfMonthDate->translatedFormat('d F Y'));
                 $sheet->getStyle("A$footerRow")->applyFromArray([
                     'alignment' => ['horizontal' => 'center'],
                     'font' => ['size' => 11],
@@ -296,7 +296,7 @@ class LaporanBulanHasilInvestasi implements FromCollection, WithColumnWidths, Wi
                 }
                 $footerRow += 5;
 
-                $sheet->getStyle('C'.($highestRow + 3).":F$footerRow")->applyFromArray([
+                $sheet->getStyle('C' . ($highestRow + 3) . ":F$footerRow")->applyFromArray([
                     'font' => ['size' => 11],
                     'alignment' => ['horizontal' => 'center'],
                 ]);

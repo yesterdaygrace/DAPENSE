@@ -1,97 +1,106 @@
 @extends('layouts.applayout')
+@section('title', 'Rekap Jurnal')
 @section('content')
-@include('components.admin-sidebar', ['activeMenu' => 'jurnaling-showing'])
 
-<div class="content-wrapper">
-    <div class="container-xxl flex-grow-1 container-p-y">
-        <div class="mt-3 card">
-            <div class="card-header">
-                <h5 class="card-title">Jurnal</h5>
-            </div>
-            <div class="card-body">
-                <!-- Filters -->
-                <div class="mb-3 row">
-                    <div class="col">
-                        <label for="filter-kategori-jurnal" class="form-label">Filter Berdasarkan Kategori Jurnal</label>
-                        <div>
-                            <button id="show-all" class="btn btn-secondary">Tampilkan Semua</button>
-                            <button id="show-KM" class="btn btn-secondary" data-category="KM-">Kas Masuk</button>
-                            <button id="show-KK" class="btn btn-secondary" data-category="KK-">Kas Keluar</button>
-                            <button id="show-BM" class="btn btn-secondary" data-category="-BM-">Bank Masuk</button>
-                            <button id="show-BK" class="btn btn-secondary" data-category="-BK-">Bank Keluar</button>
-                            <button id="show-BK" class="btn btn-secondary" data-category="JM-">Memorial</button>
-                        </div>
-                        <div class="d-flex justify-content-end">
-                            <a href="{{ route('admin/jurnaling/export', ['month' => request('month'), 'periode_id' => request('periode_id')]) }}"
-                                class="btn btn-success">
-                                Export Excel
-                            </a>
-                        </div>
-                    </div>
+<x-dashboard.page-header
+    title="Rekap Jurnal"
+    description="Daftar semua entri jurnal periode ini"
+    :actions="'<a href=\'' . route('admin/jurnaling/export', ['month' => request('month'), 'periode_id' => request('periode_id')]) . '\' class=\'btn-success\'>Export Excel</a>'"
+/>
+
+<div class="filter-card mb-6">
+    <div class="card-body">
+        <div class="filter-row">
+            <div class="filter-group flex-1">
+                <label class="label">Filter Kategori Jurnal</label>
+                <div class="flex flex-wrap gap-2">
+                    <button id="show-all" class="btn-secondary btn-sm">Semua</button>
+                    <button id="show-KM" class="btn-secondary btn-sm" data-category="KM-">Kas Masuk</button>
+                    <button id="show-KK" class="btn-secondary btn-sm" data-category="KK-">Kas Keluar</button>
+                    <button id="show-BM" class="btn-secondary btn-sm" data-category="-BM-">Bank Masuk</button>
+                    <button id="show-BK" class="btn-secondary btn-sm" data-category="-BK-">Bank Keluar</button>
+                    <button id="show-JM" class="btn-secondary btn-sm" data-category="JM-">Memorial</button>
                 </div>
-
-                <div class="mb-3 row">
-                    <div class="col">
-                        <label for="coa-search" class="form-label">Cari Nomor Bukti, COA, atau Keterangan</label>
-                        <div class="input-group input-group-merge">
-                            <span class="input-group-text" id="basic-addon-search31"><i class="bx bx-search"></i></span>
-                            <input type="text" id="search-field" class="form-control" placeholder="Cari Nomor Bukti, COA, atau Keterangan">
-                        </div>
-                    </div>
-                </div>
-                @if (isset($monthEntries) && $monthEntries->isEmpty())
-                <p>No journal entries available for {{ $monthName }}.</p>
-                @elseif (isset($monthEntries))
-                <table class="table table-bordered" id="journal-table">
-                    <thead>
-                        <tr align="center">
-                            <th id="sort-tanggal-jurnal" style="cursor: pointer;" data-sort="asc">
-                                Tanggal Jurnal
-                                <i id="sort-icon" class="sort-icon bx bx-sort-down"></i>
-                            </th>
-                            <th>Nomor Bukti</th>
-                            <th>Keterangan</th>
-                            <th>Kategori Jurnal</th>
-                            <th>COA</th>
-                            <th>Debit</th>
-                            <th>Kredit</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @php
-                        $totalDebit = 0;
-                        $totalCredit = 0;
-                        @endphp
-
-                        @foreach ($monthEntries as $entry)
-                        @php
-                        $totalDebit += $entry->debit;
-                        $totalCredit += $entry->kredit;
-                        @endphp
-                        <tr class="journal-row">
-                            <td>{{ $entry->tanggal_jurnal }}</td>
-                            <td>{{ $entry->nomor_bukti }}</td>
-                            <td>{{ $entry->keterangan }}</td>
-                            <td>{{ $entry->kategori_jurnal }}</td>
-                            <td>{{ $entry->coa->kode_akun }} - {{ $entry->coa->nama_akun }}</td>
-                            <td>{{ number_format($entry->debit, 2) }}</td>
-                            <td>{{ number_format($entry->kredit, 2) }}</td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <th colspan="5" align="right">Total:</th>
-                            <th id="total-debit">{{ number_format($totalDebit, 2) }}</th>
-                            <th id="total-credit">{{ number_format($totalCredit, 2) }}</th>
-                        </tr>
-                    </tfoot>
-                </table>
-                @else
-                <p>No data found.</p>
-                @endif
             </div>
         </div>
+        <div class="mt-3">
+            <div class="relative max-w-sm">
+                <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+                <input type="text" id="search-field" class="input-field pl-10" placeholder="Cari Nomor Bukti, COA, atau Keterangan">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        @if (isset($monthEntries) && $monthEntries->isEmpty())
+        <div class="card-body">
+            <x-dashboard.empty-state
+                icon="book-open"
+                title="Tidak ada data jurnal"
+                description="Belum ada entri jurnal untuk bulan {{ $monthName }}."
+            />
+        </div>
+        @elseif (isset($monthEntries))
+        <div class="overflow-x-auto">
+            <table class="data-table" id="journal-table">
+                <thead>
+                    <tr>
+                        <th class="sticky top-0 bg-gray-50 z-10" id="sort-tanggal-jurnal" class="cursor-pointer" data-sort="asc">
+                            Tanggal Jurnal
+                            <i id="sort-icon" class="bx bx-sort-down ml-1"></i>
+                        </th>
+                        <th class="sticky top-0 bg-gray-50 z-10">Nomor Bukti</th>
+                        <th class="sticky top-0 bg-gray-50 z-10">Keterangan</th>
+                        <th class="sticky top-0 bg-gray-50 z-10">Kategori Jurnal</th>
+                        <th class="sticky top-0 bg-gray-50 z-10">COA</th>
+                        <th class="sticky top-0 bg-gray-50 z-10 num-col">Debit</th>
+                        <th class="sticky top-0 bg-gray-50 z-10 num-col">Kredit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @php
+                    $totalDebit = 0;
+                    $totalCredit = 0;
+                    @endphp
+
+                    @foreach ($monthEntries as $entry)
+                    @php
+                    $totalDebit += $entry->debit;
+                    $totalCredit += $entry->kredit;
+                    @endphp
+                    <tr class="journal-row hover:bg-gray-50/50 transition-colors">
+                        <td>{{ $entry->tanggal_jurnal }}</td>
+                        <td class="font-mono text-sm">{{ $entry->nomor_bukti }}</td>
+                        <td>{{ $entry->keterangan }}</td>
+                        <td>
+                            <span class="badge">{{ $entry->kategori_jurnal }}</span>
+                        </td>
+                        <td>{{ $entry->coa->kode_akun }} - {{ $entry->coa->nama_akun }}</td>
+                        <td class="num-col">{{ number_format($entry->debit, 2) }}</td>
+                        <td class="num-col">{{ number_format($entry->kredit, 2) }}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+                <tfoot>
+                    <tr class="bg-gray-50 font-semibold">
+                        <th colspan="5" class="text-right">Total:</th>
+                        <th id="total-debit" class="num-col">{{ number_format($totalDebit, 2) }}</th>
+                        <th id="total-credit" class="num-col">{{ number_format($totalCredit, 2) }}</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        @else
+        <div class="card-body">
+            <x-dashboard.empty-state
+                icon="alert-circle"
+                title="Tidak ada data"
+                description="Data tidak ditemukan."
+            />
+        </div>
+        @endif
     </div>
 </div>
 
@@ -108,12 +117,11 @@
         rows.forEach(row => {
             const nomorBukti = row.querySelector('td:nth-child(2)').innerText.trim();
             if (previousNomorBukti && previousNomorBukti !== nomorBukti) {
-                row.style.borderTop = "3px solid #000000"; // Garis pemisah saat nomor bukti berubah
+                row.style.borderTop = "3px solid #000000";
             }
             previousNomorBukti = nomorBukti;
         });
 
-        // Fungsi update total sesuai baris yang tampil
         function updateTotals() {
             const rows = journalTable.querySelectorAll('tbody tr.journal-row');
             let totalDebit = 0;
@@ -136,7 +144,6 @@
             });
         }
 
-        // Fungsi Filter
         filterButtons.forEach(button => {
             button.addEventListener('click', function() {
                 const category = this.getAttribute('data-category') || 'all';
@@ -161,7 +168,6 @@
             });
         }
 
-        // Fungsi Pencarian
         searchField.addEventListener('keyup', function() {
             const query = this.value.toLowerCase();
             const rows = document.querySelectorAll('.journal-row');
@@ -177,12 +183,11 @@
             updateTotals();
         });
 
-        // Fungsi Sorting
         sortButton.addEventListener('click', function() {
             const order = this.getAttribute('data-sort') === 'asc' ? 'desc' : 'asc';
             this.setAttribute('data-sort', order);
             const icon = document.getElementById('sort-icon');
-            icon.className = order === 'asc' ? 'sort-icon bx bx-sort-up' : 'sort-icon bx bx-sort-down';
+            icon.className = order === 'asc' ? 'bx bx-sort-up' : 'bx bx-sort-down';
 
             sortTable(order);
             updateTotals();
@@ -199,10 +204,8 @@
             rows.forEach(row => tbody.appendChild(row));
         }
 
-        // Inisialisasi total pertama kali
         updateTotals();
     });
 </script>
-
 
 @endsection

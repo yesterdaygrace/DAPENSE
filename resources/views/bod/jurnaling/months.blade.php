@@ -1,51 +1,48 @@
 @extends('layouts.applayout')
+@section('title', 'Rekap Jurnal')
 @section('content')
-@include('components.admin-sidebar', ['activeMenu' => 'jurnaling-showing'])
 
-<div class="content-wrapper">
-    <div class="container-xxl flex-grow-1 container-p-y">
-        <!-- Period Selection -->
-        <div class="mt-3 card">
-            <div class="card-header">
-                <h5>Pilih Periode</h5>
-            </div>
-            <div class="card-body">
-                <form method="GET" action="{{ route('bod/jurnaling/months') }}">
-                    <div class="mb-3">
-                        <label for="periode-select" class="form-label">Pilih Periode</label>
-                        <select name="periode_id" id="periode-select" class="form-control" required>
-                            <option value="">Pilih Periode</option>
-                            @foreach ($periodes as $periode)
-                            <option value="{{ $periode->id }}" {{ $selectedPeriode == $periode->id ? 'selected' : '' }}>
-                                {{ $periode->nama_periode }} ({{ $periode->tanggal_awal }} - {{ $periode->tanggal_akhir }})
-                            </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Tampilkan Bulan</button>
-                </form>
-            </div>
-        </div>
+<x-dashboard.page-header
+    title="Pilih Bulan Jurnal"
+    description="Pilih bulan untuk melihat rekap jurnal"
+/>
 
-        <!-- Months List -->
-
-        <div class="mt-4 row">
-            @foreach ($months as $month)
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="text-center card-body">
-                        <h6>{{ $month['name'] }}</h6>
-                        <form method="GET" action="{{ route('bod/jurnaling/showing') }}">
-                            <input type="hidden" name="periode_id" value="{{ $selectedPeriode }}">
-                            <input type="hidden" name="month" value="{{ $month['id'] }}">
-                            <button type="submit" class="btn btn-primary">Tampilkan Jurnal</button>
-                        </form>
-                    </div>
+<div class="filter-card mb-6">
+    <div class="card-body">
+        <form method="GET" action="{{ route('bod/jurnaling/months') }}">
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label for="periode-select" class="label">Pilih Periode</label>
+                    <select name="periode_id" id="periode-select" class="select-field" required>
+                        <option value="">Pilih Periode</option>
+                        @foreach ($periodes as $periode)
+                        <option value="{{ $periode->id }}" {{ $selectedPeriode == $periode->id ? 'selected' : '' }}>
+                            {{ $periode->nama_periode }} ({{ $periode->tanggal_awal }} - {{ $periode->tanggal_akhir }})
+                        </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="flex items-end">
+                    <button type="submit" class="btn-primary">Tampilkan Bulan</button>
                 </div>
             </div>
-            @endforeach
-        </div>
-
+        </form>
     </div>
 </div>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    @foreach ($months as $month)
+    <div class="card">
+        <div class="card-body text-center py-8">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ $month['name'] }}</h3>
+            <form method="GET" action="{{ route('bod/jurnaling/showing') }}">
+                <input type="hidden" name="periode_id" value="{{ $selectedPeriode }}">
+                <input type="hidden" name="month" value="{{ $month['id'] }}">
+                <button type="submit" class="btn-primary btn-sm">Tampilkan Jurnal</button>
+            </form>
+        </div>
+    </div>
+    @endforeach
+</div>
+
 @endsection

@@ -1,119 +1,80 @@
 @extends('layouts.applayout')
+@section('title', 'COA')
 @section('content')
-@include('components.admin-sidebar', ['activeMenu' => 'account-coa'])
 
-<<!-- Content wrapper -->
-  <div class="content-wrapper">
-    <!-- Content -->
-    <div class="container-xxl flex-grow-1 container-p-y">
-      <div class="card">
-        <div class="card-header d-flex align-items-center justify-content-between">
-          <h5 class="mb-0">List COA</h5>
-          <a href="{{ route('admin/account/coa/create') }}" class="btn btn-primary">Tambah COA</a>
-        </div>
+<x-dashboard.page-header
+    title="Chart of Accounts"
+    description="Kelola data akun perusahaan"
+    :actions="'<a href=\'' . route('admin/account/coa/create') . '\' class=\'btn-primary\'>Tambah COA</a>'"
+/>
 
-        <div class="card-header d-flex align-items-center justify-content-between">
-          <div class="input-group input-group-merge">
-            <span class="input-group-text" id="basic-addon-search31"><i class="bx bx-search"></i></span>
-            <input type="text" id="search-field" class="form-control" placeholder="Cari Kode COA atau Nama COA">
-          </div>
-        </div>
-
-        <div class="card-body">
-          @if(Session::has('success'))
-          <div class="alert alert-success" role="alert">
-            {{ Session::get('success') }}
-          </div>
-          @endif
-          <table class="table table-hover" id="coa-table">
-            <thead class="table-primary">
-              <tr>
-                <th>Kode Akun</th>
-                <th>Nama Akun</th>
-                <th>Saldo Normal</th>
-                <th>Kategori</th>
-                <th>Level</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              @forelse ($coas as $coa)
-              <tr>
-                <td class="align-middle">{{ $coa->kode_akun }}</td>
-                <td style="text-transform: uppercase;" class="align-middle">{{ $coa->nama_akun }}</td>
-                <td class="align-middle">{{ $coa->saldo_normal }}</td>
-                <td style="text-transform: uppercase;" class="align-middle">{{ $coa->kategori }}</td>
-                <td class="align-middle">{{ $coa->level }}</td>
-                <td class="align-middle">
-                  <a href="{{ route('admin/account/coa/edit', $coa->id) }}" type="button" class="btn btn-warning">Edit</a>
-                  <button type="button" class="btn btn-danger" onclick="confirmDelete('{{ route('admin/account/coa/delete', $coa->id) }}')">Hapus</button>
-                </td>
-              </tr>
-              @empty
-              <tr>
-                <td class="text-center" colspan="7">No COA found</td>
-              </tr>
-              @endforelse
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- / Content -->
-  <div class="content-backdrop fade"></div>
-
-  <!-- Toast Confirm Delete -->
-  <div class="p-3 toast-container position-fixed top-50 start-50 translate-middle" style="z-index: 1050;">
-    <div id="deleteToast" class="text-white toast bg-warning" role="alert" aria-live="assertive" aria-atomic="true">
-      <div class="toast-header">
-        <i class="bx bx-bell me-2"></i>
-        <strong class="me-auto">Konfirmasi Hapus</strong>
-        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-      </div>
-      <div class="toast-body">
-        Apakah Anda yakin ingin menghapus COA ini?
-        <div class="pt-2 mt-4 d-flex justify-content-end border-top">
-          <button type="button" class="btn btn-light btn-sm me-2" data-bs-dismiss="toast">Batal</button>
-          <button type="button" class="btn btn-danger btn-sm" id="confirmDeleteBtn">Hapus</button>
-        </div>
-      </div>
+<div class="card rounded-card border border-gray-100 shadow-card">
+  <div class="card-header border-b border-gray-100 px-6 py-4">
+    <div class="relative w-full max-w-sm">
+      <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+      <input type="text" id="search-field" class="input-field pl-10" placeholder="Cari Kode COA atau Nama COA">
     </div>
   </div>
 
-  <script>
-    document.getElementById('search-field').addEventListener('keyup', function() {
-      let searchQuery = this.value.toLowerCase();
-      let tableRows = document.querySelectorAll('#coa-table tbody tr');
+  <div class="card-body p-6">
+    @if($coas->isEmpty())
+    <x-dashboard.empty-state
+        icon="folder-open"
+        title="Belum ada data COA"
+        description="Mulai tambahkan akun untuk perusahaan Anda"
+        :action="'<a href=\'' . route('admin/account/coa/create') . '\' class=\'btn-primary btn-sm\'>Tambah COA</a>'"
+    />
+    @else
+    <div class="table-container overflow-x-auto">
+      <table class="data-table w-full" id="coa-table">
+        <thead>
+          <tr>
+            <th class="sticky top-0 bg-gray-50 z-10">Kode Akun</th>
+            <th class="sticky top-0 bg-gray-50 z-10">Nama Akun</th>
+            <th class="sticky top-0 bg-gray-50 z-10">Saldo Normal</th>
+            <th class="sticky top-0 bg-gray-50 z-10">Kategori</th>
+            <th class="sticky top-0 bg-gray-50 z-10">Level</th>
+            <th class="sticky top-0 bg-gray-50 z-10">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          @foreach ($coas as $coa)
+          <tr class="hover:bg-gray-50/50 transition-colors">
+            <td class="font-mono text-sm">{{ $coa->kode_akun }}</td>
+            <td class="uppercase">{{ $coa->nama_akun }}</td>
+            <td><span class="badge badge-info">{{ $coa->saldo_normal }}</span></td>
+            <td class="uppercase">{{ $coa->kategori }}</td>
+            <td>{{ $coa->level }}</td>
+            <td>
+              <div class="flex items-center gap-2">
+                <a href="{{ route('admin/account/coa/edit', $coa->id) }}" class="btn-warning btn-sm">Edit</a>
+                <button type="button" class="btn-danger btn-sm" onclick="window.dispatchEvent(new CustomEvent('delete-modal-open', {detail: '{{ route('admin/account/coa/delete', $coa->id) }}'}))">Hapus</button>
+              </div>
+            </td>
+          </tr>
+          @endforeach
+        </tbody>
+      </table>
+    </div>
+    @endif
+  </div>
+</div>
 
-      tableRows.forEach(row => {
-        // Get values from 'Kode Akun' and 'Nama Akun' columns
-        let kodeAkun = row.cells[0].textContent.toLowerCase();
-        let namaAkun = row.cells[1].textContent.toLowerCase();
+<x-delete-modal
+    title="Konfirmasi Hapus COA"
+    message="Apakah Anda yakin ingin menghapus COA ini? Data yang sudah dihapus tidak dapat dikembalikan."
+/>
 
-        // Check if either field includes the search query
-        if (kodeAkun.includes(searchQuery) || namaAkun.includes(searchQuery)) {
-          row.style.display = ''; // Show row
-        } else {
-          row.style.display = 'none'; // Hide row
-        }
-      });
+<script>
+  document.getElementById('search-field').addEventListener('keyup', function() {
+    let searchQuery = this.value.toLowerCase();
+    let tableRows = document.querySelectorAll('#coa-table tbody tr');
+    tableRows.forEach(row => {
+      let kodeAkun = row.cells[0].textContent.toLowerCase();
+      let namaAkun = row.cells[1].textContent.toLowerCase();
+      row.style.display = (kodeAkun.includes(searchQuery) || namaAkun.includes(searchQuery)) ? '' : 'none';
     });
+  });
+</script>
 
-    let deleteUrl = '';
-
-    function confirmDelete(url) {
-      deleteUrl = url;
-      var toastEl = document.getElementById('deleteToast');
-      var toast = new bootstrap.Toast(toastEl);
-      toast.show();
-    }
-
-    document.getElementById('confirmDeleteBtn').onclick = function() {
-      if (deleteUrl) {
-        window.location.href = deleteUrl;
-      }
-    };
-  </script>
-
-  @endsection
+@endsection

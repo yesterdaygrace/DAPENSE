@@ -1,71 +1,74 @@
 @extends('layouts.applayout')
+@section('title', 'Header & COA')
 @section('content')
 
-@include('components.admin-sidebar', ['activeMenu' => 'account-headercoa'])
+<x-dashboard.page-header
+    title="Header & COA"
+    description="Lihat struktur hierarki header dan akun"
+/>
 
-<!-- Content wrapper -->
-<div class="content-wrapper">
-    <!-- Content -->
-    <div class="container-xxl flex-grow-1 container-p-y">
-        <!-- Accordion -->
-        <h5 class="mt-4">Header & COA</h5>
-        <div class="row">
-            <div class="mb-4 col-md mb-md-0">
-                <div class="mt-3 accordion" id="headerCoaAccordion">
-                    @foreach($headerCoas as $headerCoa)
-                    @if(!$headerCoa->parent_id)
-                    <div class="card accordion-item">
-                        <h2 class="accordion-header" id="heading{{ $headerCoa->id }}">
-                            <button type="button" class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#collapse{{ $headerCoa->id }}" aria-expanded="false" aria-controls="collapse{{ $headerCoa->id }}">
-                                {{ $headerCoa->nama_header }} (Level {{ $headerCoa->level }})
-                            </button>
-                        </h2>
-                        <div id="collapse{{ $headerCoa->id }}" class="accordion-collapse collapse" aria-labelledby="heading{{ $headerCoa->id }}">
-                            <div class="accordion-body">
-                                @if($headerCoa->children->count())
-                                @include('components.header_children', ['children' => $headerCoa->children])
-                                @else
-                                <p>No child headers</p>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-                    @endif
-                    @endforeach
-                </div>
-
-                <!-- Pagination Links -->
-                <div class="mt-3 d-flex justify-content-center">
-                    <nav aria-label="Page navigation example">
-                        <ul class="pagination">
-                            @if ($headerCoas->onFirstPage())
-                            <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
-                            @else
-                            <li class="page-item"><a class="page-link" href="{{ $headerCoas->previousPageUrl() }}" rel="prev">&laquo;</a></li>
-                            @endif
-
-                            @foreach ($headerCoas->links()->elements[0] as $page => $url)
-                            @if ($page == $headerCoas->currentPage())
-                            <li class="page-item active"><span class="page-link">{{ $page }}</span></li>
-                            @else
-                            <li class="page-item"><a class="page-link" href="{{ $url }}">{{ $page }}</a></li>
-                            @endif
-                            @endforeach
-
-                            @if ($headerCoas->hasMorePages())
-                            <li class="page-item"><a class="page-link" href="{{ $headerCoas->nextPageUrl() }}" rel="next">&raquo;</a></li>
-                            @else
-                            <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
-                            @endif
-                        </ul>
-                    </nav>
-                </div>
-            </div>
-        </div>
+<div class="space-y-3 mb-6" id="headerCoaAccordion">
+  @foreach($headerCoas as $headerCoa)
+  @if(!$headerCoa->parent_id)
+  <div class="card rounded-card border border-gray-100 shadow-card">
+    <div class="card-header cursor-pointer border-b border-gray-100 px-6 py-4 flex items-center justify-between" onclick="toggleAccordion('collapse{{ $headerCoa->id }}', this)">
+      <div class="flex items-center gap-3">
+        <span class="badge badge-info">{{ $headerCoa->level }}</span>
+        <span class="font-semibold text-gray-900">{{ $headerCoa->nama_header }}</span>
+      </div>
+      <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 transition-transform duration-200" id="icon{{ $headerCoa->id }}"></i>
     </div>
-    <!-- / Content -->
-    <div class="content-backdrop fade"></div>
+    <div id="collapse{{ $headerCoa->id }}" class="hidden">
+      <div class="card-body p-6">
+        @if($headerCoa->children->count())
+        @include('components.header_children', ['children' => $headerCoa->children])
+        @else
+        <p class="text-sm text-gray-500">No child headers</p>
+        @endif
+      </div>
+    </div>
+  </div>
+  @endif
+  @endforeach
 </div>
-<!-- Content wrapper -->
+
+@if($headerCoas->hasPages())
+<div class="flex justify-center">
+  <nav class="flex items-center gap-1">
+    @if ($headerCoas->onFirstPage())
+    <span class="px-3 py-1.5 text-sm text-gray-400">&laquo;</span>
+    @else
+    <a href="{{ $headerCoas->previousPageUrl() }}" class="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900">&laquo;</a>
+    @endif
+
+    @foreach ($headerCoas->links()->elements[0] as $page => $url)
+    @if ($page == $headerCoas->currentPage())
+    <span class="px-3 py-1.5 text-sm bg-primary text-white rounded-lg">{{ $page }}</span>
+    @else
+    <a href="{{ $url }}" class="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 rounded-lg hover:bg-gray-100">{{ $page }}</a>
+    @endif
+    @endforeach
+
+    @if ($headerCoas->hasMorePages())
+    <a href="{{ $headerCoas->nextPageUrl() }}" class="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900">&raquo;</a>
+    @else
+    <span class="px-3 py-1.5 text-sm text-gray-400">&raquo;</span>
+    @endif
+  </nav>
+</div>
+@endif
+
+<script>
+  function toggleAccordion(id, headerEl) {
+    const content = document.getElementById(id);
+    const icon = document.getElementById('icon' + id.replace('collapse', ''));
+    content.classList.toggle('hidden');
+    icon.classList.toggle('rotate-180');
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+  });
+</script>
 
 @endsection

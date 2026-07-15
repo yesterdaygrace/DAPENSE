@@ -31,6 +31,7 @@ class AuthenticatedSessionController extends Controller
 
             if ($user->status === 0) { // Check if user is inactive
                 Auth::logout();
+
                 return redirect()->route('login')->withErrors(['Your account is inactive.']);
             }
 
@@ -74,6 +75,7 @@ class AuthenticatedSessionController extends Controller
     public function logout()
     {
         Auth::logout();
+
         return redirect('/');
     }
 }

@@ -1,218 +1,172 @@
 @extends('layouts.applayout')
+@section('title', 'Memorial')
 @section('content')
-@include('components.admin-sidebar', ['activeMenu' => 'jurnaling-memorial'])
 
-<!-- Content wrapper -->
-<div class="content-wrapper">
+<x-dashboard.page-header
+    title="Jurnal Memorial"
+    description="Entri jurnal memorial"
+/>
 
-    <div class="container-xxl flex-grow-1 container-p-y">
-        <div class="card">
-            <div class="card-header d-flex align-items-center justify-content-between">
-                <h5 class="mb-0">Pilih Periode</h5>
-            </div>
-            <div class="card-body">
-                <div class="card-body">
-                    <form id="periode-form">
-                        <div class="mb-3 row">
-                            <div class="col">
-                                <label for="periode-select" class="form-label">Periode</label>
-                                <select class="form-control" id="periode-select" name="periode_id" required>
-                                    <option value="">Pilih Periode</option>
-                                    @foreach ($periodes as $periode)
-                                    <option value="{{ $periode->id }}" data-start="{{ $periode->tanggal_awal }}" data-end="{{ $periode->tanggal_akhir }}">
-                                        {{ $periode->nama_periode }} ({{ $periode->tanggal_awal }} - {{ $periode->tanggal_akhir }})
-                                    </option>
-                                    @endforeach
-                                </select>
-
-                            </div>
-                            <div class="col">
-                                <button type="submit" id="pilih-periode" class="mt-4 btn btn-primary">Pilih</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <!-- Tambah Kolom Jurnal Card -->
-        <div class="mt-3 card">
-            <div class="card-header d-flex align-items-center justify-content-between">
-                <h5 class="mb-0">Tambah Kolom Jurnal</h5>
-            </div>
-            <div class="card-body">
-                <div id="form-errors" class="alert alert-danger" style="display:none;"></div>
-                <div id="form-success" class="alert alert-success" style="display:none;"></div>
-                @if (Session::has('success'))
-                <div class="alert alert-success">
-                    {{ Session::get('success') }}
-                </div>
-                @endif
-
-                @if ($errors->any())
-                <div class="alert alert-danger">
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
+<div class="filter-card mb-6">
+    <div class="card-body">
+        <form id="periode-form">
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label for="periode-select" class="label">Periode</label>
+                    <select class="select-field" id="periode-select" name="periode_id" required>
+                        <option value="">Pilih Periode</option>
+                        @foreach ($periodes as $periode)
+                        <option value="{{ $periode->id }}" data-start="{{ $periode->tanggal_awal }}" data-end="{{ $periode->tanggal_akhir }}">
+                            {{ $periode->nama_periode }} ({{ $periode->tanggal_awal }} - {{ $periode->tanggal_akhir }})
+                        </option>
                         @endforeach
-                    </ul>
+                    </select>
                 </div>
-                @endif
-                <form id="jurnaling-form" action="{{ route('operator/jurnaling/storememorial') }}" method="POST">
-                    @csrf
-                    <input type="hidden" name="_method" value="POST" id="form-method">
-                    <div class="mb-3 row">
-                        <div class="col">
-                            <label for="tanggal_jurnal" class="form-label">Tanggal Jurnal</label>
-                            <input type="date" class="form-control" id="tanggal_jurnal" name="tanggal_jurnal" required>
-                        </div>
-                        <div class="col">
-                            <label for="kategori_jurnal" class="form-label">Kategori Jurnal</label>
-                            <select class="form-control" id="kategori_jurnal" name="kategori_jurnal" required>
-                                <option value="Memorial">Memorial</option>
-                            </select>
-                        </div>
-                        <div class="col">
-                            <label for="periode_id_form" class="form-label">Periode</label>
-                            <select class="form-control" id="periode_id_form" name="periode_id" readonly>
-                                @foreach ($periodes as $periode)
-                                <option value="{{ $periode->id }}" {{ request()->get('periode_id') == $periode->id ?
-                                    'selected' : '' }}>
-                                    {{ $periode->nama_periode }} ({{ $periode->tanggal_awal }} - {{
-                                    $periode->tanggal_akhir }})
-                                </option>
-                                @endforeach
-                            </select>
-                        </div>
+                <div class="flex items-end">
+                    <button type="submit" id="pilih-periode" class="btn-primary">Pilih</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card mt-4">
+    <div class="card-header">
+        <h5>Tambah Kolom Jurnal</h5>
+    </div>
+    <div class="card-body">
+        <div id="form-errors" class="alert alert-danger" style="display:none;"></div>
+        <div id="form-success" class="alert alert-success" style="display:none;"></div>
+
+        <form id="jurnaling-form" action="{{ route('operator/jurnaling/storememorial') }}" method="POST">
+            @csrf
+            <input type="hidden" name="_method" value="POST" id="form-method">
+            <div class="flex flex-wrap gap-4 mb-3">
+                <div class="flex-1">
+                    <label for="tanggal_jurnal" class="label">Tanggal Jurnal</label>
+                    <input type="date" class="input-field" id="tanggal_jurnal" name="tanggal_jurnal" required>
+                </div>
+                <div class="flex-1">
+                    <label for="kategori_jurnal" class="label">Kategori Jurnal</label>
+                    <select class="select-field" id="kategori_jurnal" name="kategori_jurnal" required>
+                        <option value="Memorial">Memorial</option>
+                    </select>
+                </div>
+                <div class="flex-1">
+                    <label for="periode_id_form" class="label">Periode</label>
+                    <select class="select-field" id="periode_id_form" name="periode_id" readonly>
+                        @foreach ($periodes as $periode)
+                        <option value="{{ $periode->id }}" {{ request()->get('periode_id') == $periode->id ?
+                            'selected' : '' }}>
+                            {{ $periode->nama_periode }} ({{ $periode->tanggal_awal }} - {{
+                            $periode->tanggal_akhir }})
+                        </option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+
+            <div id="coa-container">
+                <div class="mb-3">
+                    <label for="nomor_bukti" class="label">Nomor Bukti</label>
+                    <div class="flex items-center gap-0">
+                        <span class="px-3 py-2 border border-r-0 border-gray-300 rounded-l bg-gray-100 text-sm font-medium">JM-</span>
+                        <input type="text" class="input-field rounded-none flex-1" maxlength="4" id="nomor_transaksi" name="nomor_transaksi" required placeholder="Nomor Transaksi">
+                        <span class="px-3 py-2 border border-l-0 border-gray-300 rounded-r bg-gray-100 text-sm font-medium" id="bulan_tahun_bukti">/Bulan/Tahun</span>
+                        <input type="hidden" id="nomor_bukti" name="nomor_bukti">
                     </div>
+                </div>
 
-                    <div id="coa-container">
-                        <div class="mb-3 row">
-                            <div class="col">
-                                <label for="nomor_bukti" class="form-label">Nomor Bukti</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">JM-</span>
-                                    <input type="text" class="form-control" maxlength="4" id="nomor_transaksi" name="nomor_transaksi" required placeholder="Nomor Transaksi">
-                                    <span class="input-group-text" id="bulan_tahun_bukti">/Bulan/Tahun</span>
-                                    <input type="hidden" id="nomor_bukti" name="nomor_bukti">
-                                </div>
-                            </div>
-                        </div>
+                <div id="first-coa-group" class="flex flex-wrap gap-4 mb-3">
+                    <div class="flex-1">
+                        <label for="first-coa" class="label">Akun Debit</label>
+                        <input class="input-field" data-list="coa-options" id="first-coa" required oninput="updateHiddenInput(this, 'first-coa-id')" placeholder="Masukkan Akun">
+                        <input type="hidden" name="coa_id[]" id="first-coa-id">
+                        <div id="first-coa-dropdown" class="custom-dropdown"></div>
+                    </div>
+                    <div class="flex-1">
+                        <label for="debit" class="label">Debit</label>
+                        <input type="text" class="input-field debit-input" name="debit[]" value="" placeholder="Masukkan Debit" required oninput="this.value = this.value.replace(/[^0-9]/g, '')" oninput="toggleHiddenInput(this, 'credit')">
+                    </div>
+                    <div class="hidden">
+                        <label class="label" hidden>Kredit</label>
+                        <input type="text" class="input-field credit-input" name="kredit[]" value="0" hidden>
+                    </div>
+                    <div class="flex-1">
+                        <label for="keterangan" class="label">Keterangan</label>
+                        <input type="text" class="input-field" name="keterangan[]" value="" required placeholder="Masukkan Keterangan">
+                    </div>
+                </div>
 
-                        <div id="first-coa-group" class="mb-0 row">
-                            <div class="col">
-                                <label for="first-coa" class="form-label" style="display: inline-block; margin-bottom: 2px;">Akun Debit</label>
-                                <input class="form-control" data-list="coa-options" class="form-control" id="first-coa" required oninput="updateHiddenInput(this, 'first-coa-id')" placeholder="Masukkan Akun">
-                                <input type="hidden" name="coa_id[]" id="first-coa-id">
-                                <div id="first-coa-dropdown" class="custom-dropdown"></div>
-                            </div>
-                            <div class="col">
-                                <label for="debit" class="form-label" style="display: inline-block; margin-bottom: 2px;">Debit</label>
-                                <input type="text" class="form-control debit-input" name="debit[]" value="" placeholder="Masukkan Debit" required oninput="this.value = this.value.replace(/[^0-9]/g, '')" oninput="toggleHiddenInput(this, 'credit')">
-                            </div>
-                            <div>
-                                <label for="kredit" class="form-label" style="display: inline-block; margin-bottom: 2px;" hidden>Kredit</label>
-                                <input type="text" class="form-control credit-input" name="kredit[]" value="0" hidden>
-                            </div>
-                            <div class="col">
-                                <label for="keterangan" class="form-label" style="display: inline-block; margin-bottom: 2px;">Keterangan</label>
-                                <input type="text" class="form-control" name="keterangan[]" value="" required placeholder="Masukkan Keterangan">
-                            </div>
-                        </div>
+                <div id="opposite-coa-group" class="flex flex-wrap gap-4 mt-4">
+                    <div class="flex-1">
+                        <label for="opposite-coa" class="label">Akun Kredit</label>
+                        <input class="input-field" data-list="coa-options" id="opposite-coa" required oninput="updateHiddenInput(this, 'opposite-coa-id')" placeholder="Masukkan Akun">
+                        <input type="hidden" name="coa_id[]" id="opposite-coa-id">
+                        <div id="opposite-coa-dropdown" class="custom-dropdown"></div>
+                    </div>
+                    <div class="flex-1">
+                        <label for="kredit" class="label">Kredit</label>
+                        <input type="text" class="input-field kredit-input" name="kredit[]" value="" placeholder="Masukkan Kredit" required oninput="this.value = this.value.replace(/[^0-9]/g, '')" oninput="toggleHiddenInput(this, 'debit')">
+                    </div>
+                    <div class="hidden">
+                        <label class="label" hidden>Debit</label>
+                        <input type="text" class="input-field debit-input" name="debit[]" value="0" hidden>
+                    </div>
+                    <div class="flex-1">
+                        <label for="keterangan" class="label">Keterangan</label>
+                        <input type="text" class="input-field" name="keterangan[]" value="" required placeholder="Masukkan Keterangan">
+                    </div>
+                </div>
 
-                        <div id="opposite-coa-group" class="mt-4 row">
-                            <div class="col">
-                                <label for="opposite-coa" class="form-label" style="display: inline-block; margin-bottom: 2px;">Akun Kredit</label>
-                                <input class="form-control" data-list="coa-options" class="form-control" id="opposite-coa" required oninput="updateHiddenInput(this, 'opposite-coa-id')" placeholder="Masukkan Akun">
-                                <input type="hidden" name="coa_id[]" id="opposite-coa-id">
-                                <div id="opposite-coa-dropdown" class="custom-dropdown"></div>
-                            </div>
-                            <div class="col">
-                                <label for="kredit" class="form-label" style="display: inline-block; margin-bottom: 2px;">Kredit</label>
-                                <input type="text" class="form-control kredit-input" name="kredit[]" value="" placeholder="Masukkan Kredit" required oninput="this.value = this.value.replace(/[^0-9]/g, '')" oninput="toggleHiddenInput(this, 'debit')">
-                            </div>
-                            <div>
-                                <label for="debit" class="form-label" style="display: inline-block; margin-bottom: 2px;" hidden>Debit</label>
-                                <input type="text" class="form-control debit-input" name="debit[]" value="0" hidden>
-                            </div>
-                            <div class="col">
-                                <label for="keterangan" class="form-label" style="display: inline-block; margin-bottom: 2px;">Keterangan</label>
-                                <input type="text" class="form-control" name="keterangan[]" value="" required placeholder="Masukkan Keterangan">
-                            </div>
-                        </div>
+                <datalist id="coa-options">
+                    @foreach ($coas as $coa)
+                    <option value="{{ $coa->kode_akun }} - {{ $coa->nama_akun }}" data-id="{{ $coa->id }}"></option>
+                    @endforeach
+                </datalist>
 
+                <div id="button-container" class="flex gap-2 mt-3">
+                    <button type="button" id="add-first-coa-btn" class="btn-secondary">Tambah Akun Debit</button>
+                    <button type="button" id="cancel-first-coa-btn" class="btn-danger" style="display: none;">Batal Tambah Akun Debit</button>
+                </div>
 
-                        <datalist id="coa-options">
-                            @foreach ($coas as $coa)
-                            <option value="{{ $coa->kode_akun }} - {{ $coa->nama_akun }}" data-id="{{ $coa->id }}"></option>
-                            @endforeach
-                        </datalist>
+                <div id="button-container" class="flex gap-2 mt-3">
+                    <button type="button" id="add-opposite-coa-btn" class="btn-secondary">Tambah Akun Kredit</button>
+                    <button type="button" id="cancel-opposite-coa-btn" class="btn-danger" style="display: none;">Batal Tambah Akun Kredit</button>
+                </div>
 
-                        <div id="button-container" class="d-flex gap-2 mt-3">
-                            <button type="button" id="add-first-coa-btn" class="btn btn-secondary">Tambah Akun Debit</button>
-                            <button type="button" id="cancel-first-coa-btn" class="btn btn-danger" style="display: none;">Batal Tambah Akun Debit</button>
-                        </div>
+                <div class="flex flex-wrap gap-4 mt-4 mb-4">
+                    <div><strong>Total Debit:</strong> <span id="total-debit">0</span></div>
+                    <div><strong>Total Kredit:</strong> <span id="total-kredit">0</span></div>
+                    <div><strong>Status:</strong> <span id="balance-status"> </span></div>
+                </div>
 
-                        <div id="button-container" class="d-flex gap-2 mt-3">
-                            <button type="button" id="add-opposite-coa-btn" class="btn btn-secondary">Tambah Akun Kredit</button>
-                            <button type="button" id="cancel-opposite-coa-btn" class="btn btn-danger" style="display: none;">Batal Tambah Akun Kredit</button>
-                        </div>
-
-
-                        <div class="mt-4 mb-4 row">
-                            <div class="col-md-auto">
-                                <strong>Total Debit:</strong> <span id="total-debit">0</span>
-                            </div>
-                            <div class="col-md-auto">
-                                <strong>Total Kredit:</strong> <span id="total-kredit">0</span>
-                            </div>
-                            <div class="col-md-auto">
-                                <strong>Status:</strong> <span id="balance-status"> </span>
-                            </div>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                </form>
-            </div>
-        </div>
-
-        <!-- Jurnaling Entries Card -->
-
-    </div>
-</div>
-<div class="p-3 toast-container position-fixed top-50 start-50 translate-middle" style="z-index: 1050;">
-    <div id="editToast" class="text-white toast bg-info" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-header">
-            <i class="bx bx-edit me-2"></i>
-            <strong class="me-auto">Konfirmasi Edit</strong>
-            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
-        <div class="toast-body">
-            Apakah Anda yakin ingin memperbarui entri jurnal ini?
-            <div class="pt-2 mt-4 d-flex justify-content-end border-top">
-                <button type="button" class="btn btn-light btn-sm me-2" data-bs-dismiss="toast">Batal</button>
-                <button type="button" class="btn btn-primary btn-sm" id="confirmEditBtn">Edit</button>
-            </div>
-        </div>
+                <button type="submit" class="btn-primary">Submit</button>
+        </form>
     </div>
 </div>
 
-<div class="p-3 toast-container position-fixed top-50 start-50 translate-middle" style="z-index: 1050;">
-    <div id="deleteToast" class="text-white toast bg-danger" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-header">
-            <i class="bx bx-trash me-2"></i>
-            <strong class="me-auto">Konfirmasi Hapus</strong>
-            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
-        <div class="toast-body">
-            Apakah Anda yakin ingin menghapus entri jurnal ini?
-            <div class="pt-2 mt-4 d-flex justify-content-end border-top">
-                <button type="button" class="btn btn-light btn-sm me-2" data-bs-dismiss="toast">Batal</button>
-                <button type="button" class="btn btn-danger btn-sm" id="confirmDeleteBtn">Hapus</button>
-            </div>
-        </div>
-    </div>
-</div>
+<x-delete-modal
+    title="Konfirmasi Hapus"
+    message="Apakah Anda yakin ingin menghapus item ini?"
+/>
+
+<script>
+let deleteDataId = '';
+
+function confirmDelete(dataId) {
+    deleteDataId = dataId;
+    window.dispatchEvent(new CustomEvent('delete-modal-open', { detail: '#' }));
+}
+
+document.addEventListener('click', function(e) {
+    const link = e.target.closest('a.btn-danger');
+    if (link && deleteDataId && link.closest('.fixed')) {
+        e.preventDefault();
+        prepareFormForDelete(deleteDataId);
+    }
+});
+</script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -361,7 +315,7 @@
 
         function toggleHiddenInput(input, counterpartType) {
             const oppositeType = counterpartType === 'debit' ? 'credit' : 'debit';
-            const counterpartInput = input.closest('.row').querySelector(`.${oppositeType}-input`);
+            const counterpartInput = input.closest('[class*="coa-group"]').querySelector(`.${oppositeType}-input`);
 
             if (input.value && counterpartInput.value === '0') {
                 counterpartInput.value = '';
@@ -382,7 +336,6 @@
             return parseInt(value.replace(/[^\d]/g, ''), 10);
         }
 
-        // Fungsi untuk memperbarui input sebelum disubmit
         function updateInputValues() {
             debitInputs.forEach(input => {
                 input.value = stripFormatting(input);
@@ -408,19 +361,13 @@
                 editBtn = document.createElement('button');
                 editBtn.type = 'button';
                 editBtn.id = 'edit-btn';
-                editBtn.className = 'btn btn-warning ms-2';
+                editBtn.className = 'btn-warning ml-2';
                 editBtn.textContent = 'Edit';
                 const submitBtn = form.querySelector('button[type="submit"]');
                 submitBtn.parentNode.insertBefore(editBtn, submitBtn.nextSibling);
 
                 editBtn.addEventListener('click', function() {
-                    const editToast = new bootstrap.Toast(document.getElementById('editToast'));
-                    editToast.show();
-
-                    document.getElementById('confirmEditBtn').onclick = function() {
-                        prepareFormForEdit(dataId);
-                        editToast.hide();
-                    };
+                    prepareFormForEdit(dataId);
                 });
             } else {
                 editBtn.style.display = 'inline-block';
@@ -449,7 +396,7 @@
                 input.value = convertToNumber(input.value);
             });
 
-            form.action = `/operator/jurnaling/editmem/${dataId}`;
+            form.action = `/admin/jurnaling/editmem/${dataId}`;
             document.getElementById('form-method').value = 'PUT';
             form.submit();
         }
@@ -460,20 +407,14 @@
                 deleteBtn = document.createElement('button');
                 deleteBtn.type = 'button';
                 deleteBtn.id = 'delete-btn';
-                deleteBtn.className = 'btn btn-danger ms-2';
+                deleteBtn.className = 'btn-danger ml-2';
                 deleteBtn.textContent = 'Delete';
 
                 const editBtn = document.getElementById('edit-btn');
                 editBtn.parentNode.insertBefore(deleteBtn, editBtn.nextSibling)
 
                 deleteBtn.addEventListener('click', function() {
-                    const deleteToast = new bootstrap.Toast(document.getElementById('deleteToast'));
-                    deleteToast.show();
-
-                    document.getElementById('confirmDeleteBtn').onclick = function() {
-                        prepareFormForDelete(dataId);
-                        deleteToast.hide();
-                    };
+                    confirmDelete(dataId);
                 });
             } else {
                 deleteBtn.style.display = 'inline-block';
@@ -484,7 +425,7 @@
         }
 
         function prepareFormForDelete(dataId) {
-            form.action = `/operator/jurnaling/deletemem/${dataId}`;
+            form.action = `/admin/jurnaling/deletemem/${dataId}`;
             document.getElementById('form-method').value = 'DELETE';
             form.submit();
         }
@@ -494,7 +435,7 @@
             const tanggalJurnal = document.getElementById('tanggal_jurnal').value;
 
             if (nomorTransaksi.length > 3) {
-                fetch(`/operator/jurnaling/cek-nomor-buktimem?nomor_transaksi=${nomorTransaksi}&tanggal_jurnal=${tanggalJurnal}`)
+                fetch(`/admin/jurnaling/cek-nomor-buktimem?nomor_transaksi=${nomorTransaksi}&tanggal_jurnal=${tanggalJurnal}`)
                     .then(response => response.json())
                     .then(data => {
                         if (data.exists) {
@@ -506,9 +447,8 @@
                             document.getElementById('opposite-coa-id').value = data.coa2_id;
                             document.getElementById('opposite-coa').value = `${data.coa2_kode} - ${data.coa2_nama}`;
 
-                            document.querySelector('#first-coa-group .form-control[name="keterangan[]"]').value = data.keterangan_debit || '';
-                            document.querySelector('#opposite-coa-group .form-control[name="keterangan[]"]').value = data.keterangan_kredit || '';
-
+                            document.querySelector('#first-coa-group .input-field[name="keterangan[]"]').value = data.keterangan_debit || '';
+                            document.querySelector('#opposite-coa-group .input-field[name="keterangan[]"]').value = data.keterangan_kredit || '';
 
                             const dateParts = data.tanggal_jurnal.split('-');
                             const bulan = String(parseInt(dateParts[1], 10)).padStart(2, '0');
@@ -538,9 +478,9 @@
 
         function clearForm() {
             document.querySelector('#first-coa-group .debit-input').value = '';
-            document.querySelector('#first-coa-group .form-control[name="keterangan[]"]').value = '';
+            document.querySelector('#first-coa-group .input-field[name="keterangan[]"]').value = '';
             document.querySelector('#opposite-coa-group .kredit-input').value = '';
-            document.querySelector('#opposite-coa-group .form-control[name="keterangan[]"]').value = '';
+            document.querySelector('#opposite-coa-group .input-field[name="keterangan[]"]').value = '';
             document.getElementById('first-coa').value = '';
             document.getElementById('first-coa-id').value = '';
             document.getElementById('opposite-coa').value = '';
@@ -577,30 +517,30 @@
 
         function addFirstCoaField(coa) {
             const newCoaGroup = document.createElement('div');
-            newCoaGroup.classList.add('mt-1', 'row', 'first-coa-group');
+            newCoaGroup.classList.add('mt-1', 'flex', 'flex-wrap', 'gap-4', 'first-coa-group');
 
             const coaValue = coa.kode_akun ? `${coa.kode_akun} - ${coa.nama_akun}` : coa.nama_akun;
 
             newCoaGroup.innerHTML = `
-        <div class="col">
-            <label for="first-coa" class="form-label" style="display: inline-block; margin-bottom: 2px;">Akun Debit</label>
-           <input class="form-control" data-list="coa-options" class="form-control" value="${coaValue}" required 
+        <div class="flex-1">
+            <label class="label">Akun Debit</label>
+            <input class="input-field" data-list="coa-options" value="${coaValue}" required 
                 placeholder="Masukkan Akun" 
                 oninput="updateHiddenInput(this, 'first-coa-id-${coa.id}')">
             <input type="hidden" name="coa_id[]" id="first-coa-id-${coa.id}" value="${coa.coa_id}">
             <div class="custom-dropdown"></div>
         </div>
-        <div class="col">
-            <label for="debit" class="form-label" style="display: inline-block; margin-bottom: 2px;">Debit</label>
-            <input type="text" class="form-control debit-input" name="debit[]" value="${formatNumberValue(coa.debit)}" required placeholder="Masukkan Debit" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+        <div class="flex-1">
+            <label class="label">Debit</label>
+            <input type="text" class="input-field debit-input" name="debit[]" value="${formatNumberValue(coa.debit)}" required placeholder="Masukkan Debit" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
         </div>
-        <div>
-            <label for="kredit" class="form-label" style="display: inline-block; margin-bottom: 2px;" hidden>Kredit</label>
-            <input type="text" class="form-control kredit-input" name="kredit[]" value="0" hidden>
+        <div class="hidden">
+            <label class="label" hidden>Kredit</label>
+            <input type="text" class="input-field kredit-input" name="kredit[]" value="0" hidden>
         </div>
-         <div class="col">
-            <label for="keterangan" class="form-label" style="display: inline-block; margin-bottom: 2px;">Keterangan</label>
-            <input type="text" class="form-control" name="keterangan[]" value="${coa.keterangan || ''}" required placeholder="Masukkan Keterangan">
+         <div class="flex-1">
+            <label class="label">Keterangan</label>
+            <input type="text" class="input-field" name="keterangan[]" value="${coa.keterangan || ''}" required placeholder="Masukkan Keterangan">
         </div>
     `;
 
@@ -623,30 +563,30 @@
 
         function addCoaField(coa) {
             const newCoaGroup = document.createElement('div');
-            newCoaGroup.classList.add('mt-1', 'row', 'additional-coa-group');
+            newCoaGroup.classList.add('mt-1', 'flex', 'flex-wrap', 'gap-4', 'additional-coa-group');
 
             const coaValue = coa.kode_akun ? `${coa.kode_akun} - ${coa.nama_akun}` : coa.nama_akun;
 
             newCoaGroup.innerHTML = `
-        <div class="col">
-            <label for="opposite-coa" class="form-label" style="display: inline-block; margin-bottom: 2px;">Akun Kredit</label>
-            <input class="form-control" data-list="coa-options" class="form-control" value="${coaValue}" required 
+        <div class="flex-1">
+            <label class="label">Akun Kredit</label>
+            <input class="input-field" data-list="coa-options" value="${coaValue}" required 
                 placeholder="Masukkan Akun" 
                 oninput="updateHiddenInput(this, 'opposite-coa-id-${coa.id}')">
             <input type="hidden" name="coa_id[]" id="opposite-coa-id-${coa.id}" value="${coa.coa_id}">
             <div class="custom-dropdown"></div>
         </div>
-        <div class="col">
-            <label for="kredit" class="form-label" style="display: inline-block; margin-bottom: 2px;">Kredit</label>
-            <input type="text" class="form-control kredit-input" name="kredit[]" value="${formatNumberValue(coa.kredit)}" required placeholder="Masukkan Kredit" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+        <div class="flex-1">
+            <label class="label">Kredit</label>
+            <input type="text" class="input-field kredit-input" name="kredit[]" value="${formatNumberValue(coa.kredit)}" required placeholder="Masukkan Kredit" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
         </div>
-        <div>
-            <label for="debit" class="form-label" style="display: inline-block; margin-bottom: 2px;" hidden>Debit</label>
-            <input type="text" class="form-control debit-input" name="debit[]" value="0" hidden>
+        <div class="hidden">
+            <label class="label" hidden>Debit</label>
+            <input type="text" class="input-field debit-input" name="debit[]" value="0" hidden>
         </div>
-         <div class="col">
-            <label for="keterangan" class="form-label" style="display: inline-block; margin-bottom: 2px;">Keterangan</label>
-            <input type="text" class="form-control" name="keterangan[]" value="${coa.keterangan || ''}" required placeholder="Masukkan Keterangan">
+         <div class="flex-1">
+            <label class="label">Keterangan</label>
+            <input type="text" class="input-field" name="keterangan[]" value="${coa.keterangan || ''}" required placeholder="Masukkan Keterangan">
         </div>
     `;
 
@@ -718,26 +658,26 @@
 
         addOppositeCoaBtn.addEventListener('click', function() {
             const newCoaGroup = document.createElement('div');
-            newCoaGroup.classList.add('mt-1', 'row', 'opposite-coa-group');
+            newCoaGroup.classList.add('mt-1', 'flex', 'flex-wrap', 'gap-4', 'opposite-coa-group');
 
             newCoaGroup.innerHTML = `
-    <div class="col">
-        <label for="opposite-coa" class="form-label" style="display: inline-block; margin-bottom: 2px;">Akun Kredit</label>
-        <input class="form-control" data-list="coa-options" class="form-control" required oninput="updateHiddenInput(this, 'opposite-coa-id-${Date.now()}')" placeholder="Masukkan Akun">
+    <div class="flex-1">
+        <label class="label">Akun Kredit</label>
+        <input class="input-field" data-list="coa-options" required oninput="updateHiddenInput(this, 'opposite-coa-id-${Date.now()}')" placeholder="Masukkan Akun">
         <input type="hidden" name="coa_id[]" id="opposite-coa-id-${Date.now()}">
         <div class="custom-dropdown"></div>
     </div>
-    <div class="col">
-        <label for="kredit" class="form-label" style="display: inline-block; margin-bottom: 2px;">Kredit</label>
-        <input type="text" class="form-control kredit-input" name="kredit[]" required placeholder="Masukkan Kredit" oninput="this.value = this.value.replace(/[^0-9]/g, '')" oninput="formatNumberInput(this)">
+    <div class="flex-1">
+        <label class="label">Kredit</label>
+        <input type="text" class="input-field kredit-input" name="kredit[]" required placeholder="Masukkan Kredit" oninput="this.value = this.value.replace(/[^0-9]/g, '')" oninput="formatNumberInput(this)">
     </div>
-    <div>
-        <label for="debit" class="form-label" style="display: inline-block; margin-bottom: 2px;" hidden>Debit</label>
-        <input type="text" class="form-control debit-input" name="debit[]" value="0" hidden oninput="formatNumberInput(this)">
+    <div class="hidden">
+        <label class="label" hidden>Debit</label>
+        <input type="text" class="input-field debit-input" name="debit[]" value="0" hidden oninput="formatNumberInput(this)">
     </div>
-    <div class="col">
-        <label for="keterangan" class="form-label" style="display: inline-block; margin-bottom: 2px;">Keterangan</label>
-        <input type="text" class="form-control" name="keterangan[]" required placeholder="Masukkan Keterangan">
+    <div class="flex-1">
+        <label class="label">Keterangan</label>
+        <input type="text" class="input-field" name="keterangan[]" required placeholder="Masukkan Keterangan">
      </div>
     
     `;
@@ -785,26 +725,26 @@
 
         addFirstCoaBtn.addEventListener('click', function() {
             const newCoaGroup = document.createElement('div');
-            newCoaGroup.classList.add('mt-1', 'row', 'first-coa-group');
+            newCoaGroup.classList.add('mt-1', 'flex', 'flex-wrap', 'gap-4', 'first-coa-group');
 
             newCoaGroup.innerHTML = `
-       <div class="col">
-            <label for="first-coa" class="form-label" style="display: inline-block; margin-bottom: 2px;">Akun Debit</label>
-            <input class="form-control" data-list="coa-options" class="form-control" required oninput="updateHiddenInput(this, 'first-coa-id-${Date.now()}')" placeholder="Masukkan Akun">
+       <div class="flex-1">
+            <label class="label">Akun Debit</label>
+            <input class="input-field" data-list="coa-options" required oninput="updateHiddenInput(this, 'first-coa-id-${Date.now()}')" placeholder="Masukkan Akun">
             <input type="hidden" name="coa_id[]" id="first-coa-id-${Date.now()}">
             <div class="custom-dropdown"></div>
         </div>
-        <div class="col">
-            <label for="debit" class="form-label" style="display: inline-block; margin-bottom: 2px;">Debit</label>
-            <input type="text" class="form-control debit-input" name="debit[]" required placeholder="Masukkan Debit" oninput="this.value = this.value.replace(/[^0-9]/g, '')" oninput="formatNumberInput(this)">
+        <div class="flex-1">
+            <label class="label">Debit</label>
+            <input type="text" class="input-field debit-input" name="debit[]" required placeholder="Masukkan Debit" oninput="this.value = this.value.replace(/[^0-9]/g, '')" oninput="formatNumberInput(this)">
         </div>
-        <div>
-            <label for="kredit" class="form-label" style="display: inline-block; margin-bottom: 2px;" hidden>Kredit</label>
-            <input type="text" class="form-control kredit-input" name="kredit[]" value="0" hidden oninput="formatNumberInput(this)">
+        <div class="hidden">
+            <label class="label" hidden>Kredit</label>
+            <input type="text" class="input-field kredit-input" name="kredit[]" value="0" hidden oninput="formatNumberInput(this)">
         </div>
-        <div class="col">
-            <label for="keterangan" class="form-label" style="display: inline-block; margin-bottom: 2px;">Keterangan</label>
-            <input type="text" class="form-control" name="keterangan[]" required placeholder="Masukkan Keterangan">
+        <div class="flex-1">
+            <label class="label">Keterangan</label>
+            <input type="text" class="input-field" name="keterangan[]" required placeholder="Masukkan Keterangan">
         </div>
     `;
 
@@ -856,13 +796,11 @@
                 dropdown.innerHTML = '';
                 activeIndex = -1;
 
-                // Jika input cocok persis dengan salah satu opsi
                 const matchedOptions = Array.from(options).filter(opt =>
                     opt.value.trim().toLowerCase() === currentValue
                 );
 
                 if (matchedOptions.length === 1) {
-                    // Tampilkan hanya akun yang cocok persis
                     const option = matchedOptions[0];
                     const div = document.createElement('div');
                     div.textContent = option.value;
@@ -878,7 +816,6 @@
 
                     dropdown.appendChild(div);
                 } else {
-                    // Jika tidak cocok persis, tampilkan semua lalu filter
                     showDropdown(input, dropdown, hiddenInputId, options);
                     filterDropdown(input, dropdown, options);
                 }
@@ -1000,10 +937,6 @@
             const tanggalJurnalInput = document.getElementById('tanggal_jurnal');
             tanggalJurnalInput.setAttribute('max', todayISO);
 
-            // const firstDayOfLastMonth = new Date(yyyy, today.getMonth() - 1, 1);
-            // const minISO = firstDayOfLastMonth.toISOString().split('T')[0];
-            // tanggalJurnalInput.setAttribute('min', minISO);
-
             tanggalJurnalInput.addEventListener('input', function() {
                 validateDate(this);
             });
@@ -1049,7 +982,7 @@
                 if (!warning) {
                     warning = document.createElement('small');
                     warning.id = 'tanggal-warning';
-                    warning.className = 'text-danger';
+                    warning.className = 'text-red-500';
                     tanggalJurnalInput.parentNode.appendChild(warning);
                 }
                 warning.textContent = msg;
@@ -1067,7 +1000,7 @@
 
         $(document).ready(function() {
             $('#jurnaling-form').on('submit', function(e) {
-                e.preventDefault(); // cegah reload halaman
+                e.preventDefault();
 
                 let form = $(this);
                 let url = form.attr('action');

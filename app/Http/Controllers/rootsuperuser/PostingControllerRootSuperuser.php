@@ -15,35 +15,30 @@ class PostingControllerRootSuperuser
         $periodes = Periode::all();
         $searchTerm = $request->input('search');
 
-        // Initialize query for journal entries
-        $jurnalings = Jurnaling::query();
-
-        // Filter by selected period
-        $periodeId = $request->query('periode_id', session('selectedPeriode')); // Use session value if not in request
+        $periodeId = $request->query('periode_id', session('selectedPeriode'));
 
         if ($periodeId) {
             session(['selectedPeriode' => $periodeId]);
         }
 
         if ($periodeId) {
-            // Query and group by COA (account), summing debit and credit
             $jurnalings = Jurnaling::with('coa', 'periode')
                 ->where('periode_id', $periodeId)
                 ->selectRaw('coa_id, SUM(debit) as total_debit, SUM(kredit) as total_kredit')
                 ->groupBy('coa_id')
                 ->get();
+        } else {
+            $jurnalings = collect();
         }
 
-        // Apply search filter if present
         if ($searchTerm) {
             $jurnalings = $jurnalings->filter(function ($entry) use ($searchTerm) {
                 return str_contains($entry->coa->nama_akun, $searchTerm) || str_contains($entry->coa->kode_akun, $searchTerm);
             });
         }
 
-        // Group journal entries by month (if needed)
         $monthEntries = $jurnalings->groupBy(function ($entry) {
-            return Carbon::parse($entry->tanggal_jurnal)->format('n'); // Group by month number
+            return Carbon::parse($entry->tanggal_jurnal)->format('n');
         });
 
         // Define month names
@@ -105,11 +100,19 @@ class PostingControllerRootSuperuser
             return Carbon::parse($entry->tanggal_jurnal)->format('n'); // Group by month number
         });
 
+        // Define month names
+        $months = [
+            1 => 'January', 2 => 'February', 3 => 'March', 4 => 'April',
+            5 => 'May', 6 => 'June', 7 => 'July', 8 => 'August',
+            9 => 'September', 10 => 'October', 11 => 'November', 12 => 'December',
+        ];
+
         // Pass data to the view
         return view('rootsuperuser.posting.home', [
             'periodes' => $periodes,
-            'selectedPeriode' => $selectedPeriode, // Pass selected period to view
+            'selectedPeriode' => $selectedPeriode,
             'monthEntries' => $monthEntries,
+            'months' => $months,
         ]);
     }
 }

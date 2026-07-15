@@ -1,0 +1,26 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    paths:
+        - app
+        - config
+        - database
+        - routes
+        - tests
+
+    level: 5
+
+    ignoreErrors:
+        - '#Unused view data#'
+        - '#PHPDoc tag @var#'
+        - '#Property .* has no type specified#'
+        - '#Method .* has no return type specified#'
+        - '#Parameter .* has no type specified#'
+
+    excludePaths:
+        - ./*/*/File.php
+        - ./*/*/FileGeneration.php
+
+    checkMissingIterableValueType: false
+    checkGenericClassInNonGenericObjectType: false

@@ -10,6 +10,7 @@ class HeaderCoaController extends Controller
     public function index()
     {
         $headerCoas = HeaderCoa::paginate(10);
+
         return view('admin.account.header.home', compact('headerCoas'));
     }
 
@@ -40,6 +41,7 @@ class HeaderCoaController extends Controller
 
         return redirect()->route('admin/account/header')->with('success', 'Header COA created successfully.');
     }
+
     public function update(Request $request, HeaderCoa $header_coa)
     {
         $request->validate([

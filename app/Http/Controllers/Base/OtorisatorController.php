@@ -22,7 +22,7 @@ class OtorisatorController
     {
         $otorisators = Otorisator::orderBy('id', 'asc')->get();
 
-        return view($this->viewPrefix().'.otorisator.home', compact('otorisators'));
+        return view($this->viewPrefix() . '.otorisator.home', compact('otorisators'));
     }
 
     /**
@@ -30,7 +30,7 @@ class OtorisatorController
      */
     public function create()
     {
-        return view($this->viewPrefix().'.otorisator.create');
+        return view($this->viewPrefix() . '.otorisator.create');
     }
 
     /**
@@ -45,7 +45,7 @@ class OtorisatorController
 
         Otorisator::create($request->only(['nama_otorisator', 'jabatan_otorisator']));
 
-        return redirect()->route($this->routePrefix().'/otorisator/home')
+        return redirect()->route($this->routePrefix() . '/otorisator/home')
             ->with('success', 'Otorisator berhasil ditambahkan.');
     }
 
@@ -56,7 +56,7 @@ class OtorisatorController
     {
         $otorisator = Otorisator::findOrFail($id);
 
-        return view($this->viewPrefix().'.otorisator.update', compact('otorisator'));
+        return view($this->viewPrefix() . '.otorisator.update', compact('otorisator'));
     }
 
     /**
@@ -72,7 +72,7 @@ class OtorisatorController
         $otorisator = Otorisator::findOrFail($id);
         $otorisator->update($request->only(['nama_otorisator', 'jabatan_otorisator']));
 
-        return redirect()->route($this->routePrefix().'/otorisator/home')
+        return redirect()->route($this->routePrefix() . '/otorisator/home')
             ->with('success', 'Otorisator berhasil diperbarui.');
     }
 
@@ -84,7 +84,7 @@ class OtorisatorController
         $otorisator = Otorisator::findOrFail($id);
         $otorisator->delete();
 
-        return redirect()->route($this->routePrefix().'/otorisator/home')
+        return redirect()->route($this->routePrefix() . '/otorisator/home')
             ->with('success', 'Otorisator berhasil dihapus.');
     }
 }

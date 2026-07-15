@@ -35,7 +35,7 @@ class BukuBesarController
         $periodes = Periode::orderBy('tanggal_awal', 'desc')->get();
         $coas = COA::all();
 
-        return view($this->viewPrefix().'.bukubesar.filter', compact('periodes', 'coas'));
+        return view($this->viewPrefix() . '.bukubesar.filter', compact('periodes', 'coas'));
     }
 
     public function searchCoaByPeriod(Request $request)
@@ -57,7 +57,7 @@ class BukuBesarController
             ->orderBy('bulan', 'asc')
             ->pluck('bulan');
 
-        return view($this->viewPrefix().'.bukubesar.home', compact('coas', 'periodes', 'periodeId', 'availableMonths'));
+        return view($this->viewPrefix() . '.bukubesar.home', compact('coas', 'periodes', 'periodeId', 'availableMonths'));
     }
 
     public function searchCoaByFilter(Request $request)
@@ -75,7 +75,7 @@ class BukuBesarController
             $query->where('periode_id', $periodeId);
         })->get();
 
-        return view($this->viewPrefix().'.bukubesar.filter', compact('coas', 'periodes', 'periodeId'));
+        return view($this->viewPrefix() . '.bukubesar.filter', compact('coas', 'periodes', 'periodeId'));
     }
 
     public function showLedgerForm(Request $request)
@@ -91,7 +91,7 @@ class BukuBesarController
                 ->pluck('bulan')
             : collect();
 
-        return view($this->viewPrefix().'.bukubesar.home', compact('coas', 'periodes', 'periodeId', 'availableMonths'));
+        return view($this->viewPrefix() . '.bukubesar.home', compact('coas', 'periodes', 'periodeId', 'availableMonths'));
     }
 
     public function searchByDate(Request $request)
@@ -160,7 +160,7 @@ class BukuBesarController
             ]);
         }
 
-        return view($this->viewPrefix().'.bukubesar.filter', compact(
+        return view($this->viewPrefix() . '.bukubesar.filter', compact(
             'saldoAwal',
             'coas',
             'selectedCoa',
@@ -196,16 +196,32 @@ class BukuBesarController
             ->orderBy('tanggal_jurnal')
             ->get(['tanggal_jurnal', 'nomor_bukti', 'keterangan', 'debit', 'kredit']);
 
+        $keteranganGabungan = Jurnaling::where('periode_id', $periodeId)
+            ->whereMonth('tanggal_jurnal', $bulan)
+            ->whereIn('nomor_bukti', $transactions->pluck('nomor_bukti')->unique())
+            ->whereNotNull('keterangan')
+            ->where('keterangan', '!=', '')
+            ->get()
+            ->groupBy('nomor_bukti')
+            ->map(function ($group) {
+                return $group->pluck('keterangan')->unique()->implode(', ');
+            });
+
         $runningTotal = $initialBalance;
 
         $entries = collect();
         foreach ($transactions as $transaction) {
             $runningTotal += $transaction->debit - $transaction->kredit;
 
+            $keterangan = $transaction->keterangan;
+            if (! $keterangan || trim($keterangan) === '') {
+                $keterangan = $keteranganGabungan[$transaction->nomor_bukti] ?? '';
+            }
+
             $entries->push((object) [
                 'tanggal_jurnal' => $transaction->tanggal_jurnal,
                 'nomor_bukti' => $transaction->nomor_bukti,
-                'keterangan' => $transaction->keterangan,
+                'keterangan' => $keterangan,
                 'debit' => $transaction->debit,
                 'kredit' => $transaction->kredit,
                 'running_total' => $runningTotal,
@@ -215,7 +231,7 @@ class BukuBesarController
         $coas = COA::all();
         $selectedCoa = COA::findOrFail($coaId);
 
-        return view($this->viewPrefix().'.bukubesar.home', compact('coas', 'entries', 'selectedCoa', 'bulan'));
+        return view($this->viewPrefix() . '.bukubesar.home', compact('coas', 'entries', 'selectedCoa', 'bulan'));
     }
 
     public function showAll(Request $request)
@@ -294,7 +310,7 @@ class BukuBesarController
         $coas = COA::all();
         $periodes = Periode::orderBy('tanggal_awal', 'desc')->get();
 
-        return view($this->viewPrefix().'.bukubesar.home', compact(
+        return view($this->viewPrefix() . '.bukubesar.home', compact(
             'coas',
             'entries',
             'selectedCoa',

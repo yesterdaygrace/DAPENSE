@@ -22,14 +22,14 @@ class HeaderController
     {
         $headerCoas = HeaderCOA::orderBy('kode_header', 'asc')->get();
 
-        return view($this->viewPrefix().'.account.header.home', compact('headerCoas'));
+        return view($this->viewPrefix() . '.account.header.home', compact('headerCoas'));
     }
 
     public function create()
     {
         $headerCoas = HeaderCOA::all();
 
-        return view($this->viewPrefix().'.account.header.create', compact('headerCoas'));
+        return view($this->viewPrefix() . '.account.header.create', compact('headerCoas'));
     }
 
     public function save(Request $request)
@@ -46,7 +46,7 @@ class HeaderController
 
         HeaderCOA::create($validated);
 
-        return redirect()->route($this->routePrefix().'/account/header')->with('success', 'Header COA berhasil ditambahkan.');
+        return redirect()->route($this->routePrefix() . '/account/header')->with('success', 'Header COA berhasil ditambahkan.');
     }
 
     public function update($id)
@@ -54,7 +54,7 @@ class HeaderController
         $headerCoa = HeaderCOA::findOrFail($id);
         $headerCoas = HeaderCOA::all();
 
-        return view($this->viewPrefix().'.account.header.update', compact('headerCoa', 'headerCoas'));
+        return view($this->viewPrefix() . '.account.header.update', compact('headerCoa', 'headerCoas'));
     }
 
     public function updateSave(Request $request, $id)
@@ -62,7 +62,7 @@ class HeaderController
         $header_coa = HeaderCOA::findOrFail($id);
 
         $validated = $request->validate([
-            'kode_header' => 'required|string|max:255|unique:header_coas,kode_header,'.$header_coa->id,
+            'kode_header' => 'required|string|max:255|unique:header_coas,kode_header,' . $header_coa->id,
             'nama_header' => 'required|string|max:255',
             'level' => 'required|integer',
             'parent_id' => 'nullable|exists:header_coas,id',
@@ -79,7 +79,7 @@ class HeaderController
             'parent_id' => $validated['parent_id'],
         ]);
 
-        return redirect()->route($this->routePrefix().'/account/header')
+        return redirect()->route($this->routePrefix() . '/account/header')
             ->with('success', 'Header COA berhasil diubah.');
     }
 
@@ -88,6 +88,6 @@ class HeaderController
         $header_coa = HeaderCOA::findOrFail($id);
         $header_coa->delete();
 
-        return redirect()->route($this->routePrefix().'/account/header')->with('success', 'Header COA berhasil dihapus.');
+        return redirect()->route($this->routePrefix() . '/account/header')->with('success', 'Header COA berhasil dihapus.');
     }
 }

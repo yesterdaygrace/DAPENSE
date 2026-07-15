@@ -31,7 +31,7 @@ class LaporanPerubahanAsetNeto implements FromCollection, WithColumnWidths, With
     public function collection()
     {
         $cleanMonth = preg_replace('/[^0-9\-]/', '', $this->month);
-        $selectedMonth = Carbon::parse($cleanMonth.'-01');
+        $selectedMonth = Carbon::parse($cleanMonth . '-01');
         $previousMonth = $selectedMonth->copy()->subMonth();
 
         $sections = [
@@ -174,9 +174,9 @@ class LaporanPerubahanAsetNeto implements FromCollection, WithColumnWidths, With
             }
 
             if (! empty($accounts)) {
-                $label = 'Total '.ucwords(strtolower($sectionName));
+                $label = 'Total ' . ucwords(strtolower($sectionName));
                 $result[] = [
-                    'Investasi Nilai Buku' => '               '.$label,
+                    'Investasi Nilai Buku' => '               ' . $label,
                     'Saldo Akhir (Last)' => $this->formatSaldo($totalLast),
                     'Saldo Akhir (Current)' => $this->formatSaldo($totalCurrent),
                 ];
@@ -281,7 +281,7 @@ class LaporanPerubahanAsetNeto implements FromCollection, WithColumnWidths, With
 
     public function headings(): array
     {
-        $selectedMonth = Carbon::parse($this->month.'-01');
+        $selectedMonth = Carbon::parse($this->month . '-01');
         $previousMonth = $selectedMonth->copy()->subMonth();
 
         return [
@@ -307,7 +307,7 @@ class LaporanPerubahanAsetNeto implements FromCollection, WithColumnWidths, With
             AfterSheet::class => function (AfterSheet $event) {
                 $otorisators = Otorisator::orderBy('id', 'asc')->get();
                 $sheet = $event->sheet;
-                $selectedMonth = Carbon::parse($this->month.'-01');
+                $selectedMonth = Carbon::parse($this->month . '-01');
                 $previousMonth = $selectedMonth->copy()->subMonth();
 
                 $sheet->insertNewRowBefore(1, 7);
@@ -324,14 +324,14 @@ class LaporanPerubahanAsetNeto implements FromCollection, WithColumnWidths, With
                     'A3' => 'SINODE GKJ & GKI JAWA TENGAH SALATIGA',
                     'A4' => '(PROGRAM PENSIUM MANFAAT PASTI)',
                     'A5' => 'LAPORAN PERUBAHAN HASIL USAHA',
-                    'A6' => 'Per '.$previousMonth->translatedFormat('F Y').' & '.$selectedMonth->translatedFormat('F Y'),
+                    'A6' => 'Per ' . $previousMonth->translatedFormat('F Y') . ' & ' . $selectedMonth->translatedFormat('F Y'),
                 ];
 
                 $sheet->setCellValue('A7', '');
                 $sheet->setCellValue('A8', '');
 
                 foreach ($titles as $cell => $text) {
-                    $sheet->mergeCells($cell.':C'.substr($cell, 1));
+                    $sheet->mergeCells($cell . ':C' . substr($cell, 1));
                     $sheet->setCellValue($cell, $text);
                     $sheet->getStyle($cell)->applyFromArray([
                         'font' => ['bold' => true, 'size' => 12],
@@ -359,7 +359,7 @@ class LaporanPerubahanAsetNeto implements FromCollection, WithColumnWidths, With
                     if (stripos($val, 'Total') !== false) {
                         $sheet->getStyle("A$row:C$row")->getFont()->setBold(true);
 
-                        $sheet->getStyle('B'.($row - 1).':C'.($row - 1))->applyFromArray([
+                        $sheet->getStyle('B' . ($row - 1) . ':C' . ($row - 1))->applyFromArray([
                             'borders' => [
                                 'bottom' => [
                                     'borderStyle' => Border::BORDER_THICK,
@@ -370,8 +370,7 @@ class LaporanPerubahanAsetNeto implements FromCollection, WithColumnWidths, With
                     }
 
                     if (trim(strtoupper($val)) === 'ASET NETO AKHIR PERIODE') {
-
-                        $sheet->getStyle('B'.($row - 1).':C'.($row - 1))->applyFromArray([
+                        $sheet->getStyle('B' . ($row - 1) . ':C' . ($row - 1))->applyFromArray([
                             'borders' => [
                                 'bottom' => [
                                     'borderStyle' => Border::BORDER_DOUBLE,
@@ -382,7 +381,7 @@ class LaporanPerubahanAsetNeto implements FromCollection, WithColumnWidths, With
 
                         $sheet->getStyle("A$row:C$row")->getFont()->setBold(true);
 
-                        $sheet->getStyle('B'.($row + 1).':C'.($row + 1))->applyFromArray([
+                        $sheet->getStyle('B' . ($row + 1) . ':C' . ($row + 1))->applyFromArray([
                             'borders' => [
                                 'top' => [
                                     'borderStyle' => Border::BORDER_DOUBLE,
@@ -398,7 +397,7 @@ class LaporanPerubahanAsetNeto implements FromCollection, WithColumnWidths, With
                 $endOfMonthDate = $selectedMonth->copy()->endOfMonth();
 
                 $sheet->mergeCells("A$footerRow:C$footerRow");
-                $sheet->setCellValue("A$footerRow", 'Salatiga, '.$endOfMonthDate->translatedFormat('d F Y'));
+                $sheet->setCellValue("A$footerRow", 'Salatiga, ' . $endOfMonthDate->translatedFormat('d F Y'));
                 $sheet->getStyle("A$footerRow")->applyFromArray([
                     'alignment' => ['horizontal' => 'center'],
                     'font' => ['size' => 11],
@@ -449,7 +448,7 @@ class LaporanPerubahanAsetNeto implements FromCollection, WithColumnWidths, With
                 }
                 $footerRow += 5;
 
-                $sheet->getStyle('A'.($highestRow + 3).":C$footerRow")->applyFromArray([
+                $sheet->getStyle('A' . ($highestRow + 3) . ":C$footerRow")->applyFromArray([
                     'font' => ['size' => 11],
                     'alignment' => ['horizontal' => 'center'],
                 ]);

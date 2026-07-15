@@ -23,12 +23,18 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    return view(Auth::user()->usertype.'.dashboard');
+    $u = Auth::user()->usertype;
+    $method = match ($u) {
+        'rootsuperuser' => 'homeRootSuperuser', 'bod' => 'homeBod', 'operator' => 'homeOperator', default => 'index'
+    };
+
+    return app(HomeController::class)->$method();
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/logout', [AuthenticatedSessionController::class, 'logout'])->name('logout');
 });
 
@@ -72,6 +78,7 @@ Route::middleware(['auth', 'role:rootsuperuser'])->group(function () {
     Route::get('/rootsuperuser/jurnaling/memorial', [JurnalingController::class, 'indexmemorial'])->name('rootsuperuser/jurnaling/memorial');
     Route::get('/rootsuperuser/jurnaling/memorialpenutup', [JurnalingController::class, 'indexmemorialpenutup'])->name('rootsuperuser/jurnaling/memorialpenutup');
     Route::get('/rootsuperuser/jurnaling/create', [JurnalingController::class, 'create'])->name('rootsuperuser/jurnaling/create');
+    Route::post('/rootsuperuser/jurnaling/save', [JurnalingController::class, 'save'])->name('rootsuperuser/jurnaling/save');
     Route::post('/rootsuperuser/jurnaling/store', [JurnalingController::class, 'store'])->name('rootsuperuser/jurnaling/store');
     Route::post('/rootsuperuser/jurnaling/storekaskeluar', [JurnalingController::class, 'storekaskeluar'])->name('rootsuperuser/jurnaling/storekaskeluar');
     Route::post('/rootsuperuser/jurnaling/storebankmasuk', [JurnalingController::class, 'storebankmasuk'])->name('rootsuperuser/jurnaling/storebankmasuk');
@@ -179,6 +186,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin/jurnaling/memorial', [JurnalingController::class, 'indexmemorial'])->name('admin/jurnaling/memorial');
     Route::get('/admin/jurnaling/memorialpenutup', [JurnalingController::class, 'indexmemorialpenutup'])->name('admin/jurnaling/memorialpenutup');
     Route::get('/admin/jurnaling/create', [JurnalingController::class, 'create'])->name('admin/jurnaling/create');
+    Route::post('/admin/jurnaling/save', [JurnalingController::class, 'save'])->name('admin/jurnaling/save');
     Route::post('/admin/jurnaling/store', [JurnalingController::class, 'store'])->name('admin/jurnaling/store');
     Route::post('/admin/jurnaling/storekaskeluar', [JurnalingController::class, 'storekaskeluar'])->name('admin/jurnaling/storekaskeluar');
     Route::post('/admin/jurnaling/storebankmasuk', [JurnalingController::class, 'storebankmasuk'])->name('admin/jurnaling/storebankmasuk');
@@ -244,7 +252,6 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 });
 
 Route::middleware(['auth', 'role:operator'])->group(function () {
-
     Route::get('operator/dashboard', [HomeController::class, 'homeOperator'])->name('operator/dashboard');
 
     Route::get('/operator/periodes', [PeriodeController::class, 'index'])->name('operator/periodes');
@@ -277,6 +284,7 @@ Route::middleware(['auth', 'role:operator'])->group(function () {
     Route::get('/operator/jurnaling/memorial', [JurnalingController::class, 'indexmemorial'])->name('operator/jurnaling/memorial');
     Route::get('/operator/jurnaling/memorialpenutup', [JurnalingController::class, 'indexmemorialpenutup'])->name('operator/jurnaling/memorialpenutup');
     Route::get('/operator/jurnaling/create', [JurnalingController::class, 'create'])->name('operator/jurnaling/create');
+    Route::post('/operator/jurnaling/save', [JurnalingController::class, 'save'])->name('operator/jurnaling/save');
     Route::post('/operator/jurnaling/store', [JurnalingController::class, 'store'])->name('operator/jurnaling/store');
     Route::post('/operator/jurnaling/storekaskeluar', [JurnalingController::class, 'storekaskeluar'])->name('operator/jurnaling/storekaskeluar');
     Route::post('/operator/jurnaling/storebankmasuk', [JurnalingController::class, 'storebankmasuk'])->name('operator/jurnaling/storebankmasuk');
@@ -343,7 +351,6 @@ Route::middleware(['auth', 'role:operator'])->group(function () {
 });
 
 Route::middleware(['auth', 'role:bod'])->group(function () {
-
     Route::get('bod/dashboard', [HomeController::class, 'homeBod'])->name('bod/dashboard');
 
     Route::get('/bod/jurnaling/showing', [JurnalingController::class, 'showEntries'])->name('bod/jurnaling/showing');
@@ -368,4 +375,13 @@ Route::middleware(['auth', 'role:bod'])->group(function () {
     Route::get('/bod/neracasaldo/exportpdf/{periode_id}', [NeracaSaldoController::class, 'exportPdf'])->name('bod/neracasaldo/exportpdf');
 });
 
-require __DIR__.'/auth.php';
+Route::get('/health', function () {
+    return response()->json([
+        'status' => 'healthy',
+        'timestamp' => now()->toIso8601String(),
+        'app' => config('app.name'),
+        'env' => config('app.env'),
+    ]);
+});
+
+require __DIR__ . '/auth.php';

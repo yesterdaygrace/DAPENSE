@@ -17,7 +17,7 @@ class Jurnaling extends Model
         'debit',
         'kredit',
         'coa_id',
-        'periode_id'
+        'periode_id',
     ];
 
     public function coa()

@@ -1,55 +1,56 @@
-<section class="space-y-6">
-    <header>
-        <h2 class="text-lg font-medium text-gray-900">
-            {{ __('Delete Account') }}
-        </h2>
+<div class="card border-danger/20">
+    <div class="card-header">
+        <h3 class="text-sm font-bold text-danger">{{ __('Hapus Akun') }}</h3>
+    </div>
+    <div class="card-body">
+        <p class="text-xs text-gray-500 mb-4">{{ __('Setelah akun Anda dihapus, semua sumber daya dan datanya akan dihapus secara permanen. Sebelum menghapus akun, silakan unduh data atau informasi yang ingin Anda pertahankan.') }}</p>
 
-        <p class="mt-1 text-sm text-gray-600">
-            {{ __('Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.') }}
-        </p>
-    </header>
+        <button
+            type="button"
+            class="btn-danger"
+            x-data=""
+            x-on:click.prevent="$dispatch('open-modal', 'confirm-user-deletion')"
+        >{{ __('Hapus Akun') }}</button>
 
-    <x-danger-button
-        x-data=""
-        x-on:click.prevent="$dispatch('open-modal', 'confirm-user-deletion')"
-    >{{ __('Delete Account') }}</x-danger-button>
+        <x-modal name="confirm-user-deletion" :show="$errors->userDeletion->isNotEmpty()" focusable>
+            <div class="p-6">
+                <h2 class="text-lg font-bold text-gray-900">
+                    {{ __('Anda yakin ingin menghapus akun?') }}
+                </h2>
 
-    <x-modal name="confirm-user-deletion" :show="$errors->userDeletion->isNotEmpty()" focusable>
-        <form method="post" action="{{ route('profile.destroy') }}" class="p-6">
-            @csrf
-            @method('delete')
+                <p class="mt-1 text-sm text-gray-500">
+                    {{ __('Setelah akun Anda dihapus, semua sumber daya dan datanya akan dihapus secara permanen. Masukkan kata sandi Anda untuk mengonfirmasi bahwa Anda ingin menghapus akun secara permanen.') }}
+                </p>
 
-            <h2 class="text-lg font-medium text-gray-900">
-                {{ __('Are you sure you want to delete your account?') }}
-            </h2>
+                <div class="mt-6">
+                    <label for="password" class="label sr-only">{{ __('Kata Sandi') }}</label>
+                    <input
+                        id="password"
+                        name="password"
+                        type="password"
+                        class="input-field w-3/4"
+                        placeholder="{{ __('Kata Sandi') }}"
+                        autocomplete="current-password"
+                    >
+                    @error('password')
+                    <p class="text-xs text-danger mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
 
-            <p class="mt-1 text-sm text-gray-600">
-                {{ __('Once your account is deleted, all of its resources and data will be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.') }}
-            </p>
+                <div class="mt-6 flex justify-end gap-3">
+                    <button type="button" class="btn-secondary" x-on:click="$dispatch('close')">
+                        {{ __('Batal') }}
+                    </button>
 
-            <div class="mt-6">
-                <x-input-label for="password" value="{{ __('Password') }}" class="sr-only" />
-
-                <x-text-input
-                    id="password"
-                    name="password"
-                    type="password"
-                    class="mt-1 block w-3/4"
-                    placeholder="{{ __('Password') }}"
-                />
-
-                <x-input-error :messages="$errors->userDeletion->get('password')" class="mt-2" />
+                    <form method="post" action="{{ route('profile.destroy') }}">
+                        @csrf
+                        @method('delete')
+                        <button type="submit" class="btn-danger">
+                            {{ __('Hapus Akun') }}
+                        </button>
+                    </form>
+                </div>
             </div>
-
-            <div class="mt-6 flex justify-end">
-                <x-secondary-button x-on:click="$dispatch('close')">
-                    {{ __('Cancel') }}
-                </x-secondary-button>
-
-                <x-danger-button class="ms-3">
-                    {{ __('Delete Account') }}
-                </x-danger-button>
-            </div>
-        </form>
-    </x-modal>
-</section>
+        </x-modal>
+    </div>
+</div>

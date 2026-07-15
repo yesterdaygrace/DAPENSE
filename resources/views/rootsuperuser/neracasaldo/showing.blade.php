@@ -1,217 +1,102 @@
 @extends('layouts.applayout')
+@section('title', 'Neraca Saldo')
 @section('content')
-<!-- Menu -->
-<aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
-    <div class="app-brand demo">
-        <a href="{{ route('rootsuperuser/dashboard') }}" class="app-brand-link">
-            <span class="app-brand-text demo menu-text fw-bolder ms-2">{{ Auth::user()->name }}</span>
-        </a>
-    </div>
 
-    <div class="menu-inner-shadow"></div>
+<x-dashboard.page-header
+    title="Neraca Saldo"
+    description="Ringkasan saldo akun periode {{ $periode->nama_periode ?? '' }}"
+    :actions="'<a href=\'' . route('rootsuperuser/neracasaldo/exportexcel', ['periode_id' => $periode->id]) . '?month=' . request()->query('month') . '\' class=\'btn-success btn-sm\'><i data-lucide=\'file-spreadsheet\' class=\'w-4 h-4\'></i> Export Excel</a>'"
+/>
 
-    <ul class="py-1 menu-inner">
-        <!-- Dashboard -->
-        <li class="menu-item">
-            <a href="{{ route('rootsuperuser/dashboard') }}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-home-circle"></i>
-                <div data-i18n="Analytics">Dashboard</div>
-            </a>
-        </li>
-        <li class="menu-item">
-            <a href="{{ route('rootsuperuser/products') }}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-user"></i>
-                <div data-i18n="Analytics">User Management</div>
-            </a>
-        </li>
-        <li class="menu-item">
-            <a href="{{ route('rootsuperuser/periodes') }}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-calendar"></i>
-                <div data-i18n="Analytics">Periode</div>
-            </a>
-        </li>
-        <li class="menu-item">
-            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-spreadsheet"></i>
-                <div data-i18n="Layouts">Accounts</div>
-            </a>
+<div class="card rounded-card border border-gray-100 shadow-card">
+  <div class="card-body p-6 overflow-x-auto">
+    @php
+    $hasData = false;
+    foreach($headerCoas as $header) {
+        if (
+            $header->total_saldo_awal_debit != 0 || $header->total_saldo_awal_kredit != 0 ||
+            $header->total_debit != 0 || $header->total_kredit != 0 ||
+            $header->total_saldo_akhir != 0
+        ) { $hasData = true; break; }
+    }
+    @endphp
 
-            <ul class="menu-sub">
-                <li class="menu-item">
-                    <a href="{{ route('rootsuperuser/account/header') }}" class="menu-link">
-                        <div data-i18n="Without menu">Header</div>
-                    </a>
-                </li>
-            </ul>
-            <ul class="menu-sub">
-                <li class="menu-item">
-                    <a href="{{ route('rootsuperuser/account/coa') }}" class="menu-link">
-                        <div data-i18n="Without menu">COA</div>
-                    </a>
-                </li>
-            </ul>
-            <ul class="menu-sub">
-                <li class="menu-item">
-                    <a href="{{ route('rootsuperuser/account/headercoa') }}" class="menu-link">
-                        <div data-i18n="Without menu">Combine Header & COA</div>
-                    </a>
-                </li>
-            </ul>
-        </li>
-        <li class="menu-item">
-            <a href="{{ route('rootsuperuser/saldoawal') }}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-money"></i>
-                <div data-i18n="Analytics">Saldo Awal</div>
-            </a>
-        </li>
-        <li class="menu-item">
-            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-notepad"></i>
-                <div data-i18n="Layouts">Jurnaling</div>
-            </a>
-            <ul class="menu-sub">
-                <li class="menu-item">
-                    <a href="{{ route('rootsuperuser/jurnaling') }}" class="menu-link">
-                        <div data-i18n="Without menu">Kas Masuk</div>
-                    </a>
-                </li>
-            </ul>
-            <ul class="menu-sub">
-                <li class="menu-item">
-                    <a href="{{ route('rootsuperuser/jurnaling/kaskeluar') }}" class="menu-link">
-                        <div data-i18n="Without menu">Kas Keluar</div>
-                    </a>
-                </li>
-            </ul>
-            <ul class="menu-sub">
-                <li class="menu-item">
-                    <a href="{{ route('rootsuperuser/jurnaling/bankmasuk') }}" class="menu-link">
-                        <div data-i18n="Without menu">Bank Masuk</div>
-                    </a>
-                </li>
-            </ul>
-            <ul class="menu-sub">
-                <li class="menu-item">
-                    <a href="{{ route('rootsuperuser/jurnaling/bankkeluar') }}" class="menu-link">
-                        <div data-i18n="Without menu">Bank Keluar</div>
-                    </a>
-                </li>
-            </ul>
-            <ul class="menu-sub">
-                <li class="menu-item">
-                    <a href="{{ route('rootsuperuser/jurnaling/memorial') }}" class="menu-link">
-                        <div data-i18n="Without menu">Memorial</div>
-                    </a>
-                </li>
-            </ul>
-            <ul class="menu-sub">
-                <li class="menu-item">
-                    <a href="{{ route('rootsuperuser/jurnaling/memorialpenutup') }}" class="menu-link">
-                        <div data-i18n="Without menu">Memorial (Penutup)</div>
-                    </a>
-                </li>
-            </ul>
-            <ul class="menu-sub">
-                <li class="menu-item">
-                    <a href="{{ route('rootsuperuser/jurnaling/showing') }}" class="menu-link">
-                        <div data-i18n="Without menu">Tampil</div>
-                    </a>
-                </li>
-            </ul>
-        </li>
-        <li class="menu-item">
-            <a href="{{ route('rootsuperuser/bukubesar') }}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-book"></i>
-                <div data-i18n="Analytics">Buku Besar</div>
-            </a>
-        </li>
-        <li class="menu-item active">
-            <a href="{{ route('rootsuperuser/neracasaldo/') }}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-calculator"></i>
-                <div data-i18n="Analytics">Neraca Saldo</div>
-            </a>
-        </li>
-    </ul>
-</aside>
+    @if($hasData)
+    <table class="data-table w-full">
+      <thead>
+        <tr>
+          <th class="sticky top-0 bg-gray-50 z-10">Kode Perk</th>
+          <th class="sticky top-0 bg-gray-50 z-10">Nama Perkiraan</th>
+          <th class="sticky top-0 bg-gray-50 z-10 text-right num-col">Saldo Awal</th>
+          <th class="sticky top-0 bg-gray-50 z-10 text-right num-col">Debit</th>
+          <th class="sticky top-0 bg-gray-50 z-10 text-right num-col">Kredit</th>
+          <th class="sticky top-0 bg-gray-50 z-10 text-right num-col">Saldo Akhir</th>
+        </tr>
+      </thead>
+      <tbody>
+        @php
+        function formatSaldo($angka) {
+        $formatted = number_format(abs($angka), 2);
+        return $angka < 0 ? "($formatted)" : $formatted;
+        }
 
-<div class="content-wrapper">
-    <div class="container-xxl flex-grow-1 container-p-y">
-        <div class="card">
-            <a href="{{ route('rootsuperuser/neracasaldo/export', ['periode_id' => $periode->id]) }}?month={{ request()->query('month') }}" class="btn btn-success">
-                Export Excel
-            </a>
-            <div class="card-header d-flex align-items-center justify-content-between">
-                <div class="card-body">
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Kode Perk</th>
-                                <th>Nama Perkiraan</th>
-                                <th>Saldo Awal</th>
-                                <th>Debit</th>
-                                <th>Kredit</th>
-                                <th>Saldo Akhir</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @php
-                            function formatSaldo($angka) {
-                            $formatted = number_format(abs($angka), 2);
-                            return $angka < 0 ? "($formatted)" : $formatted;
-                                }
+        function renderHeader($header, $level=0) {
+        if (
+        $header->total_saldo_awal_debit == 0 && $header->total_saldo_awal_kredit == 0 &&
+        $header->total_debit == 0 && $header->total_kredit == 0 &&
+        $header->total_saldo_akhir == 0
+        ) {
+        return;
+        }
 
-                                function renderHeader($header, $level=0) {
-                                if (
-                                $header->total_saldo_awal_debit == 0 && $header->total_saldo_awal_kredit == 0 &&
-                                $header->total_debit == 0 && $header->total_kredit == 0 &&
-                                $header->total_saldo_akhir == 0
-                                ) {
-                                return;
-                                }
+        $indent = str_repeat('&nbsp;', $level * 4);
+        echo "<tr class=\"hover:bg-gray-50/50 transition-colors\">";
+        echo "<td class=\"font-semibold\">{$indent}{$header->kode_header}</td>";
+        echo "<td class=\"font-semibold\">{$header->nama_header}</td>";
+        echo "<td class=\"text-right num-col font-semibold\">" . formatSaldo($header->total_saldo_awal_debit - $header->total_saldo_awal_kredit) . "</td>";
+        echo "<td class=\"text-right num-col font-semibold\">" . formatSaldo($header->total_debit) . "</td>";
+        echo "<td class=\"text-right num-col font-semibold\">" . formatSaldo($header->total_kredit) . "</td>";
+        echo "<td class=\"text-right num-col font-semibold\">" . formatSaldo($header->total_saldo_akhir) . "</td>";
+        echo "</tr>";
 
-                                $indent = str_repeat('&nbsp;', $level * 4);
-                                echo "<tr>";
-                                    echo "<td><strong>{$indent}{$header->kode_header}</strong></td>";
-                                    echo "<td><strong>{$header->nama_header}</strong></td>";
-                                    echo "<td><strong>" . formatSaldo($header->total_saldo_awal_debit - $header->total_saldo_awal_kredit) . "</strong></td>";
-                                    echo "<td><strong>" . formatSaldo($header->total_debit) . "</strong></td>";
-                                    echo "<td><strong>" . formatSaldo($header->total_kredit) . "</strong></td>";
-                                    echo "<td><strong>" . formatSaldo($header->total_saldo_akhir) . "</strong></td>";
-                                    echo "</tr>";
+        foreach ($header->coas as $coa) {
+        if (
+        $coa->saldo_awal_debit == 0 && $coa->saldo_awal_kredit == 0 &&
+        $coa->total_debit == 0 && $coa->total_kredit == 0 &&
+        $coa->saldo_akhir == 0
+        ) {
+        continue;
+        }
 
-                                foreach ($header->coas as $coa) {
-                                if (
-                                $coa->saldo_awal_debit == 0 && $coa->saldo_awal_kredit == 0 &&
-                                $coa->total_debit == 0 && $coa->total_kredit == 0 &&
-                                $coa->saldo_akhir == 0
-                                ) {
-                                continue;
-                                }
+        echo "<tr class=\"hover:bg-gray-50/50 transition-colors\">";
+        echo "<td>{$indent}&nbsp;&nbsp;&nbsp;{$coa->kode_akun}</td>";
+        echo "<td>{$indent}&nbsp;&nbsp;&nbsp;{$coa->kode_akun} - {$coa->nama_akun}</td>";
+        echo "<td class=\"text-right num-col\">" . formatSaldo($coa->saldo_awal_debit - $coa->saldo_awal_kredit) . "</td>";
+        echo "<td class=\"text-right num-col\">" . formatSaldo($coa->total_debit) . "</td>";
+        echo "<td class=\"text-right num-col\">" . formatSaldo($coa->total_kredit) . "</td>";
+        echo "<td class=\"text-right num-col\">" . formatSaldo($coa->saldo_akhir) . "</td>";
+        echo "</tr>";
+        }
 
-                                echo "<tr>";
-                                    echo "<td>{$indent}&nbsp;&nbsp;&nbsp;{$coa->kode_akun}</td>";
-                                    echo "<td>{$indent}&nbsp;&nbsp;&nbsp;{$coa->kode_akun} - {$coa->nama_akun}</td>";
-                                    echo "<td>" . formatSaldo($coa->saldo_awal_debit - $coa->saldo_awal_kredit) . "</td>";
-                                    echo "<td>" . formatSaldo($coa->total_debit) . "</td>";
-                                    echo "<td>" . formatSaldo($coa->total_kredit) . "</td>";
-                                    echo "<td>" . formatSaldo($coa->saldo_akhir) . "</td>";
-                                    echo "</tr>";
-                                }
+        foreach ($header->children as $child) {
+        renderHeader($child, $level + 1);
+        }
+        }
+        @endphp
 
-                                foreach ($header->children as $child) {
-                                renderHeader($child, $level + 1);
-                                }
-                                }
-                                @endphp
+        @foreach($headerCoas as $header)
+        @php renderHeader($header); @endphp
+        @endforeach
+      </tbody>
+    </table>
+    @else
+    <x-dashboard.empty-state
+        icon="file-x"
+        title="Tidak ada data Neraca Saldo"
+        description="Tidak ada data untuk periode yang dipilih."
+    />
+    @endif
+  </div>
+</div>
 
-                                @foreach($headerCoas as $header)
-                                @php renderHeader($header); @endphp
-                                @endforeach
-
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-    @endsection
+@endsection

@@ -32,7 +32,7 @@ class LaporanInvestasi implements FromCollection, WithColumnWidths, WithEvents, 
     public function collection()
     {
         $cleanMonth = preg_replace('/[^0-9\-]/', '', $this->month);
-        $selectedMonth = Carbon::parse($cleanMonth.'-01');
+        $selectedMonth = Carbon::parse($cleanMonth . '-01');
         $previousMonth = $selectedMonth->copy()->subMonth();
 
         $sections = [
@@ -101,14 +101,14 @@ class LaporanInvestasi implements FromCollection, WithColumnWidths, WithEvents, 
                 $result[] = [
                     'ASET' => $row['name'],
                     'Saldo Akhir (Last)' => $this->formatSaldo($row['last']),
-                    '% Last' => number_format($percentLast, 2, ',', '').'%',
+                    '% Last' => number_format($percentLast, 2, ',', '') . '%',
                     'Saldo Akhir (Current)' => $this->formatSaldo($row['current']),
-                    '% Current' => number_format($percentCurrent, 2, ',', '').'%',
+                    '% Current' => number_format($percentCurrent, 2, ',', '') . '%',
                 ];
             }
 
             $result[] = [
-                'ASET' => '               Total '.ucwords(strtolower(str_replace('^', '', $section))),
+                'ASET' => '               Total ' . ucwords(strtolower(str_replace('^', '', $section))),
                 'Saldo Akhir (Last)' => $this->formatSaldo($totalLast),
                 '% Last' => '100%',
                 'Saldo Akhir (Current)' => $this->formatSaldo($totalCurrent),
@@ -155,12 +155,12 @@ class LaporanInvestasi implements FromCollection, WithColumnWidths, WithEvents, 
         $final = $saldoAwalBersih + ($jurnal->total_debit - $jurnal->total_kredit);
 
         if (! empty($addAccounts)) {
-            $addSaldo = $this->getSaldoAkhir($addAccounts, $date, $label.' (Add)', $pos, 0);
+            $addSaldo = $this->getSaldoAkhir($addAccounts, $date, $label . ' (Add)', $pos, 0);
             $final += $addSaldo;
         }
 
         if (! empty($offsetAccounts)) {
-            $offsetSaldo = $this->getSaldoAkhir($offsetAccounts, $date, $label.' (Offset)', $pos, 0);
+            $offsetSaldo = $this->getSaldoAkhir($offsetAccounts, $date, $label . ' (Offset)', $pos, 0);
             $final -= $offsetSaldo;
         }
 
@@ -186,7 +186,7 @@ class LaporanInvestasi implements FromCollection, WithColumnWidths, WithEvents, 
 
     public function headings(): array
     {
-        $selectedMonth = Carbon::parse($this->month.'-01');
+        $selectedMonth = Carbon::parse($this->month . '-01');
         $previousMonth = $selectedMonth->copy()->subMonth();
 
         return [
@@ -220,7 +220,7 @@ class LaporanInvestasi implements FromCollection, WithColumnWidths, WithEvents, 
             AfterSheet::class => function (AfterSheet $event) {
                 $otorisators = Otorisator::orderBy('id', 'asc')->get();
                 $sheet = $event->sheet;
-                $selectedMonth = Carbon::parse($this->month.'-01');
+                $selectedMonth = Carbon::parse($this->month . '-01');
                 $previousMonth = $selectedMonth->copy()->subMonth();
 
                 $sheet->insertNewRowBefore(1, 7);
@@ -237,14 +237,14 @@ class LaporanInvestasi implements FromCollection, WithColumnWidths, WithEvents, 
                     'A3' => 'SINODE GKJ & GKI JAWA TENGAH SALATIGA',
                     'A4' => '(PROGRAM PENSIUM MANFAAT PASTI)',
                     'A5' => 'LAPORAN INVESTASI',
-                    'A6' => 'Per '.$previousMonth->translatedFormat('F Y').' & '.$selectedMonth->translatedFormat('F Y'),
+                    'A6' => 'Per ' . $previousMonth->translatedFormat('F Y') . ' & ' . $selectedMonth->translatedFormat('F Y'),
                 ];
 
                 $sheet->setCellValue('A7', '');
                 $sheet->setCellValue('A8', '');
 
                 foreach ($titles as $cell => $text) {
-                    $sheet->mergeCells($cell.':C'.substr($cell, 1));
+                    $sheet->mergeCells($cell . ':C' . substr($cell, 1));
                     $sheet->setCellValue($cell, $text);
                     $sheet->getStyle($cell)->applyFromArray([
                         'font' => ['bold' => true, 'size' => 12],
@@ -270,7 +270,7 @@ class LaporanInvestasi implements FromCollection, WithColumnWidths, WithEvents, 
                     }
 
                     if (stripos($val, 'Total') !== false) {
-                        $sheet->getStyle('B'.($row - 1).':E'.($row - 1))->applyFromArray([
+                        $sheet->getStyle('B' . ($row - 1) . ':E' . ($row - 1))->applyFromArray([
                             'borders' => [
                                 'bottom' => [
                                     'borderStyle' => Border::BORDER_DOUBLE,
@@ -281,7 +281,7 @@ class LaporanInvestasi implements FromCollection, WithColumnWidths, WithEvents, 
 
                         $sheet->getStyle("A$row:C$row")->getFont()->setBold(true);
 
-                        $sheet->getStyle('B'.($row + 1).':E'.($row + 1))->applyFromArray([
+                        $sheet->getStyle('B' . ($row + 1) . ':E' . ($row + 1))->applyFromArray([
                             'borders' => [
                                 'top' => [
                                     'borderStyle' => Border::BORDER_DOUBLE,
@@ -297,7 +297,7 @@ class LaporanInvestasi implements FromCollection, WithColumnWidths, WithEvents, 
                 $endOfMonthDate = $selectedMonth->copy()->endOfMonth();
 
                 $sheet->mergeCells("A$footerRow:D$footerRow");
-                $sheet->setCellValue("A$footerRow", 'Salatiga, '.$endOfMonthDate->translatedFormat('d F Y'));
+                $sheet->setCellValue("A$footerRow", 'Salatiga, ' . $endOfMonthDate->translatedFormat('d F Y'));
                 $sheet->getStyle("A$footerRow")->applyFromArray([
                     'alignment' => ['horizontal' => 'center'],
                     'font' => ['size' => 11],
@@ -348,7 +348,7 @@ class LaporanInvestasi implements FromCollection, WithColumnWidths, WithEvents, 
                 }
                 $footerRow += 5;
 
-                $sheet->getStyle('A'.($highestRow + 3).":D$footerRow")->applyFromArray([
+                $sheet->getStyle('A' . ($highestRow + 3) . ":D$footerRow")->applyFromArray([
                     'font' => ['size' => 11],
                     'alignment' => ['horizontal' => 'center'],
                 ]);

@@ -4,9 +4,9 @@
 
 namespace App\Http\Controllers\admin;
 
-use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
@@ -16,6 +16,7 @@ class ProductControllerAdmin
     {
         $users = User::orderBy('id', 'desc')->get();
         $total = User::count();
+
         return view('admin.product.home', compact(['users', 'total']));
     }
 
@@ -48,9 +49,11 @@ class ProductControllerAdmin
 
         if ($data) {
             session()->flash('success', 'User Added Successfully');
+
             return redirect()->route('admin/products');
         } else {
             session()->flash('error', 'Some problem occurred');
+
             return redirect()->route('admin/products/create');
         }
     }
@@ -58,6 +61,7 @@ class ProductControllerAdmin
     public function edit($id)
     {
         $user = User::findOrFail($id);
+
         return view('admin.product.update', compact('user'));
     }
 
@@ -95,9 +99,11 @@ class ProductControllerAdmin
 
         if ($user->save()) {
             session()->flash('success', 'User Updated Successfully');
+
             return redirect()->route('admin/products');
         } else {
             session()->flash('error', 'Some problem occurred');
+
             return redirect()->route('admin/products/edit', $id);
         }
     }
@@ -111,9 +117,11 @@ class ProductControllerAdmin
                 Storage::disk('public')->delete($user->image);
             }
             session()->flash('success', 'User Deleted Successfully');
+
             return redirect()->route('admin/products');
         } else {
             session()->flash('error', 'Some problem occurred');
+
             return redirect()->route('admin/products');
         }
     }
@@ -121,10 +129,11 @@ class ProductControllerAdmin
     public function toggleStatus($id)
     {
         $user = User::findOrFail($id);
-        $user->status = !$user->status;
+        $user->status = ! $user->status;
         $user->save();
 
         session()->flash('success', 'User status updated successfully');
+
         return redirect()->route('admin/products');
     }
 }

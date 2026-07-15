@@ -1,7 +1,7 @@
 {
-    "name": "laravel/laravel",
+    "name": "dapense/dapense",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
+    "description": "DAPENSE - Dana Pensiun Sekolah Kristen Salatiga",
     "keywords": [
         "laravel",
         "framework"
@@ -12,13 +12,15 @@
         "laravel/breeze": "^2.0",
         "laravel/framework": "^11.9",
         "laravel/tinker": "^2.9",
+        "livewire/livewire": "^3.0",
         "maatwebsite/excel": "^3.1",
-        "mpdf/mpdf": "^8.2"
+        "mpdf/mpdf": "^8.2",
+        "spatie/laravel-activitylog": "^4.12"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.15",
         "fakerphp/faker": "^1.23",
-        "fruitcake/laravel-debugbar": "^3.16",
+        "larastan/larastan": "^2.0",
         "laravel/pint": "^1.13",
         "laravel/sail": "^1.26",
         "mockery/mockery": "^1.6",
@@ -53,6 +55,29 @@
             "@php artisan key:generate --ansi",
             "@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
             "@php artisan migrate --graceful --ansi"
+        ],
+        "test": [
+            "pest"
+        ],
+        "test-coverage": [
+            "pest --coverage"
+        ],
+        "lint": [
+            "@php ./vendor/bin/pint --test"
+        ],
+        "lint-fix": [
+            "@php ./vendor/bin/pint"
+        ],
+        "analyse": [
+            "@php ./vendor/bin/phpstan analyse"
+        ],
+        "analyse-verbose": [
+            "@php ./vendor/bin/phpstan analyse --debug"
+        ],
+        "check": [
+            "@composer lint",
+            "@composer analyse",
+            "@composer test"
         ]
     },
     "extra": {

@@ -1,179 +1,137 @@
 @extends('layouts.applayout')
+@section('title', 'Saldo Awal')
 @section('content')
-@include('components.admin-sidebar', ['activeMenu' => 'saldoawal'])
 
-<div class="content-wrapper">
-    <div class="container-xxl flex-grow-1 container-p-y">
-        <div class="card">
-            <div class="card-header d-flex align-items-center justify-content-between">
-                <div class="container mt-5">
-                    <h2>Saldo Awal</h2>
+<x-dashboard.page-header
+    title="Saldo Awal"
+    description="Kelola saldo awal periode akuntansi"
+    :actions="'<a href=\'' . route('operator/saldoawal/create') . '\' class=\'btn-primary\'>Tambah Saldo Awal</a>'"
+/>
 
-                    <!-- Form Filter Periode dan Bulan -->
-                    <form method="GET" action="{{ route('operator/saldoawal') }}" class="mb-3">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <label for="periode">Pilih Periode</label>
-                                <select name="periode_id" id="periode" class="form-control">
-                                    <option value="">Pilih Periode</option>
-                                    @foreach ($periodes as $periode)
-                                    <option value="{{ $periode->id }}" {{ request('periode_id') == $periode->id ? 'selected' : '' }}>
-                                        {{ $periode->nama_periode }}
-                                    </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-md-4">
-                                <label for="bulan">Pilih Bulan</label>
-                                <select name="bulan" id="bulan" class="form-control">
-                                    <option value="">Pilih Bulan</option>
-                                    @for ($i = 1; $i <= 12; $i++)
-                                        <option value="{{ $i }}" {{ request('bulan') == $i ? 'selected' : '' }}>
-                                        {{ date('F', mktime(0, 0, 0, $i, 1)) }}
-                                        </option>
-                                        @endfor
-                                </select>
-                            </div>
-                            <div class="col-md-4 d-flex align-items-end">
-                                <button type="submit" class="btn btn-primary">Tampil</button>
-                            </div>
-                        </div>
-                    </form>
-
-                    <a href="{{ route('operator/saldoawal/create') }}" class="mb-3 btn btn-primary">Tambah Saldo Awal</a>
-
-                    <!-- Tampilkan tabel hanya jika periode & bulan sudah dipilih -->
-                    @if(request()->filled('periode_id') && request()->filled('bulan'))
-                    <div class="mb-3 row">
-                        <div class="col">
-                            <label for="coa-search" class="form-label">Cari Saldo Awal</label>
-                            <div class="input-group input-group-merge">
-                                <span class="input-group-text" id="basic-addon-search31"><i class="bx bx-search"></i></span>
-                                <input type="text" id="search-field" class="form-control" placeholder="Cari Saldo Awal" onkeyup="searchCOA()">
-                            </div>
-                        </div>
-                    </div>
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Kode COA</th>
-                                <th>Tanggal Saldo</th>
-                                <th>COA</th>
-                                <th>Saldo Awal</th>
-                                <th>Periode</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($saldo_awals->sortBy('coa.kode_akun') as $saldo_awal)
-                            <tr>
-                                <td>{{ $saldo_awal->coa->kode_akun }}</td>
-                                <td>{{ $saldo_awal->tanggal_saldo }}</td>
-                                <td>{{ $saldo_awal->coa->nama_akun }}</td>
-                                <td>
-                                    @if($saldo_awal->debit < 0)
-                                        ({{ number_format(abs($saldo_awal->debit), 2) }})
-                                        @else
-                                        {{ number_format($saldo_awal->debit, 2) }}
-                                        @endif
-                                        </td>
-                                <td>{{ $saldo_awal->periode->nama_periode }}</td>
-                                <td>
-                                    <div class="btn-group" role="group">
-                                        <a href="{{ route('operator.saldoawal.edit', $saldo_awal->id) }}" class="btn btn-warning btn-sm me-2">Edit</a>
-                                        <form action="{{ route('operator.saldoawal.destroy', $saldo_awal->id) }}" method="POST" style="display: inline-block; margin: 0;" id="deleteForm{{ $saldo_awal->id }}">
-                                            @csrf
-                                            @method('DELETE')
-                                            @php
-                                            $deleteUrl = route('operator.saldoawal.destroy', $saldo_awal->id);
-                                            @endphp
-                                            <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete('{{ $deleteUrl }}')">Hapus</button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                    @endif
-                </div>
-            </div>
+<div class="filter-card mb-6">
+  <div class="card-body">
+    <form method="GET" action="{{ route('operator/saldoawal') }}">
+      <div class="filter-row">
+        <div class="filter-group">
+          <label for="periode" class="label">Pilih Periode</label>
+          <select name="periode_id" id="periode" class="select-field">
+            <option value="">Pilih Periode</option>
+            @foreach ($periodes as $periode)
+            <option value="{{ $periode->id }}" {{ request('periode_id') == $periode->id ? 'selected' : '' }}>
+              {{ $periode->nama_periode }}
+            </option>
+            @endforeach
+          </select>
         </div>
-    </div>
+        <div class="filter-group">
+          <label for="bulan" class="label">Pilih Bulan</label>
+          <select name="bulan" id="bulan" class="select-field">
+            <option value="">Pilih Bulan</option>
+            @for ($i = 1; $i <= 12; $i++)
+              <option value="{{ $i }}" {{ request('bulan') == $i ? 'selected' : '' }}>
+              {{ date('F', mktime(0, 0, 0, $i, 1)) }}
+              </option>
+              @endfor
+          </select>
+        </div>
+        <div class="flex items-end">
+          <button type="submit" class="btn-primary">Tampil</button>
+        </div>
+      </div>
+    </form>
+  </div>
 </div>
 
-<div class="p-3 toast-container position-fixed top-50 start-50 translate-middle" style="z-index: 1050;">
-    <div id="deleteToast" class="text-white toast bg-warning" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-header">
-            <i class="bx bx-bell me-2"></i>
-            <strong class="me-auto">Delete Confirmation</strong>
-            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
-        <div class="toast-body">
-            Apakah Anda yakin ingin menghapus Saldo Awal ini?
-            <div class="pt-2 mt-4 d-flex justify-content-end border-top">
-                <button type="button" class="btn btn-light btn-sm me-2" data-bs-dismiss="toast">Batal</button>
-                <button type="button" class="btn btn-danger btn-sm" id="confirmDeleteBtn">Hapus</button>
-            </div>
-        </div>
+@if(request()->filled('periode_id') && request()->filled('bulan'))
+<div class="card">
+  <div class="card-header border-b border-gray-100 px-6 py-4">
+    <div class="relative w-full max-w-sm">
+      <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+      <input type="text" id="search-field" class="input-field pl-10" placeholder="Cari Saldo Awal">
     </div>
+  </div>
+  <div class="card-body p-6">
+    @if($saldo_awals->isEmpty())
+    <x-dashboard.empty-state
+        icon="wallet"
+        title="Belum ada data saldo awal"
+        description="Belum ada saldo awal untuk periode dan bulan yang dipilih"
+        :action="'<a href=\'' . route('operator/saldoawal/create') . '\' class=\'btn-primary btn-sm\'>Tambah Saldo Awal</a>'"
+    />
+    @else
+    <div class="table-container overflow-x-auto">
+      <table class="data-table w-full">
+        <thead>
+          <tr>
+            <th class="sticky top-0 bg-gray-50 z-10">Kode COA</th>
+            <th class="sticky top-0 bg-gray-50 z-10">Tanggal Saldo</th>
+            <th class="sticky top-0 bg-gray-50 z-10">COA</th>
+            <th class="sticky top-0 bg-gray-50 z-10 num-col">Saldo Awal</th>
+            <th class="sticky top-0 bg-gray-50 z-10">Periode</th>
+            <th class="sticky top-0 bg-gray-50 z-10">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          @foreach ($saldo_awals->sortBy('coa.kode_akun') as $saldo_awal)
+          <tr class="hover:bg-gray-50/50 transition-colors">
+            <td class="font-mono text-sm">{{ $saldo_awal->coa->kode_akun }}</td>
+            <td>{{ $saldo_awal->tanggal_saldo }}</td>
+            <td>{{ $saldo_awal->coa->nama_akun }}</td>
+            <td class="num-col">
+              @if($saldo_awal->debit < 0)
+                ({{ number_format(abs($saldo_awal->debit), 2) }})
+                @else
+                {{ number_format($saldo_awal->debit, 2) }}
+                @endif
+            </td>
+            <td>{{ $saldo_awal->periode->nama_periode }}</td>
+            <td>
+              <div class="flex items-center gap-2">
+                <a href="{{ route('operator.saldoawal.edit', $saldo_awal->id) }}" class="btn-warning btn-sm">Edit</a>
+                <button type="button" class="btn-danger btn-sm" onclick="window.dispatchEvent(new CustomEvent('delete-modal-open', {detail: '{{ route('operator.saldoawal.destroy', $saldo_awal->id) }}'}))">Hapus</button>
+              </div>
+            </td>
+          </tr>
+          @endforeach
+        </tbody>
+      </table>
+    </div>
+    @endif
+  </div>
 </div>
+@elseif(!request()->filled('periode_id') && !request()->filled('bulan'))
+<div class="card">
+  <div class="card-body">
+    <x-dashboard.empty-state
+        icon="filter"
+        title="Pilih filter untuk mulai"
+        description="Silakan pilih periode dan bulan terlebih dahulu untuk menampilkan data saldo awal"
+    />
+  </div>
+</div>
+@endif
+
+<x-delete-modal
+    title="Konfirmasi Hapus Saldo Awal"
+    message="Apakah Anda yakin ingin menghapus Saldo Awal ini? Data yang sudah dihapus tidak dapat dikembalikan."
+/>
 
 <script>
-    function searchCOA() {
-        var input = document.getElementById("search-field").value.toLowerCase();
-        var table = document.querySelector("table tbody");
-        var rows = table.getElementsByTagName("tr");
-
-        for (var i = 0; i < rows.length; i++) {
-            var coaCode = rows[i].getElementsByTagName("td")[0]; // Kolom Kode COA
-            var coaName = rows[i].getElementsByTagName("td")[2]; // Kolom COA Name
-
-            if (coaCode && coaName) {
-                var codeText = coaCode.textContent || coaCode.innerText;
-                var nameText = coaName.textContent || coaName.innerText;
-
-                if (codeText.toLowerCase().includes(input) || nameText.toLowerCase().includes(input)) {
-                    rows[i].style.display = "";
-                } else {
-                    rows[i].style.display = "none";
-                }
-            }
-        }
+  document.getElementById('search-field')?.addEventListener('keyup', function() {
+    let input = this.value.toLowerCase();
+    let table = document.querySelector("table tbody");
+    if (!table) return;
+    let rows = table.getElementsByTagName("tr");
+    for (let i = 0; i < rows.length; i++) {
+      let coaCode = rows[i].getElementsByTagName("td")[0];
+      let coaName = rows[i].getElementsByTagName("td")[2];
+      if (coaCode && coaName) {
+        let codeText = coaCode.textContent || coaCode.innerText;
+        let nameText = coaName.textContent || coaName.innerText;
+        rows[i].style.display = (codeText.toLowerCase().includes(input) || nameText.toLowerCase().includes(input)) ? "" : "none";
+      }
     }
-
-
-    var deleteUrl = "";
-
-    function confirmDelete(url) {
-        deleteUrl = url; // Simpan URL yang akan digunakan
-        var toastEl = document.getElementById('deleteToast');
-        var toast = new bootstrap.Toast(toastEl);
-        toast.show();
-    }
-
-    document.getElementById('confirmDeleteBtn').onclick = function() {
-        if (deleteUrl) {
-            var form = document.createElement('form');
-            form.method = 'POST';
-            form.action = deleteUrl;
-
-            var csrfField = document.createElement('input');
-            csrfField.type = 'hidden';
-            csrfField.name = '_token';
-            csrfField.value = '{{ csrf_token() }}';
-
-            var methodField = document.createElement('input');
-            methodField.type = 'hidden';
-            methodField.name = '_method';
-            methodField.value = 'DELETE';
-
-            form.appendChild(csrfField);
-            form.appendChild(methodField);
-            document.body.appendChild(form);
-            form.submit();
-        }
-    };
+  });
 </script>
 
 @endsection

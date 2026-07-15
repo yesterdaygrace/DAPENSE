@@ -4,9 +4,9 @@
 
 namespace App\Http\Controllers\rootsuperuser;
 
-use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
@@ -16,6 +16,7 @@ class ProductControllerRootSuperuser
     {
         $users = User::orderBy('id', 'desc')->get();
         $total = User::count();
+
         return view('rootsuperuser.product.home', compact(['users', 'total']));
     }
 
@@ -48,9 +49,11 @@ class ProductControllerRootSuperuser
 
         if ($data) {
             session()->flash('success', 'User Added Successfully');
+
             return redirect()->route('rootsuperuser/products');
         } else {
             session()->flash('error', 'Some problem occurred');
+
             return redirect()->route('rootsuperuser/products/create');
         }
     }
@@ -58,6 +61,7 @@ class ProductControllerRootSuperuser
     public function edit($id)
     {
         $user = User::findOrFail($id);
+
         return view('rootsuperuser.product.update', compact('user'));
     }
 
@@ -91,14 +95,15 @@ class ProductControllerRootSuperuser
             $user->password = Hash::make($request->input('password'));
         }
 
-
         $user->usertype = $request->usertype;
 
         if ($user->save()) {
             session()->flash('success', 'User Updated Successfully');
+
             return redirect()->route('rootsuperuser/products');
         } else {
             session()->flash('error', 'Some problem occurred');
+
             return redirect()->route('rootsuperuser/products/edit', $id);
         }
     }
@@ -112,9 +117,11 @@ class ProductControllerRootSuperuser
                 Storage::disk('public')->delete($user->image);
             }
             session()->flash('success', 'User Deleted Successfully');
+
             return redirect()->route('rootsuperuser/products');
         } else {
             session()->flash('error', 'Some problem occurred');
+
             return redirect()->route('rootsuperuser/products');
         }
     }
@@ -122,10 +129,11 @@ class ProductControllerRootSuperuser
     public function toggleStatus($id)
     {
         $user = User::findOrFail($id);
-        $user->status = !$user->status;
+        $user->status = ! $user->status;
         $user->save();
 
         session()->flash('success', 'User status updated successfully');
+
         return redirect()->route('rootsuperuser/products');
     }
 }

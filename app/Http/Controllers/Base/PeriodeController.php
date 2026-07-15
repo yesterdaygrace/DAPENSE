@@ -25,12 +25,12 @@ class PeriodeController extends Controller
     {
         $periodes = Periode::orderBy('tanggal_awal', 'desc')->get();
 
-        return view($this->viewPrefix().'.periode.home', compact('periodes'));
+        return view($this->viewPrefix() . '.periode.home', compact('periodes'));
     }
 
     public function create()
     {
-        return view($this->viewPrefix().'.periode.create');
+        return view($this->viewPrefix() . '.periode.create');
     }
 
     public function save(Request $request)
@@ -54,14 +54,14 @@ class PeriodeController extends Controller
             'tanggal_akhir' => $request->tanggal_akhir,
         ]);
 
-        return redirect()->route($this->routePrefix().'/periodes')->with('success', 'Periode berhasil ditambahkan.');
+        return redirect()->route($this->routePrefix() . '/periodes')->with('success', 'Periode berhasil ditambahkan.');
     }
 
     public function update($id)
     {
         $periode = Periode::findOrFail($id);
 
-        return view($this->viewPrefix().'.periode.update', compact('periode'));
+        return view($this->viewPrefix() . '.periode.update', compact('periode'));
     }
 
     public function updateSave(Request $request, $id)
@@ -89,7 +89,7 @@ class PeriodeController extends Controller
             'tanggal_akhir' => $request->tanggal_akhir,
         ]);
 
-        return redirect()->route($this->routePrefix().'/periodes')->with('success', 'Periode berhasil diperbarui.');
+        return redirect()->route($this->routePrefix() . '/periodes')->with('success', 'Periode berhasil diperbarui.');
     }
 
     public function delete($id)
@@ -101,12 +101,12 @@ class PeriodeController extends Controller
         $usedInJurnaling = Jurnaling::where('periode_id', $periode->id)->exists();
 
         if ($usedInSaldoAwal || $usedInJurnaling) {
-            return redirect()->route($this->routePrefix().'/periodes')
+            return redirect()->route($this->routePrefix() . '/periodes')
                 ->with('error', 'Periode tidak dapat dihapus karena sudah digunakan pada Saldo Awal atau Jurnaling.');
         }
 
         $periode->delete();
 
-        return redirect()->route($this->routePrefix().'/periodes')->with('success', 'Periode berhasil dihapus.');
+        return redirect()->route($this->routePrefix() . '/periodes')->with('success', 'Periode berhasil dihapus.');
     }
 }

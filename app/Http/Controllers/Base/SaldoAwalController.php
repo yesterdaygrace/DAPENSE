@@ -35,7 +35,7 @@ class SaldoAwalController
         $saldo_awals = $query->get();
         $periodes = Periode::orderBy('tanggal_awal', 'desc')->get();
 
-        return view($this->viewPrefix().'.saldoawal.home', compact('saldo_awals', 'periodes'));
+        return view($this->viewPrefix() . '.saldoawal.home', compact('saldo_awals', 'periodes'));
     }
 
     public function create()
@@ -44,7 +44,7 @@ class SaldoAwalController
         $periodes = Periode::orderBy('tanggal_awal', 'desc')
             ->get();
 
-        return view($this->viewPrefix().'.saldoawal.create', compact('coas', 'periodes'));
+        return view($this->viewPrefix() . '.saldoawal.create', compact('coas', 'periodes'));
     }
 
     public function store(Request $request)
@@ -65,15 +65,15 @@ class SaldoAwalController
         $tanggalAkhir = strtotime($periode->tanggal_akhir);
 
         if ($tanggalSaldo < $tanggalAwal || $tanggalSaldo > $tanggalAkhir) {
-            return redirect()->back()->with('error', 'Tanggal saldo harus berada dalam rentang periode yang dipilih ('.
-                date('d-m-Y', $tanggalAwal).' s/d '.date('d-m-Y', $tanggalAkhir).').')->withInput();
+            return redirect()->back()->with('error', 'Tanggal saldo harus berada dalam rentang periode yang dipilih (' .
+                date('d-m-Y', $tanggalAwal) . ' s/d ' . date('d-m-Y', $tanggalAkhir) . ').')->withInput();
         }
 
         $validatedData['kredit'] = 0;
 
         SaldoAwal::create($validatedData);
 
-        return redirect()->route($this->routePrefix().'/saldoawal')->with('success', 'Saldo Awal berhasil dibuat.');
+        return redirect()->route($this->routePrefix() . '/saldoawal')->with('success', 'Saldo Awal berhasil dibuat.');
     }
 
     public function edit($id)
@@ -82,7 +82,7 @@ class SaldoAwalController
         $coas = COA::orderBy('kode_akun', 'asc')->get();
         $periodes = Periode::orderBy('tanggal_awal', 'desc')->get();
 
-        return view($this->viewPrefix().'.saldoawal.edit', compact('saldo_awal', 'coas', 'periodes'));
+        return view($this->viewPrefix() . '.saldoawal.edit', compact('saldo_awal', 'coas', 'periodes'));
     }
 
     public function update(Request $request, $id)
@@ -101,8 +101,8 @@ class SaldoAwalController
         $tanggalAkhir = strtotime($periode->tanggal_akhir);
 
         if ($tanggalSaldo < $tanggalAwal || $tanggalSaldo > $tanggalAkhir) {
-            return redirect()->back()->with('error', 'Tanggal saldo harus berada dalam rentang periode yang dipilih ('.
-                date('d-m-Y', $tanggalAwal).' s/d '.date('d-m-Y', $tanggalAkhir).').')->withInput();
+            return redirect()->back()->with('error', 'Tanggal saldo harus berada dalam rentang periode yang dipilih (' .
+                date('d-m-Y', $tanggalAwal) . ' s/d ' . date('d-m-Y', $tanggalAkhir) . ').')->withInput();
         }
 
         $validatedData['kredit'] = 0;
@@ -110,7 +110,7 @@ class SaldoAwalController
         $saldo_awal = SaldoAwal::findOrFail($id);
         $saldo_awal->update($validatedData);
 
-        return redirect()->route($this->routePrefix().'/saldoawal')->with('success', 'Saldo Awal berhasil diperbarui.');
+        return redirect()->route($this->routePrefix() . '/saldoawal')->with('success', 'Saldo Awal berhasil diperbarui.');
     }
 
     public function destroy($id)
@@ -118,6 +118,6 @@ class SaldoAwalController
         $saldo_awal = SaldoAwal::findOrFail($id);
         $saldo_awal->delete();
 
-        return redirect()->route($this->routePrefix().'/saldoawal')->with('success', 'Saldo Awal berhasil dihapus.');
+        return redirect()->route($this->routePrefix() . '/saldoawal')->with('success', 'Saldo Awal berhasil dihapus.');
     }
 }
