@@ -28,7 +28,7 @@
     </div>
 
     <!-- Stats Row -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="grid grid-cols-2 lg:grid-cols-3 gap-4">
         <div class="bg-white rounded-[--radius-card] p-6 shadow-card">
             <div class="flex items-center justify-between">
                 <div>
@@ -57,21 +57,6 @@
             </div>
             <div class="mt-3 flex items-center gap-1 text-sm">
                 <span class="text-gray-600">Periode 07</span>
-            </div>
-        </div>
-
-        <div class="bg-white rounded-[--radius-card] p-6 shadow-card">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-600">Header Akun</p>
-                    <p class="text-2xl font-bold text-gray-900 mt-1">28</p>
-                </div>
-                <div class="w-12 h-12 rounded-[--radius-button] bg-purple-50 flex items-center justify-center">
-                    <i class='bx bx-table text-2xl text-purple-600'></i>
-                </div>
-            </div>
-            <div class="mt-3 flex items-center gap-1 text-sm">
-                <span class="text-gray-500">Dikonfigurasi</span>
             </div>
         </div>
 
@@ -107,26 +92,13 @@
             </div>
         </a>
 
-        <!-- Chart of Accounts -->
+        <!-- Chart of Accounts + Headers -->
         <a href="{{ $prefix }}/master-data/coa-workspace" class="bg-white rounded-[--radius-card] p-6 shadow-card hover:shadow-card-hover transition-shadow cursor-pointer group">
             <div class="w-12 h-12 rounded-[--radius-button] bg-primary-50 flex items-center justify-center text-primary mb-4 group-hover:scale-110 transition-transform">
                 <i class='bx bx-spreadsheet text-2xl'></i>
             </div>
             <h3 class="text-lg font-semibold text-gray-900 mb-2">Kode Akun</h3>
-            <p class="text-sm text-gray-600 mb-4">Lihat dan kelola struktur akun</p>
-            <div class="flex items-center text-primary text-sm font-medium">
-                <span>Buka</span>
-                <i class='bx bx-right-arrow-alt ml-1 group-hover:translate-x-1 transition-transform'></i>
-            </div>
-        </a>
-
-        <!-- Account Headers -->
-        <a href="{{ $prefix }}/master-data/coa-workspace?tab=headers" class="bg-white rounded-[--radius-card] p-6 shadow-card hover:shadow-card-hover transition-shadow cursor-pointer group">
-            <div class="w-12 h-12 rounded-[--radius-button] bg-primary-50 flex items-center justify-center text-primary mb-4 group-hover:scale-110 transition-transform">
-                <i class='bx bx-table text-2xl'></i>
-            </div>
-            <h3 class="text-lg font-semibold text-gray-900 mb-2">Header Akun</h3>
-            <p class="text-sm text-gray-600 mb-4">Konfigurasi kategori dan pengelompokan akun</p>
+            <p class="text-sm text-gray-600 mb-4">Kelola struktur akun dan header akun</p>
             <div class="flex items-center text-primary text-sm font-medium">
                 <span>Buka</span>
                 <i class='bx bx-right-arrow-alt ml-1 group-hover:translate-x-1 transition-transform'></i>
@@ -145,32 +117,6 @@
                 <i class='bx bx-right-arrow-alt ml-1 group-hover:translate-x-1 transition-transform'></i>
             </div>
         </a>
-
-        <!-- Import Data -->
-        <a href="{{ $prefix }}/master-data/coa-workspace?tab=import" class="bg-white rounded-[--radius-card] p-6 shadow-card hover:shadow-card-hover transition-shadow cursor-pointer group">
-            <div class="w-12 h-12 rounded-[--radius-button] bg-primary-50 flex items-center justify-center text-primary mb-4 group-hover:scale-110 transition-transform">
-                <i class='bx bx-import text-2xl'></i>
-            </div>
-            <h3 class="text-lg font-semibold text-gray-900 mb-2">Impor Data</h3>
-            <p class="text-sm text-gray-600 mb-4">Impor akun secara massal dari Excel atau CSV</p>
-            <div class="flex items-center text-primary text-sm font-medium">
-                <span>Buka</span>
-                <i class='bx bx-right-arrow-alt ml-1 group-hover:translate-x-1 transition-transform'></i>
-            </div>
-        </a>
-
-        <!-- Export Data -->
-        <a href="{{ $prefix }}/master-data/coa-workspace?tab=export" class="bg-white rounded-[--radius-card] p-6 shadow-card hover:shadow-card-hover transition-shadow cursor-pointer group">
-            <div class="w-12 h-12 rounded-[--radius-button] bg-primary-50 flex items-center justify-center text-primary mb-4 group-hover:scale-110 transition-transform">
-                <i class='bx bx-export text-2xl'></i>
-            </div>
-            <h3 class="text-lg font-semibold text-gray-900 mb-2">Ekspor Data</h3>
-            <p class="text-sm text-gray-600 mb-4">Unduh kode akun untuk cadangan</p>
-            <div class="flex items-center text-primary text-sm font-medium">
-                <span>Buka</span>
-                <i class='bx bx-right-arrow-alt ml-1 group-hover:translate-x-1 transition-transform'></i>
-            </div>
-        </a>
     </div>
 
     <!-- Quick Actions -->
@@ -180,10 +126,6 @@
             <a href="{{ $prefix }}/master-data/coa-workspace?action=new" class="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-[--radius-button] hover:bg-primary-600 transition-colors text-sm font-medium">
                 <i class='bx bx-plus'></i>
                 <span>Akun Baru</span>
-            </a>
-            <a href="{{ $prefix }}/master-data/coa-workspace?tab=import" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-[--radius-button] hover:bg-gray-200 transition-colors text-sm font-medium">
-                <i class='bx bx-import'></i>
-                <span>Impor Akun</span>
             </a>
             <a href="{{ $prefix }}/periodes?action=new" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-[--radius-button] hover:bg-gray-200 transition-colors text-sm font-medium">
                 <i class='bx bx-calendar-plus'></i>
