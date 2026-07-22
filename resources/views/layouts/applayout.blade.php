@@ -15,60 +15,65 @@
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css" />
 
+    <script>
+        (function() {
+            window.addEventListener('pageshow', function(e) {
+                if (e.persisted) {
+                    e.stopImmediatePropagation();
+                    window.location.reload();
+                }
+            }, true);
+        })();
+    </script>
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-background antialiased">
+<body class="bg-background antialiased" x-data="{ sidebarOpen: false }">
 
     <!-- Skip to content -->
     <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[9999] focus:px-4 focus:py-2 focus:bg-primary focus:text-white focus:rounded-button">
         Skip to content
     </a>
 
-    <!-- Toast - idle on first render, only shows after event -->
+    <!-- Toast -->
     <x-toast />
 
-    <!-- Loading - idle on first render, only shows during request -->
+    <!-- Loading -->
     <x-loading />
 
-    <div class="flex min-h-screen">
-        <!-- Sidebar -->
-        @include('components.sidebar')
-
-        <!-- Main content area -->
-        <div class="flex flex-col flex-1 min-w-0">
-            <!-- Top navbar -->
-            @include('components.topbar')
-
-            <!-- Page content -->
-            <main id="main-content" class="flex-1 overflow-y-auto">
-                <div class="content-container px-6 lg:px-8 py-6 lg:py-8">
-                    @yield('content')
-                </div>
-            </main>
-
-            <!-- Footer -->
-            <footer class="border-t border-gray-100 bg-white/60 backdrop-blur-sm px-6 lg:px-8 py-3">
-                <div class="flex items-center justify-between text-xs text-gray-500 max-w-content mx-auto">
-                    <span>&copy; {{ date('Y') }} WAS — Web Accounting System</span>
-                    <span class="flex items-center gap-2">
-                        {{ Auth::user()->name }}
-                        <span class="badge badge-primary">{{ ucfirst(Auth::user()->usertype === 'rootsuperuser' ? 'Root Superuser' : Auth::user()->usertype) }}</span>
-                    </span>
-                </div>
-            </footer>
-        </div>
+    <!-- Mobile sidebar backdrop -->
+    <div x-show="sidebarOpen"
+         @click="sidebarOpen = false"
+         class="fixed inset-0 z-20 bg-black/30 backdrop-blur-sm lg:hidden"
+         x-transition.opacity.duration.300ms>
     </div>
 
-    <script>
-        document.querySelectorAll('form').forEach(function(form) {
-            var method = (form.querySelector('input[name="_method"]')?.value || form.method || 'GET').toUpperCase();
-            if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(method)) {
-                form.addEventListener('submit', function() {
-                    window.dispatchEvent(new CustomEvent('loading-start'));
-                });
-            }
-        });
-    </script>
+    <!-- Sidebar (fixed) -->
+    @include('components.sidebar')
+
+    <!-- Main content area -->
+    <div class="main-content flex flex-col min-h-screen lg:ml-[72px]">
+        <!-- Top navbar -->
+        @include('components.topbar')
+
+        <!-- Page content -->
+        <main id="main-content" class="flex-1 overflow-y-auto">
+            <div class="content-container px-6 lg:px-8 py-6 lg:py-8">
+                @yield('content')
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="border-t border-gray-100 bg-white/60 backdrop-blur-sm px-6 lg:px-8 py-3">
+            <div class="flex items-center justify-between text-xs text-gray-500 max-w-content mx-auto">
+                <span>&copy; {{ date('Y') }} WAS — Web Accounting System</span>
+                <span class="flex items-center gap-2">
+                    {{ Auth::user()->name }}
+                    <span class="badge badge-primary">{{ ucfirst(Auth::user()->usertype === 'rootsuperuser' ? 'Root Superuser' : Auth::user()->usertype) }}</span>
+                </span>
+            </div>
+        </footer>
+    </div>
 
     @stack('scripts')
 </body>

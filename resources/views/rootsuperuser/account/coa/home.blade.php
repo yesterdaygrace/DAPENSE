@@ -26,15 +26,15 @@
     />
     @else
     <div class="table-container overflow-x-auto">
-      <table class="data-table w-full" id="coa-table">
+      <table class="data-table w-full" id="coa-table" aria-label="Data Chart of Accounts">
         <thead>
           <tr>
-            <th class="sticky top-0 bg-gray-50 z-10">Kode Akun</th>
-            <th class="sticky top-0 bg-gray-50 z-10">Nama Akun</th>
-            <th class="sticky top-0 bg-gray-50 z-10">Saldo Normal</th>
-            <th class="sticky top-0 bg-gray-50 z-10">Kategori</th>
-            <th class="sticky top-0 bg-gray-50 z-10">Level</th>
-            <th class="sticky top-0 bg-gray-50 z-10">Action</th>
+            <th scope="col" class="sticky top-0 bg-gray-50 z-10">Kode Akun</th>
+            <th scope="col" class="sticky top-0 bg-gray-50 z-10">Nama Akun</th>
+            <th scope="col" class="sticky top-0 bg-gray-50 z-10">Saldo Normal</th>
+            <th scope="col" class="sticky top-0 bg-gray-50 z-10">Kategori</th>
+            <th scope="col" class="sticky top-0 bg-gray-50 z-10">Level</th>
+            <th scope="col" class="sticky top-0 bg-gray-50 z-10">Action</th>
           </tr>
         </thead>
         <tbody>

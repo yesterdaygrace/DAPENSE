@@ -59,8 +59,8 @@
         <h5>Tambah Kolom Jurnal</h5>
     </div>
     <div class="card-body">
-        <div id="form-errors" class="alert alert-danger" style="display:none;"></div>
-        <div id="form-success" class="alert alert-success" style="display:none;"></div>
+        <div id="form-errors" class="alert alert-danger" style="display:none;" role="alert" aria-live="polite"></div>
+        <div id="form-success" class="alert alert-success" style="display:none;" role="alert" aria-live="polite"></div>
 
         <form id="jurnaling-form" action="{{ route('admin/jurnaling/storebankmasuk') }}" method="POST">
             @csrf
@@ -111,7 +111,7 @@
                     </div>
                     <div class="flex-1">
                         <label for="kredit" class="label">Kredit</label>
-                        <input type="text" class="input-field kredit-input" name="kredit[]" value="" placeholder="Masukkan Kredit" required oninput="this.value = this.value.replace(/[^0-9]/g, '')" oninput="toggleHiddenInput(this, 'debit')">
+                        <input type="text" class="input-field kredit-input" name="kredit[]" value="" placeholder="Masukkan Kredit" required oninput="this.value = this.value.replace(/[^0-9]/g, ''); toggleHiddenInput(this, 'debit')">
                     </div>
                     <div class="hidden">
                         <label class="label" hidden>Debit</label>
@@ -132,7 +132,7 @@
                     </div>
                     <div class="flex-1">
                         <label for="debit" class="label">Debit</label>
-                        <input type="text" class="input-field debit-input" name="debit[]" value="" required placeholder="Masukkan Debit" oninput="toggleHiddenInput(this, 'credit')">
+                        <input type="text" class="input-field debit-input" name="debit[]" value="" required placeholder="Masukkan Debit" oninput="toggleHiddenInput(this, 'kredit')">
                     </div>
                     <div class="hidden">
                         <label class="label" hidden>Kredit</label>
@@ -692,7 +692,7 @@ document.addEventListener('click', function(e) {
     </div>
     <div class="flex-1">
         <label class="label">Kredit</label>
-        <input type="text" class="input-field kredit-input" name="kredit[]" required placeholder="Masukkan Kredit" oninput="this.value = this.value.replace(/[^0-9]/g, '')" oninput="formatNumberInput(this)">
+                        <input type="text" class="input-field kredit-input" name="kredit[]" required placeholder="Masukkan Kredit" oninput="this.value = this.value.replace(/[^0-9]/g, ''); formatNumberInput(this)">
     </div>
     <div class="hidden">
         <label class="label" hidden>Debit</label>

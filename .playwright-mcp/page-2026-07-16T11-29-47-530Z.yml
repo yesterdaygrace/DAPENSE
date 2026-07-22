@@ -1,0 +1,141 @@
+- generic [active] [ref=f4e1]:
+  - link "Skip to content" [ref=f4e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=f4e3]:
+    - complementary [ref=f4e4]:
+      - generic [ref=f4e5]:
+        - generic [ref=f4e6]: W
+        - generic [ref=f4e8]:
+          - text: WAS
+          - generic [ref=f4e9]: Accounting System
+      - navigation [ref=f4e10]:
+        - generic [ref=f4e11]: MAIN
+        - link " Dashboard" [ref=f4e12] [cursor=pointer]:
+          - /url: http://localhost:8000/rootsuperuser/dashboard
+          - generic [ref=f4e13]: 
+          - generic [ref=f4e14]: Dashboard
+        - generic [ref=f4e15]: MASTER
+        - link " Periode" [ref=f4e16] [cursor=pointer]:
+          - /url: http://localhost:8000/rootsuperuser/periodes
+          - generic [ref=f4e17]: 
+          - generic [ref=f4e18]: Periode
+        - button " COA " [ref=f4e20]:
+          - generic [ref=f4e21]: 
+          - generic [ref=f4e22]: COA
+          - generic [ref=f4e23]: 
+        - link " Saldo Awal" [ref=f4e24] [cursor=pointer]:
+          - /url: http://localhost:8000/rootsuperuser/saldoawal
+          - generic [ref=f4e25]: 
+          - generic [ref=f4e26]: Saldo Awal
+        - generic [ref=f4e27]: TRANSACTION
+        - button " Jurnaling " [ref=f4e29]:
+          - generic [ref=f4e30]: 
+          - generic [ref=f4e31]: Jurnaling
+          - generic [ref=f4e32]: 
+        - generic [ref=f4e33]: REPORT
+        - link " Rekap Jurnal" [ref=f4e34] [cursor=pointer]:
+          - /url: http://localhost:8000/rootsuperuser/jurnaling/showing
+          - generic [ref=f4e35]: 
+          - generic [ref=f4e36]: Rekap Jurnal
+        - link " Buku Besar" [ref=f4e37] [cursor=pointer]:
+          - /url: http://localhost:8000/rootsuperuser/bukubesar
+          - generic [ref=f4e38]: 
+          - generic [ref=f4e39]: Buku Besar
+        - link " Neraca Saldo" [ref=f4e40] [cursor=pointer]:
+          - /url: http://localhost:8000/rootsuperuser/neracasaldo
+          - generic [ref=f4e41]: 
+          - generic [ref=f4e42]: Neraca Saldo
+        - generic [ref=f4e43]: SYSTEM
+        - link " User Management" [ref=f4e44] [cursor=pointer]:
+          - /url: http://localhost:8000/rootsuperuser/products
+          - generic [ref=f4e45]: 
+          - generic [ref=f4e46]: User Management
+        - link " Posting" [ref=f4e47] [cursor=pointer]:
+          - /url: http://localhost:8000/rootsuperuser/posting
+          - generic [ref=f4e48]: 
+          - generic [ref=f4e49]: Posting
+        - link " Pengaturan" [ref=f4e50] [cursor=pointer]:
+          - /url: http://localhost:8000/rootsuperuser/otorisator/home
+          - generic [ref=f4e51]: 
+          - generic [ref=f4e52]: Pengaturan
+      - button " Logout" [ref=f4e55]:
+        - generic [ref=f4e56]: 
+        - generic [ref=f4e57]: Logout
+    - generic [ref=f4e58]:
+      - banner [ref=f4e59]:
+        - generic [ref=f4e60]:
+          - button "" [ref=f4e61]
+          - navigation "breadcrumb" [ref=f4e63]:
+            - link "" [ref=f4e64] [cursor=pointer]:
+              - /url: http://localhost:8000/rootsuperuser/dashboard
+            - generic [ref=f4e66]: 
+            - generic [ref=f4e67]: Neraca Saldo
+        - generic [ref=f4e69]:
+          - button " was Root Superuser " [ref=f4e70]:
+            - generic [ref=f4e71]: 
+            - generic [ref=f4e73]:
+              - paragraph [ref=f4e74]: was
+              - paragraph [ref=f4e75]: Root Superuser
+            - generic [ref=f4e76]: 
+          - text:  
+      - main [ref=f4e77]:
+        - generic [ref=f4e78]:
+          - generic [ref=f4e79]:
+            - generic [ref=f4e80]:
+              - heading "Neraca Saldo Bulan January 2025" [level=1] [ref=f4e81]
+              - paragraph [ref=f4e82]: Ringkasan saldo seluruh akun
+            - generic [ref=f4e83]:
+              - link "Export Excel" [ref=f4e84] [cursor=pointer]:
+                - /url: http://localhost:8000/rootsuperuser/neracasaldo/exportexcel/1?month=2025-01
+              - link "Export PDF" [ref=f4e88] [cursor=pointer]:
+                - /url: http://localhost:8000/rootsuperuser/neracasaldo/exportpdf/1?month=2025-01
+          - table [ref=f4e94]:
+            - rowgroup [ref=f4e95]:
+              - row [ref=f4e96]:
+                - columnheader "Kode Perk" [ref=f4e97]
+                - columnheader "Nama Perkiraan" [ref=f4e98]
+                - columnheader "Saldo Awal" [ref=f4e99]
+                - columnheader "Debit" [ref=f4e100]
+                - columnheader "Kredit" [ref=f4e101]
+                - columnheader "Saldo Akhir" [ref=f4e102]
+            - rowgroup
+      - contentinfo [ref=f4e103]:
+        - generic [ref=f4e104]:
+          - generic [ref=f4e105]: © 2026 WAS — Web Accounting System
+          - generic [ref=f4e106]:
+            - text: was
+            - generic [ref=f4e107]: Root Superuser
+  - generic [ref=f4e108]:
+    - generic [ref=f4e110]:
+      - generic [ref=f4e112]:
+        - generic [ref=f4e113] [cursor=pointer]: 
+        - text: 
+        - generic [ref=f4e114] [cursor=pointer]: 
+        - text: 
+        - generic [ref=f4e115] [cursor=pointer]:
+          - generic: 
+          - generic [ref=f4e116]: "7"
+        - generic [ref=f4e117] [cursor=pointer]:
+          - generic: 
+          - generic [ref=f4e118]: "21"
+        - generic [ref=f4e119] [cursor=pointer]:
+          - generic: 
+          - generic [ref=f4e120]: "273"
+        - text:   
+      - generic [ref=f4e121]:
+        - generic [ref=f4e124] [cursor=pointer]: 
+        - generic [ref=f4e126] [cursor=pointer]: 
+        - generic [ref=f4e127] [cursor=pointer]:
+          - generic: 
+          - generic: 46.64ms
+        - generic [ref=f4e128]:
+          - generic: 
+          - generic: 2MB
+        - generic [ref=f4e129]:
+          - generic: 
+          - generic: 11.x
+        - generic [ref=f4e130] [cursor=pointer]:
+          - generic: 
+          - generic: "GET rootsuperuser/neracasaldo/showing/{periode_id}"
+    - text:                                                                                                                                                                  
+  - text: 

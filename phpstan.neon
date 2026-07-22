@@ -14,13 +14,9 @@ parameters:
     ignoreErrors:
         - '#Unused view data#'
         - '#PHPDoc tag @var#'
-        - '#Property .* has no type specified#'
-        - '#Method .* has no return type specified#'
-        - '#Parameter .* has no type specified#'
+        - identifier: missingType.iterableValue
+        - identifier: missingType.generics
 
     excludePaths:
         - ./*/*/File.php
         - ./*/*/FileGeneration.php
-
-    checkMissingIterableValueType: false
-    checkGenericClassInNonGenericObjectType: false

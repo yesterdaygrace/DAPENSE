@@ -28,7 +28,7 @@ class CoaController
 
     public function create()
     {
-        $headers = HeaderCOA::where('level', 3)->orderBy('kode_header')->get();
+        $headers = HeaderCOA::orderBy('kode_header')->get();
 
         return view($this->viewPrefix() . '.account.coa.create', compact('headers'));
     }
@@ -56,7 +56,7 @@ class CoaController
     public function update($id)
     {
         $coa = COA::findOrFail($id);
-        $headers = HeaderCOA::where('level', 3)->orderBy('kode_header')->get();
+        $headers = HeaderCOA::orderBy('kode_header')->get();
 
         return view($this->viewPrefix() . '.account.coa.update', compact('coa', 'headers'));
     }

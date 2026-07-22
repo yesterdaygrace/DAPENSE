@@ -3,8 +3,8 @@
 @section('content')
 
 <x-dashboard.page-header
-    title="Tambah Periode"
-    description="Buat periode akuntansi baru"
+    title="Tambah Jurnaling"
+    description="Buat jurnal baru"
     :actions="'<a href=\'' . route('rootsuperuser/jurnaling') . '\' class=\'btn-secondary\'>Kembali</a>'"
 />
 

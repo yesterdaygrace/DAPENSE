@@ -4,7 +4,7 @@ $prefix = $usertype === 'rootsuperuser' ? 'rootsuperuser' : ($usertype === 'bod'
 @endphp
 
 @extends('layouts.applayout')
-@section('title', 'Profile')
+@section('title', 'Profil')
 @section('content')
 
 <x-dashboard.page-header title="Profil Saya" description="Kelola informasi profil dan pengaturan akun Anda" />

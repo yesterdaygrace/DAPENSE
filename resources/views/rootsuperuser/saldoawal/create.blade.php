@@ -15,12 +15,10 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="relative">
           <label for="coa_display" class="label">Pilih COA</label>
-          <input type="text" class="input-field @error('coa_id') border-danger @enderror" id="coa_display" placeholder="Pilih COA" required>
+          <input type="text" class="input-field @error('coa_id') border-danger @enderror" id="coa_display" placeholder="Pilih COA" required role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="coa_dropdown">
           <input type="hidden" id="coa_id" name="coa_id" value="{{ old('coa_id') }}">
-          <div id="coa_dropdown" style="display: none;"></div>
-          @error('coa_id')
-          <p class="text-sm text-danger mt-1">{{ $message }}</p>
-          @enderror
+          <div id="coa_dropdown" style="display: none;" role="listbox"></div>
+          <x-form-error name="coa_id" />
         </div>
         <datalist id="coa_list" style="display: none;">
           @foreach ($coas as $coa)
@@ -31,25 +29,19 @@
         <div>
           <label for="tanggal_saldo" class="label">Tanggal Saldo</label>
           <input type="date" class="input-field @error('tanggal_saldo') border-danger @enderror" id="tanggal_saldo" name="tanggal_saldo" value="{{ old('tanggal_saldo') }}" required>
-          @error('tanggal_saldo')
-          <p class="text-sm text-danger mt-1">{{ $message }}</p>
-          @enderror
+          <x-form-error name="tanggal_saldo" />
         </div>
 
         <div id="debit-group">
           <label for="debit" class="label">Saldo Awal</label>
           <input type="text" class="input-field @error('debit') border-danger @enderror" id="debit" name="debit" value="{{ old('debit') }}" disabled>
-          @error('debit')
-          <p class="text-sm text-danger mt-1">{{ $message }}</p>
-          @enderror
+          <x-form-error name="debit" />
         </div>
 
         <div id="kredit-group" style="display: none;">
           <label for="kredit" class="label">Kredit</label>
           <input type="text" class="input-field @error('kredit') border-danger @enderror" id="kredit" name="kredit" value="{{ old('kredit', '0') }}" disabled>
-          @error('kredit')
-          <p class="text-sm text-danger mt-1">{{ $message }}</p>
-          @enderror
+          <x-form-error name="kredit" />
         </div>
 
         <div>
@@ -62,9 +54,7 @@
             </option>
             @endforeach
           </select>
-          @error('periode_id')
-          <p class="text-sm text-danger mt-1">{{ $message }}</p>
-          @enderror
+          <x-form-error name="periode_id" />
         </div>
       </div>
 
@@ -83,24 +73,6 @@
     const hiddenInput = document.getElementById('coa_id');
 
     let activeIndex = -1;
-
-    coaInput.addEventListener('focus', function() {
-      const currentValue = coaInput.value.trim().toLowerCase();
-      coaDropdown.innerHTML = '';
-      activeIndex = -1;
-      const matchedOptions = Array.from(coaOptions).filter(opt =>
-        opt.value.trim().toLowerCase() === currentValue
-      );
-      if (matchedOptions.length === 1) {
-        const option = matchedOptions[0];
-        const div = createDropdownItem(option);
-        coaDropdown.appendChild(div);
-      } else {
-        showDropdown();
-        filterDropdown();
-      }
-      coaDropdown.style.display = 'block';
-    });
 
     coaInput.addEventListener('input', function() {
       filterDropdown();
@@ -140,6 +112,7 @@
     document.addEventListener('click', function(event) {
       if (!coaInput.contains(event.target) && !coaDropdown.contains(event.target)) {
         coaDropdown.style.display = 'none';
+        coaInput.setAttribute('aria-expanded', 'false');
       }
     });
 
@@ -149,15 +122,29 @@
         const div = createDropdownItem(option);
         coaDropdown.appendChild(div);
       });
-      coaDropdown.style.position = 'absolute';
-      coaDropdown.style.backgroundColor = 'white';
-      coaDropdown.style.border = '1px solid #ccc';
-      coaDropdown.style.maxHeight = '200px';
-      coaDropdown.style.overflowY = 'auto';
-      coaDropdown.style.zIndex = '1000';
+      coaDropdown.classList.add('custom-dropdown');
       coaDropdown.style.width = `${coaInput.offsetWidth}px`;
       coaDropdown.style.display = 'block';
     }
+
+    coaInput.addEventListener('focus', function() {
+      const currentValue = coaInput.value.trim().toLowerCase();
+      coaDropdown.innerHTML = '';
+      activeIndex = -1;
+      const matchedOptions = Array.from(coaOptions).filter(opt =>
+        opt.value.trim().toLowerCase() === currentValue
+      );
+      if (matchedOptions.length === 1) {
+        const option = matchedOptions[0];
+        const div = createDropdownItem(option);
+        coaDropdown.appendChild(div);
+      } else {
+        showDropdown();
+        filterDropdown();
+      }
+      coaDropdown.style.display = 'block';
+      coaInput.setAttribute('aria-expanded', 'true');
+    }); 
 
     function createDropdownItem(option) {
       const div = document.createElement('div');
@@ -165,9 +152,8 @@
       div.setAttribute('data-id', option.dataset.id);
       div.setAttribute('data-saldo-normal', option.dataset.saldoNormal);
       div.classList.add('dropdown-item');
-      div.style.padding = '8px';
-      div.style.cursor = 'pointer';
-      div.style.backgroundColor = 'white';
+      div.setAttribute('role', 'option');
+      div.setAttribute('aria-selected', 'false');
       div.addEventListener('click', function() {
         selectItem(div);
       });
@@ -190,7 +176,8 @@
 
     function highlightItem(items, index) {
       items.forEach((item, i) => {
-        item.style.backgroundColor = i === index ? '#e0e0e0' : 'white';
+        item.classList.toggle('highlighted', i === index);
+        item.setAttribute('aria-selected', i === index ? 'true' : 'false');
       });
       items[index].scrollIntoView({ block: 'nearest' });
     }

@@ -1,0 +1,131 @@
+- generic [active] [ref=f5e1]:
+  - link "Skip to content" [ref=f5e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=f5e3]:
+    - complementary [ref=f5e4]:
+      - generic [ref=f5e5]:
+        - generic [ref=f5e6]: W
+        - generic [ref=f5e8]:
+          - text: WAS
+          - generic [ref=f5e9]: Accounting System
+      - navigation [ref=f5e10]:
+        - generic [ref=f5e11]: MAIN
+        - link " Dashboard" [ref=f5e12] [cursor=pointer]:
+          - /url: http://localhost:8000/rootsuperuser/dashboard
+          - generic [ref=f5e13]: 
+          - generic [ref=f5e14]: Dashboard
+        - generic [ref=f5e15]: MASTER
+        - link " Periode" [ref=f5e16] [cursor=pointer]:
+          - /url: http://localhost:8000/rootsuperuser/periodes
+          - generic [ref=f5e17]: 
+          - generic [ref=f5e18]: Periode
+        - button " COA " [ref=f5e20]:
+          - generic [ref=f5e21]: 
+          - generic [ref=f5e22]: COA
+          - generic [ref=f5e23]: 
+        - link " Saldo Awal" [ref=f5e24] [cursor=pointer]:
+          - /url: http://localhost:8000/rootsuperuser/saldoawal
+          - generic [ref=f5e25]: 
+          - generic [ref=f5e26]: Saldo Awal
+        - generic [ref=f5e27]: TRANSACTION
+        - button " Jurnaling " [ref=f5e29]:
+          - generic [ref=f5e30]: 
+          - generic [ref=f5e31]: Jurnaling
+          - generic [ref=f5e32]: 
+        - generic [ref=f5e33]: REPORT
+        - link " Rekap Jurnal" [ref=f5e34] [cursor=pointer]:
+          - /url: http://localhost:8000/rootsuperuser/jurnaling/showing
+          - generic [ref=f5e35]: 
+          - generic [ref=f5e36]: Rekap Jurnal
+        - link " Buku Besar" [ref=f5e37] [cursor=pointer]:
+          - /url: http://localhost:8000/rootsuperuser/bukubesar
+          - generic [ref=f5e38]: 
+          - generic [ref=f5e39]: Buku Besar
+        - link " Neraca Saldo" [ref=f5e40] [cursor=pointer]:
+          - /url: http://localhost:8000/rootsuperuser/neracasaldo
+          - generic [ref=f5e41]: 
+          - generic [ref=f5e42]: Neraca Saldo
+        - generic [ref=f5e43]: SYSTEM
+        - link " User Management" [ref=f5e44] [cursor=pointer]:
+          - /url: http://localhost:8000/rootsuperuser/products
+          - generic [ref=f5e45]: 
+          - generic [ref=f5e46]: User Management
+        - link " Posting" [ref=f5e47] [cursor=pointer]:
+          - /url: http://localhost:8000/rootsuperuser/posting
+          - generic [ref=f5e48]: 
+          - generic [ref=f5e49]: Posting
+        - link " Pengaturan" [ref=f5e50] [cursor=pointer]:
+          - /url: http://localhost:8000/rootsuperuser/otorisator/home
+          - generic [ref=f5e51]: 
+          - generic [ref=f5e52]: Pengaturan
+      - button " Logout" [ref=f5e55]:
+        - generic [ref=f5e56]: 
+        - generic [ref=f5e57]: Logout
+    - generic [ref=f5e58]:
+      - banner [ref=f5e59]:
+        - generic [ref=f5e60]:
+          - button "" [ref=f5e61]
+          - navigation "breadcrumb" [ref=f5e63]:
+            - link "" [ref=f5e64] [cursor=pointer]:
+              - /url: http://localhost:8000/rootsuperuser/dashboard
+            - generic [ref=f5e66]: 
+            - generic [ref=f5e67]: Neraca Saldo - Rekap
+        - generic [ref=f5e69]:
+          - button " was Root Superuser " [ref=f5e70]:
+            - generic [ref=f5e71]: 
+            - generic [ref=f5e73]:
+              - paragraph [ref=f5e74]: was
+              - paragraph [ref=f5e75]: Root Superuser
+            - generic [ref=f5e76]: 
+          - text:  
+      - main [ref=f5e77]:
+        - generic [ref=f5e78]:
+          - generic [ref=f5e80]:
+            - heading "Rekap Neraca Saldo" [level=1] [ref=f5e81]
+            - paragraph [ref=f5e82]: Ringkasan neraca saldo seluruh periode
+          - generic [ref=f5e85]:
+            - heading "Tahun 2025" [level=5] [ref=f5e89]
+            - paragraph [ref=f5e90]: 01 Jan, 2025 — 31 Dec, 2025
+            - generic [ref=f5e91]:
+              - button "Rekap Bulan" [ref=f5e93]
+              - button "Tampilkan Neraca" [ref=f5e95]
+      - contentinfo [ref=f5e96]:
+        - generic [ref=f5e97]:
+          - generic [ref=f5e98]: © 2026 WAS — Web Accounting System
+          - generic [ref=f5e99]:
+            - text: was
+            - generic [ref=f5e100]: Root Superuser
+  - generic [ref=f5e101]:
+    - generic [ref=f5e103]:
+      - generic [ref=f5e105]:
+        - generic [ref=f5e106] [cursor=pointer]: 
+        - text: 
+        - generic [ref=f5e107] [cursor=pointer]: 
+        - text: 
+        - generic [ref=f5e108] [cursor=pointer]:
+          - generic: 
+          - generic [ref=f5e109]: "7"
+        - generic [ref=f5e110] [cursor=pointer]:
+          - generic: 
+          - generic [ref=f5e111]: "3"
+        - generic [ref=f5e112] [cursor=pointer]:
+          - generic: 
+          - generic [ref=f5e113]: "2"
+        - text:   
+      - generic [ref=f5e114]:
+        - generic [ref=f5e117] [cursor=pointer]: 
+        - generic [ref=f5e119] [cursor=pointer]: 
+        - generic [ref=f5e120] [cursor=pointer]:
+          - generic: 
+          - generic: 25.56ms
+        - generic [ref=f5e121]:
+          - generic: 
+          - generic: 2MB
+        - generic [ref=f5e122]:
+          - generic: 
+          - generic: 11.x
+        - generic [ref=f5e123] [cursor=pointer]:
+          - generic: 
+          - generic: GET rootsuperuser/neracasaldo
+    - text:                                                     
+  - text: 

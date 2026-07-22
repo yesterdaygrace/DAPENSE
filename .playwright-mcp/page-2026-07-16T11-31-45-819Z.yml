@@ -1,0 +1,179 @@
+- generic [active] [ref=f6e1]:
+  - link "Skip to content" [ref=f6e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=f6e3]:
+    - complementary [ref=f6e4]:
+      - generic [ref=f6e5]:
+        - generic [ref=f6e6]: W
+        - generic [ref=f6e8]:
+          - text: WAS
+          - generic [ref=f6e9]: Accounting System
+      - navigation [ref=f6e10]:
+        - generic [ref=f6e11]: MAIN
+        - link " Dashboard" [ref=f6e12] [cursor=pointer]:
+          - /url: http://localhost:8000/rootsuperuser/dashboard
+          - generic [ref=f6e13]: 
+          - generic [ref=f6e14]: Dashboard
+        - generic [ref=f6e15]: MASTER
+        - link " Periode" [ref=f6e16] [cursor=pointer]:
+          - /url: http://localhost:8000/rootsuperuser/periodes
+          - generic [ref=f6e17]: 
+          - generic [ref=f6e18]: Periode
+        - button " COA " [ref=f6e20]:
+          - generic [ref=f6e21]: 
+          - generic [ref=f6e22]: COA
+          - generic [ref=f6e23]: 
+        - link " Saldo Awal" [ref=f6e24] [cursor=pointer]:
+          - /url: http://localhost:8000/rootsuperuser/saldoawal
+          - generic [ref=f6e25]: 
+          - generic [ref=f6e26]: Saldo Awal
+        - generic [ref=f6e27]: TRANSACTION
+        - button " Jurnaling " [ref=f6e29]:
+          - generic [ref=f6e30]: 
+          - generic [ref=f6e31]: Jurnaling
+          - generic [ref=f6e32]: 
+        - generic [ref=f6e33]: REPORT
+        - link " Rekap Jurnal" [ref=f6e34] [cursor=pointer]:
+          - /url: http://localhost:8000/rootsuperuser/jurnaling/showing
+          - generic [ref=f6e35]: 
+          - generic [ref=f6e36]: Rekap Jurnal
+        - link " Buku Besar" [ref=f6e37] [cursor=pointer]:
+          - /url: http://localhost:8000/rootsuperuser/bukubesar
+          - generic [ref=f6e38]: 
+          - generic [ref=f6e39]: Buku Besar
+        - link " Neraca Saldo" [ref=f6e40] [cursor=pointer]:
+          - /url: http://localhost:8000/rootsuperuser/neracasaldo
+          - generic [ref=f6e41]: 
+          - generic [ref=f6e42]: Neraca Saldo
+        - generic [ref=f6e43]: SYSTEM
+        - link " User Management" [ref=f6e44] [cursor=pointer]:
+          - /url: http://localhost:8000/rootsuperuser/products
+          - generic [ref=f6e45]: 
+          - generic [ref=f6e46]: User Management
+        - link " Posting" [ref=f6e47] [cursor=pointer]:
+          - /url: http://localhost:8000/rootsuperuser/posting
+          - generic [ref=f6e48]: 
+          - generic [ref=f6e49]: Posting
+        - link " Pengaturan" [ref=f6e50] [cursor=pointer]:
+          - /url: http://localhost:8000/rootsuperuser/otorisator/home
+          - generic [ref=f6e51]: 
+          - generic [ref=f6e52]: Pengaturan
+      - button " Logout" [ref=f6e55]:
+        - generic [ref=f6e56]: 
+        - generic [ref=f6e57]: Logout
+    - generic [ref=f6e58]:
+      - banner [ref=f6e59]:
+        - generic [ref=f6e60]:
+          - button "" [ref=f6e61]
+          - navigation "breadcrumb" [ref=f6e63]:
+            - link "" [ref=f6e64] [cursor=pointer]:
+              - /url: http://localhost:8000/rootsuperuser/dashboard
+            - generic [ref=f6e66]: 
+            - generic [ref=f6e67]: Neraca Saldo - Tampil
+        - generic [ref=f6e69]:
+          - button " was Root Superuser " [ref=f6e70]:
+            - generic [ref=f6e71]: 
+            - generic [ref=f6e73]:
+              - paragraph [ref=f6e74]: was
+              - paragraph [ref=f6e75]: Root Superuser
+            - generic [ref=f6e76]: 
+          - text:  
+      - main [ref=f6e77]:
+        - generic [ref=f6e78]:
+          - generic [ref=f6e80]:
+            - heading "Pilih Bulan" [level=1] [ref=f6e81]
+            - paragraph [ref=f6e82]: Pilih bulan untuk menampilkan Neraca Saldo
+          - generic [ref=f6e86]:
+            - generic [ref=f6e87]: Periode
+            - combobox [ref=f6e88]:
+              - option "Pilih Periode"
+              - option "Tahun 2025" [selected]
+          - generic [ref=f6e89]:
+            - generic [ref=f6e91]:
+              - heading "December 2025" [level=5] [ref=f6e95]
+              - paragraph [ref=f6e96]: Periode December 2025
+              - button "Tampilkan Neraca" [ref=f6e98]
+            - generic [ref=f6e100]:
+              - heading "November 2025" [level=5] [ref=f6e104]
+              - paragraph [ref=f6e105]: Periode November 2025
+              - button "Tampilkan Neraca" [ref=f6e107]
+            - generic [ref=f6e109]:
+              - heading "October 2025" [level=5] [ref=f6e113]
+              - paragraph [ref=f6e114]: Periode October 2025
+              - button "Tampilkan Neraca" [ref=f6e116]
+            - generic [ref=f6e118]:
+              - heading "September 2025" [level=5] [ref=f6e122]
+              - paragraph [ref=f6e123]: Periode September 2025
+              - button "Tampilkan Neraca" [ref=f6e125]
+            - generic [ref=f6e127]:
+              - heading "August 2025" [level=5] [ref=f6e131]
+              - paragraph [ref=f6e132]: Periode August 2025
+              - button "Tampilkan Neraca" [ref=f6e134]
+            - generic [ref=f6e136]:
+              - heading "July 2025" [level=5] [ref=f6e140]
+              - paragraph [ref=f6e141]: Periode July 2025
+              - button "Tampilkan Neraca" [ref=f6e143]
+            - generic [ref=f6e145]:
+              - heading "June 2025" [level=5] [ref=f6e149]
+              - paragraph [ref=f6e150]: Periode June 2025
+              - button "Tampilkan Neraca" [ref=f6e152]
+            - generic [ref=f6e154]:
+              - heading "May 2025" [level=5] [ref=f6e158]
+              - paragraph [ref=f6e159]: Periode May 2025
+              - button "Tampilkan Neraca" [ref=f6e161]
+            - generic [ref=f6e163]:
+              - heading "April 2025" [level=5] [ref=f6e167]
+              - paragraph [ref=f6e168]: Periode April 2025
+              - button "Tampilkan Neraca" [ref=f6e170]
+            - generic [ref=f6e172]:
+              - heading "March 2025" [level=5] [ref=f6e176]
+              - paragraph [ref=f6e177]: Periode March 2025
+              - button "Tampilkan Neraca" [ref=f6e179]
+            - generic [ref=f6e181]:
+              - heading "February 2025" [level=5] [ref=f6e185]
+              - paragraph [ref=f6e186]: Periode February 2025
+              - button "Tampilkan Neraca" [ref=f6e188]
+            - generic [ref=f6e190]:
+              - heading "January 2025" [level=5] [ref=f6e194]
+              - paragraph [ref=f6e195]: Periode January 2025
+              - button "Tampilkan Neraca" [ref=f6e197]
+      - contentinfo [ref=f6e198]:
+        - generic [ref=f6e199]:
+          - generic [ref=f6e200]: © 2026 WAS — Web Accounting System
+          - generic [ref=f6e201]:
+            - text: was
+            - generic [ref=f6e202]: Root Superuser
+  - generic [ref=f6e203]:
+    - generic [ref=f6e205]:
+      - generic [ref=f6e207]:
+        - generic [ref=f6e208] [cursor=pointer]: 
+        - text: 
+        - generic [ref=f6e209] [cursor=pointer]: 
+        - text: 
+        - generic [ref=f6e210] [cursor=pointer]:
+          - generic: 
+          - generic [ref=f6e211]: "7"
+        - generic [ref=f6e212] [cursor=pointer]:
+          - generic: 
+          - generic [ref=f6e213]: "5"
+        - generic [ref=f6e214] [cursor=pointer]:
+          - generic: 
+          - generic [ref=f6e215]: "3"
+        - text:   
+      - generic [ref=f6e216]:
+        - generic [ref=f6e219] [cursor=pointer]: 
+        - generic [ref=f6e221] [cursor=pointer]: 
+        - generic [ref=f6e222] [cursor=pointer]:
+          - generic: 
+          - generic: 40.36ms
+        - generic [ref=f6e223]:
+          - generic: 
+          - generic: 2MB
+        - generic [ref=f6e224]:
+          - generic: 
+          - generic: 11.x
+        - generic [ref=f6e225] [cursor=pointer]:
+          - generic: 
+          - generic: "GET rootsuperuser/neracasaldo/monthstampil/{periode?}"
+    - text:                                                                 
+  - text: 

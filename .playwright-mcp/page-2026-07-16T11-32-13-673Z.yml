@@ -1,0 +1,148 @@
+- generic [active] [ref=f8e1]:
+  - link "Skip to content" [ref=f8e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=f8e3]:
+    - complementary [ref=f8e4]:
+      - generic [ref=f8e5]:
+        - generic [ref=f8e6]: W
+        - generic [ref=f8e8]:
+          - text: WAS
+          - generic [ref=f8e9]: Accounting System
+      - navigation [ref=f8e10]:
+        - generic [ref=f8e11]: MAIN
+        - link " Dashboard" [ref=f8e12] [cursor=pointer]:
+          - /url: http://localhost:8000/rootsuperuser/dashboard
+          - generic [ref=f8e13]: 
+          - generic [ref=f8e14]: Dashboard
+        - generic [ref=f8e15]: MASTER
+        - link " Periode" [ref=f8e16] [cursor=pointer]:
+          - /url: http://localhost:8000/rootsuperuser/periodes
+          - generic [ref=f8e17]: 
+          - generic [ref=f8e18]: Periode
+        - button " COA " [ref=f8e20]:
+          - generic [ref=f8e21]: 
+          - generic [ref=f8e22]: COA
+          - generic [ref=f8e23]: 
+        - link " Saldo Awal" [ref=f8e24] [cursor=pointer]:
+          - /url: http://localhost:8000/rootsuperuser/saldoawal
+          - generic [ref=f8e25]: 
+          - generic [ref=f8e26]: Saldo Awal
+        - generic [ref=f8e27]: TRANSACTION
+        - generic [ref=f8e28]:
+          - button " Jurnaling " [ref=f8e29]:
+            - generic [ref=f8e30]: 
+            - generic [ref=f8e31]: Jurnaling
+            - generic [ref=f8e32]: 
+          - generic [ref=f8e34]:
+            - link "Kas Masuk" [ref=f8e35] [cursor=pointer]:
+              - /url: http://localhost:8000/rootsuperuser/jurnaling
+            - link "Kas Keluar" [ref=f8e37] [cursor=pointer]:
+              - /url: http://localhost:8000/rootsuperuser/jurnaling/kaskeluar
+            - link "Bank Masuk" [ref=f8e39] [cursor=pointer]:
+              - /url: http://localhost:8000/rootsuperuser/jurnaling/bankmasuk
+            - link "Bank Keluar" [ref=f8e41] [cursor=pointer]:
+              - /url: http://localhost:8000/rootsuperuser/jurnaling/bankkeluar
+            - link "Memorial" [ref=f8e43] [cursor=pointer]:
+              - /url: http://localhost:8000/rootsuperuser/jurnaling/memorial
+            - link "Memorial Penutup" [ref=f8e45] [cursor=pointer]:
+              - /url: http://localhost:8000/rootsuperuser/jurnaling/memorialpenutup
+            - link "Lihat Jurnal" [ref=f8e47] [cursor=pointer]:
+              - /url: http://localhost:8000/rootsuperuser/jurnaling/showing
+        - generic [ref=f8e49]: REPORT
+        - link " Rekap Jurnal" [ref=f8e50] [cursor=pointer]:
+          - /url: http://localhost:8000/rootsuperuser/jurnaling/showing
+          - generic [ref=f8e51]: 
+          - generic [ref=f8e52]: Rekap Jurnal
+        - link " Buku Besar" [ref=f8e53] [cursor=pointer]:
+          - /url: http://localhost:8000/rootsuperuser/bukubesar
+          - generic [ref=f8e54]: 
+          - generic [ref=f8e55]: Buku Besar
+        - link " Neraca Saldo" [ref=f8e56] [cursor=pointer]:
+          - /url: http://localhost:8000/rootsuperuser/neracasaldo
+          - generic [ref=f8e57]: 
+          - generic [ref=f8e58]: Neraca Saldo
+        - generic [ref=f8e59]: SYSTEM
+        - link " User Management" [ref=f8e60] [cursor=pointer]:
+          - /url: http://localhost:8000/rootsuperuser/products
+          - generic [ref=f8e61]: 
+          - generic [ref=f8e62]: User Management
+        - link " Posting" [ref=f8e63] [cursor=pointer]:
+          - /url: http://localhost:8000/rootsuperuser/posting
+          - generic [ref=f8e64]: 
+          - generic [ref=f8e65]: Posting
+        - link " Pengaturan" [ref=f8e66] [cursor=pointer]:
+          - /url: http://localhost:8000/rootsuperuser/otorisator/home
+          - generic [ref=f8e67]: 
+          - generic [ref=f8e68]: Pengaturan
+      - button " Logout" [ref=f8e71]:
+        - generic [ref=f8e72]: 
+        - generic [ref=f8e73]: Logout
+    - generic [ref=f8e74]:
+      - banner [ref=f8e75]:
+        - generic [ref=f8e76]:
+          - button "" [ref=f8e77]
+          - navigation "breadcrumb" [ref=f8e79]:
+            - link "" [ref=f8e80] [cursor=pointer]:
+              - /url: http://localhost:8000/rootsuperuser/dashboard
+            - generic [ref=f8e82]: 
+            - generic [ref=f8e83]: Rekap Jurnal
+        - generic [ref=f8e85]:
+          - button " was Root Superuser " [ref=f8e86]:
+            - generic [ref=f8e87]: 
+            - generic [ref=f8e89]:
+              - paragraph [ref=f8e90]: was
+              - paragraph [ref=f8e91]: Root Superuser
+            - generic [ref=f8e92]: 
+          - text:  
+      - main [ref=f8e93]:
+        - generic [ref=f8e94]:
+          - generic [ref=f8e96]:
+            - heading "Pilih Bulan Jurnal" [level=1] [ref=f8e97]
+            - paragraph [ref=f8e98]: Pilih bulan untuk melihat rekap jurnal
+          - generic [ref=f8e102]:
+            - generic [ref=f8e103]:
+              - generic [ref=f8e104]: Pilih Periode
+              - combobox "Pilih Periode" [ref=f8e105]:
+                - option "Pilih Periode" [selected]
+                - option "Tahun 2025 (2025-01-01 - 2025-12-31)"
+            - button "Tampilkan Bulan" [ref=f8e107]
+      - contentinfo [ref=f8e108]:
+        - generic [ref=f8e109]:
+          - generic [ref=f8e110]: © 2026 WAS — Web Accounting System
+          - generic [ref=f8e111]:
+            - text: was
+            - generic [ref=f8e112]: Root Superuser
+  - generic [ref=f8e113]:
+    - generic [ref=f8e115]:
+      - generic [ref=f8e117]:
+        - generic [ref=f8e118] [cursor=pointer]: 
+        - text: 
+        - generic [ref=f8e119] [cursor=pointer]: 
+        - text: 
+        - generic [ref=f8e120] [cursor=pointer]:
+          - generic: 
+          - generic [ref=f8e121]: "7"
+        - generic [ref=f8e122] [cursor=pointer]:
+          - generic: 
+          - generic [ref=f8e123]: "3"
+        - generic [ref=f8e124] [cursor=pointer]:
+          - generic: 
+          - generic [ref=f8e125]: "2"
+        - text:   
+      - generic [ref=f8e126]:
+        - generic [ref=f8e129] [cursor=pointer]: 
+        - generic [ref=f8e131] [cursor=pointer]: 
+        - generic [ref=f8e132] [cursor=pointer]:
+          - generic: 
+          - generic: 22.19ms
+        - generic [ref=f8e133]:
+          - generic: 
+          - generic: 2MB
+        - generic [ref=f8e134]:
+          - generic: 
+          - generic: 11.x
+        - generic [ref=f8e135] [cursor=pointer]:
+          - generic: 
+          - generic: GET rootsuperuser/jurnaling/months
+    - text:                                                     
+  - text: 

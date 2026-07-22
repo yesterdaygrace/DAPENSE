@@ -37,20 +37,15 @@ class AuthenticatedSessionController extends Controller
 
             $request->session()->regenerate();
 
-            if ($user->usertype == 'rootsuperuser') {
-                return redirect('rootsuperuser/dashboard');
-            }
-            if ($user->usertype == 'admin') {
-                return redirect('admin/dashboard');
-            }
-            if ($user->usertype == 'operator') {
-                return redirect('operator/dashboard');
-            }
-            if ($user->usertype == 'bod') {
-                return redirect('bod/dashboard');
-            }
+            $redirect = match($user->usertype) {
+                'rootsuperuser' => 'rootsuperuser/dashboard',
+                'admin' => 'admin/dashboard',
+                'operator' => 'operator/dashboard',
+                'bod' => 'bod/dashboard',
+                default => 'dashboard',
+            };
 
-            return redirect()->intended(route('dashboard'));
+            return redirect()->intended($redirect);
         }
 
         return back()->withErrors([

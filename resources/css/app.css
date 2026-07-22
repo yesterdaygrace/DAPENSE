@@ -68,9 +68,6 @@
     --shadow-sidebar: 1px 0 3px 0 rgba(0,0,0,0.04);
     --shadow-badge: 0 1px 2px 0 rgba(0,0,0,0.05);
 
-    --spacing-sidebar: 260px;
-    --spacing-sidebar-collapsed: 72px;
-
     --font-size-2xs: 0.6875rem;
     --font-size-2xs--line-height: 1rem;
 }
@@ -218,6 +215,10 @@
                focus:border-primary focus:ring-2 focus:ring-primary/10 focus:outline-none;
     }
 
+    .input-uppercase {
+        text-transform: uppercase;
+    }
+
     .select-field {
         @apply w-full rounded-[--radius-input] border border-gray-200 bg-white
                px-3.5 py-2.5 text-sm text-gray-900
@@ -317,19 +318,18 @@
     }
 
     .sidebar-item {
-        @apply flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-500
+        @apply flex items-center gap-3 py-2.5 text-sm font-medium text-gray-500
                rounded-[--radius-button] mx-2
-               transition-all duration-150
+               transition-all duration-150 relative
                hover:bg-gray-100 hover:text-gray-900;
     }
 
     .sidebar-item.active {
         @apply bg-primary-50 text-primary-700 font-semibold;
-        box-shadow: inset 3px 0 0 0 #2563EB;
     }
 
     .sidebar-section {
-        @apply px-5 pt-5 pb-2 text-[0.65rem] font-bold uppercase tracking-widest text-gray-400;
+        @apply text-[0.65rem] font-bold uppercase tracking-widest text-gray-400 px-5 pt-5 pb-2;
     }
 
     .modal-backdrop {
@@ -419,6 +419,16 @@
     .content-area {
         @apply min-h-[calc(100vh-4rem)];
     }
+
+    .sidebar-nav {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+    .sidebar-nav::-webkit-scrollbar {
+        display: none;
+    }
+
+
 }
 
 @layer utilities {

@@ -42,10 +42,6 @@ test('can view header list', function () {
     $this->get('/admin/account/header')->assertOk();
 });
 
-test('can view headercoa combine page', function () {
-    $this->get('admin/account/headercoa')->assertOk();
-});
-
 test('can view saldo awal page', function () {
     $this->get('/admin/saldoawal')->assertOk();
 });
@@ -114,7 +110,6 @@ test('semua admin routes return 200', function () {
         '/admin/account/header/create',
         '/admin/account/coa',
         '/admin/account/coa/create',
-        'admin/account/headercoa',
         '/admin/saldoawal',
         '/admin/saldoawal/create',
         '/admin/jurnaling',

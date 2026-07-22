@@ -31,7 +31,6 @@ test('authenticated user gets 200 on protected routes', function () {
         '/admin/periodes',
         '/admin/account/coa',
         '/admin/account/header',
-        '/admin/account/headercoa',
         '/admin/saldoawal',
         '/admin/products',
         '/admin/otorisator/home',

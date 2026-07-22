@@ -1,4 +1,4 @@
-@props(['activities', 'routePrefix' => ''])
+@props(['activities'])
 
 <div class="card h-full">
     <div class="card-header">
@@ -6,7 +6,7 @@
             <i data-lucide="activity" class="w-4 h-4 text-primary"></i>
             <h5 class="font-semibold text-sm">Aktivitas Terbaru</h5>
         </div>
-        <a href="{{ route($routePrefix . '/jurnaling/showing') }}" class="btn-ghost text-xs px-2.5 py-1">Lihat Semua</a>
+        <a href="{{ route('jurnaling') }}" class="btn-ghost text-xs px-2.5 py-1">Lihat Semua</a>
     </div>
     <div class="card-body !p-0">
         @if($activities->count() > 0)

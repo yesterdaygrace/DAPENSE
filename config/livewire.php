@@ -42,6 +42,19 @@ return [
 
     /*
     |---------------------------------------------------------------------------
+    | Route Configuration
+    |---------------------------------------------------------------------------
+    |
+    | Livewire can handle routing when using Livewire components as pages.
+    | This allows you to use Route::get('/path', Component::class).
+    |
+    */
+    'route_config' => [
+        'middleware' => ['auth', 'verified'],
+    ],
+
+    /*
+    |---------------------------------------------------------------------------
     | Lazy Loading Placeholder
     |---------------------------------------------------------------------------
     | Livewire allows you to lazy load components that would otherwise slow down
@@ -114,7 +127,7 @@ return [
     |
     */
 
-    'inject_assets' => true,
+    'inject_assets' => false,
 
     /*
     |---------------------------------------------------------------------------

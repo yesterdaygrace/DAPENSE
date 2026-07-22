@@ -32,8 +32,8 @@
           <label for="saldo_normal" class="label">Saldo Normal</label>
           <select id="saldo_normal" name="saldo_normal" class="select-field @error('saldo_normal') border-danger @enderror">
             <option value="">PILIH</option>
-            <option value="Debit" {{ old('saldo_normal', $coa->saldo_normal) == 'DEBIT' ? 'selected' : '' }}>Debit</option>
-            <option value="Kredit" {{ old('saldo_normal', $coa->saldo_normal) == 'KREDIT' ? 'selected' : '' }}>Kredit</option>
+            <option value="Debit" {{ old('saldo_normal', $coa->saldo_normal) == 'Debit' ? 'selected' : '' }}>Debit</option>
+            <option value="Kredit" {{ old('saldo_normal', $coa->saldo_normal) == 'Kredit' ? 'selected' : '' }}>Kredit</option>
           </select>
           @error('saldo_normal')
           <p class="text-sm text-danger mt-1">{{ $message }}</p>
@@ -83,3 +83,15 @@
 </div>
 
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    @if($errors->any())
+        @foreach($errors->all() as $error)
+            window.dispatchEvent(new CustomEvent('toast', { detail: { type: 'error', message: '{{ $error }}' } }));
+        @endforeach
+    @endif
+});
+</script>
+@endpush

@@ -1,5 +1,5 @@
 @extends('layouts.applayout')
-@section('title', 'Dashboard')
+@section('title', 'Dasbor')
 @section('content')
 
 @php
@@ -32,7 +32,7 @@ $roleLabel = match($u) { 'rootsuperuser' => 'Root Superuser', 'bod' => 'BOD', 'o
     @elseif($u === 'operator')
     @foreach([
         ['name' => 'Periode', 'route' => 'operator/periodes', 'icon' => 'bx bx-calendar', 'desc' => 'Atur periode akuntansi'],
-        ['name' => 'COA', 'route' => 'operator/account/coa', 'icon' => 'bx bx-spreadsheet', 'desc' => 'Chart of Accounts'],
+        ['name' => 'COA', 'route' => 'operator/account/coa', 'icon' => 'bx bx-spreadsheet', 'desc' => 'Kode akun'],
         ['name' => 'Saldo Awal', 'route' => 'operator/saldoawal', 'icon' => 'bx bx-money', 'desc' => 'Saldo awal periode'],
         ['name' => 'Jurnaling', 'route' => 'operator/jurnaling', 'icon' => 'bx bx-notepad', 'desc' => 'Entri jurnal transaksi'],
         ['name' => 'Buku Besar', 'route' => 'operator/bukubesar', 'icon' => 'bx bx-book', 'desc' => 'Ringkasan akun per buku besar'],
@@ -43,9 +43,9 @@ $roleLabel = match($u) { 'rootsuperuser' => 'Root Superuser', 'bod' => 'BOD', 'o
     @endforeach
     @else
     @foreach([
-        ['name' => 'User Management', 'route' => $prefix . '/products', 'icon' => 'bx bx-user', 'desc' => 'Kelola pengguna sistem'],
+        ['name' => 'Manajemen Pengguna', 'route' => $prefix . '/products', 'icon' => 'bx bx-user', 'desc' => 'Kelola pengguna sistem'],
         ['name' => 'Periode', 'route' => $prefix . '/periodes', 'icon' => 'bx bx-calendar', 'desc' => 'Atur periode akuntansi'],
-        ['name' => 'COA', 'route' => $prefix . '/account/coa', 'icon' => 'bx bx-spreadsheet', 'desc' => 'Chart of Accounts'],
+        ['name' => 'COA', 'route' => $prefix . '/account/coa', 'icon' => 'bx bx-spreadsheet', 'desc' => 'Kode akun'],
         ['name' => 'Saldo Awal', 'route' => $prefix . '/saldoawal', 'icon' => 'bx bx-money', 'desc' => 'Saldo awal periode'],
         ['name' => 'Jurnaling', 'route' => $prefix . '/jurnaling', 'icon' => 'bx bx-notepad', 'desc' => 'Entri jurnal transaksi'],
         ['name' => 'Buku Besar', 'route' => $prefix . '/bukubesar', 'icon' => 'bx bx-book', 'desc' => 'Ringkasan akun per buku besar'],
@@ -60,7 +60,7 @@ $roleLabel = match($u) { 'rootsuperuser' => 'Root Superuser', 'bod' => 'BOD', 'o
 {{-- Activity & Monthly Summary --}}
 <div class="grid grid-cols-1 lg:grid-cols-7 gap-6 mt-6">
     <div class="lg:col-span-4">
-        <x-dashboard.activity-list :activities="$activities" :routePrefix="$prefix" />
+        <x-dashboard.activity-list :activities="$activities" />
     </div>
     <div class="lg:col-span-3">
         <x-dashboard.monthly-summary :monthlyWithTrend="$monthlySummary" />

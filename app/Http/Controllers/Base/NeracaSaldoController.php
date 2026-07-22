@@ -50,15 +50,11 @@ class NeracaSaldoController
             $periode = Periode::find($selectedPeriode);
 
             if ($periode) {
-                $entries = NeracaSaldo::where('periode_id', $periode->id)
-                    ->whereNotNull('month')
-                    ->get();
-
-                $activeMonths = $entries->map(function ($entry) {
-                    $monthDate = date('Y-m', strtotime($entry->month));
-
-                    return $monthDate;
-                })->unique()->sortDesc()->values();
+                $activeMonths = Jurnaling::where('periode_id', $periode->id)
+                    ->selectRaw('DISTINCT DATE_FORMAT(tanggal_jurnal, "%Y-%m") as ym')
+                    ->orderBy('ym', 'desc')
+                    ->pluck('ym')
+                    ->toArray();
 
                 foreach ($activeMonths as $ym) {
                     $months[] = [
@@ -130,6 +126,17 @@ class NeracaSaldoController
             ->get()
             ->keyBy('coa_id');
 
+        if ($neracaByCoa->isEmpty()) {
+            $neracaByCoa = Jurnaling::where('jurnalings.periode_id', $periode_id)
+                ->whereMonth('jurnalings.tanggal_jurnal', $selectedMonth->month)
+                ->whereYear('jurnalings.tanggal_jurnal', $selectedMonth->year)
+                ->join('coas', 'jurnalings.coa_id', '=', 'coas.id')
+                ->selectRaw('coas.kode_akun, SUM(jurnalings.debit) as debit, SUM(jurnalings.kredit) as kredit')
+                ->groupBy('coas.kode_akun')
+                ->get()
+                ->keyBy('kode_akun');
+        }
+
         $allCoas = COA::all();
 
         $headerCoas = HeaderCOA::with(['children', 'coas'])->whereNull('parent_id')->get();
@@ -161,23 +168,23 @@ class NeracaSaldoController
     }
 
     private $headerAccountRanges = [
-        '1' => ['min' => 1101, 'max' => 1304],
-        '1.1' => ['min' => 1101, 'max' => 1116],
-        '1.2' => ['min' => 1201, 'max' => 1210],
-        '1.3' => ['min' => 1301, 'max' => 1304],
-        '2' => ['min' => 2101, 'max' => 2204],
-        '2.1' => ['min' => 2101, 'max' => 2113],
-        '2.2' => ['min' => 2201, 'max' => 2204],
-        '3' => ['min' => 3101, 'max' => 3203],
-        '3.1' => ['min' => 3101, 'max' => 3104],
-        '3.2' => ['min' => 3201, 'max' => 3203],
-        '4' => ['min' => 4101, 'max' => 4204],
-        '4.1' => ['min' => 4101, 'max' => 4108],
-        '4.2' => ['min' => 4201, 'max' => 4204],
-        '5' => ['min' => 5101, 'max' => 5310],
-        '5.1' => ['min' => 5101, 'max' => 5114],
-        '5.2' => ['min' => 5201, 'max' => 5210],
-        '5.3' => ['min' => 5301, 'max' => 5310],
+        '1' => ['min' => '10010001', 'max' => '10039999'],
+        '1.1' => ['min' => '10010001', 'max' => '10019999'],
+        '1.2' => ['min' => '10020001', 'max' => '10029999'],
+        '1.3' => ['min' => '10030001', 'max' => '10039999'],
+        '2' => ['min' => '20010001', 'max' => '20029999'],
+        '2.1' => ['min' => '20010001', 'max' => '20019999'],
+        '2.2' => ['min' => '20020001', 'max' => '20029999'],
+        '3' => ['min' => '30010001', 'max' => '30029999'],
+        '3.1' => ['min' => '30010001', 'max' => '30019999'],
+        '3.2' => ['min' => '30020001', 'max' => '30029999'],
+        '4' => ['min' => '40010001', 'max' => '40029999'],
+        '4.1' => ['min' => '40010001', 'max' => '40019999'],
+        '4.2' => ['min' => '40020001', 'max' => '40029999'],
+        '5' => ['min' => '50010001', 'max' => '50039999'],
+        '5.1' => ['min' => '50010001', 'max' => '50019999'],
+        '5.2' => ['min' => '50020001', 'max' => '50029999'],
+        '5.3' => ['min' => '50030001', 'max' => '50039999'],
     ];
 
     private $headerAccountRangesByIndex = [

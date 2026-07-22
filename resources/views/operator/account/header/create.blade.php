@@ -91,3 +91,15 @@
 </script>
 
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    @if($errors->any())
+        @foreach($errors->all() as $error)
+            window.dispatchEvent(new CustomEvent('toast', { detail: { type: 'error', message: '{{ $error }}' } }));
+        @endforeach
+    @endif
+});
+</script>
+@endpush

@@ -80,7 +80,7 @@
         <div class="code">404</div>
         <h1>Halaman tidak ditemukan</h1>
         <p>Halaman yang Anda cari mungkin telah dipindahkan, dihapus, atau tidak pernah ada.</p>
-        <a href="{{ url('/') }}">&larr; Kembali ke Dashboard</a>
+        <a href="{{ url('/') }}">&larr; Kembali ke Dasbor</a>
     </div>
 </body>
 </html>

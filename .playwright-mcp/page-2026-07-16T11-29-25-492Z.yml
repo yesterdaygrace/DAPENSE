@@ -1,0 +1,295 @@
+- generic [active] [ref=f1e1]:
+  - link "Skip to content" [ref=f1e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=f1e3]:
+    - complementary [ref=f1e4]:
+      - generic [ref=f1e5]:
+        - generic [ref=f1e6]: W
+        - generic [ref=f1e8]:
+          - text: WAS
+          - generic [ref=f1e9]: Accounting System
+      - navigation [ref=f1e10]:
+        - generic [ref=f1e11]: MAIN
+        - link " Dashboard" [ref=f1e12] [cursor=pointer]:
+          - /url: http://localhost:8000/rootsuperuser/dashboard
+          - generic [ref=f1e13]: 
+          - generic [ref=f1e14]: Dashboard
+        - generic [ref=f1e15]: MASTER
+        - link " Periode" [ref=f1e16] [cursor=pointer]:
+          - /url: http://localhost:8000/rootsuperuser/periodes
+          - generic [ref=f1e17]: 
+          - generic [ref=f1e18]: Periode
+        - button " COA " [ref=f1e20]:
+          - generic [ref=f1e21]: 
+          - generic [ref=f1e22]: COA
+          - generic [ref=f1e23]: 
+        - link " Saldo Awal" [ref=f1e24] [cursor=pointer]:
+          - /url: http://localhost:8000/rootsuperuser/saldoawal
+          - generic [ref=f1e25]: 
+          - generic [ref=f1e26]: Saldo Awal
+        - generic [ref=f1e27]: TRANSACTION
+        - button " Jurnaling " [ref=f1e29]:
+          - generic [ref=f1e30]: 
+          - generic [ref=f1e31]: Jurnaling
+          - generic [ref=f1e32]: 
+        - generic [ref=f1e33]: REPORT
+        - link " Rekap Jurnal" [ref=f1e34] [cursor=pointer]:
+          - /url: http://localhost:8000/rootsuperuser/jurnaling/showing
+          - generic [ref=f1e35]: 
+          - generic [ref=f1e36]: Rekap Jurnal
+        - link " Buku Besar" [ref=f1e37] [cursor=pointer]:
+          - /url: http://localhost:8000/rootsuperuser/bukubesar
+          - generic [ref=f1e38]: 
+          - generic [ref=f1e39]: Buku Besar
+        - link " Neraca Saldo" [ref=f1e40] [cursor=pointer]:
+          - /url: http://localhost:8000/rootsuperuser/neracasaldo
+          - generic [ref=f1e41]: 
+          - generic [ref=f1e42]: Neraca Saldo
+        - generic [ref=f1e43]: SYSTEM
+        - link " User Management" [ref=f1e44] [cursor=pointer]:
+          - /url: http://localhost:8000/rootsuperuser/products
+          - generic [ref=f1e45]: 
+          - generic [ref=f1e46]: User Management
+        - link " Posting" [ref=f1e47] [cursor=pointer]:
+          - /url: http://localhost:8000/rootsuperuser/posting
+          - generic [ref=f1e48]: 
+          - generic [ref=f1e49]: Posting
+        - link " Pengaturan" [ref=f1e50] [cursor=pointer]:
+          - /url: http://localhost:8000/rootsuperuser/otorisator/home
+          - generic [ref=f1e51]: 
+          - generic [ref=f1e52]: Pengaturan
+      - button " Logout" [ref=f1e55]:
+        - generic [ref=f1e56]: 
+        - generic [ref=f1e57]: Logout
+    - generic [ref=f1e58]:
+      - banner [ref=f1e59]:
+        - generic [ref=f1e60]:
+          - text: 
+          - navigation "breadcrumb" [ref=f1e61]:
+            - link "" [ref=f1e62] [cursor=pointer]:
+              - /url: http://localhost:8000/rootsuperuser/dashboard
+            - generic [ref=f1e64]: 
+            - generic [ref=f1e65]: Dashboard
+        - generic [ref=f1e67]:
+          - button " was Root Superuser " [ref=f1e68]:
+            - generic [ref=f1e69]: 
+            - generic [ref=f1e71]:
+              - paragraph [ref=f1e72]: was
+              - paragraph [ref=f1e73]: Root Superuser
+            - generic [ref=f1e74]: 
+          - text:  
+      - main [ref=f1e75]:
+        - generic [ref=f1e76]:
+          - generic [ref=f1e78]:
+            - generic [ref=f1e79]:
+              - generic [ref=f1e80]: Root Superuser
+              - heading "Selamat Datang, was" [level=2] [ref=f1e82]
+            - generic [ref=f1e83]:
+              - generic [ref=f1e84]: Thursday, 16 July 2026
+              - link "Buat Jurnal" [ref=f1e85] [cursor=pointer]:
+                - /url: http://localhost:8000/rootsuperuser/jurnaling/create
+          - generic [ref=f1e87]:
+            - generic [ref=f1e94]:
+              - paragraph [ref=f1e95]: Total Jurnal
+              - heading "1.000" [level=4] [ref=f1e96]
+            - generic [ref=f1e103]:
+              - paragraph [ref=f1e104]: Total Debit
+              - heading "Rp 12.377.238.000" [level=4] [ref=f1e105]
+            - generic [ref=f1e112]:
+              - paragraph [ref=f1e113]: Total Kredit
+              - heading "Rp 12.377.238.000" [level=4] [ref=f1e114]
+            - generic [ref=f1e120]:
+              - paragraph [ref=f1e121]: Periode Aktif
+              - heading "Tahun 2025" [level=4] [ref=f1e122]
+          - generic [ref=f1e123]:
+            - link " User Management Kelola pengguna sistem" [ref=f1e124] [cursor=pointer]:
+              - /url: http://localhost:8000/rootsuperuser/products
+              - generic [ref=f1e126]:
+                - generic [ref=f1e127]: 
+                - heading "User Management" [level=6] [ref=f1e129]
+                - paragraph [ref=f1e130]: Kelola pengguna sistem
+            - link " Periode Atur periode akuntansi" [ref=f1e131] [cursor=pointer]:
+              - /url: http://localhost:8000/rootsuperuser/periodes
+              - generic [ref=f1e133]:
+                - generic [ref=f1e134]: 
+                - heading "Periode" [level=6] [ref=f1e136]
+                - paragraph [ref=f1e137]: Atur periode akuntansi
+            - link " COA Chart of Accounts" [ref=f1e138] [cursor=pointer]:
+              - /url: http://localhost:8000/rootsuperuser/account/coa
+              - generic [ref=f1e140]:
+                - generic [ref=f1e141]: 
+                - heading "COA" [level=6] [ref=f1e143]
+                - paragraph [ref=f1e144]: Chart of Accounts
+            - link " Saldo Awal Saldo awal periode" [ref=f1e145] [cursor=pointer]:
+              - /url: http://localhost:8000/rootsuperuser/saldoawal
+              - generic [ref=f1e147]:
+                - generic [ref=f1e148]: 
+                - heading "Saldo Awal" [level=6] [ref=f1e150]
+                - paragraph [ref=f1e151]: Saldo awal periode
+            - link " Jurnaling Entri jurnal transaksi" [ref=f1e152] [cursor=pointer]:
+              - /url: http://localhost:8000/rootsuperuser/jurnaling
+              - generic [ref=f1e154]:
+                - generic [ref=f1e155]: 
+                - heading "Jurnaling" [level=6] [ref=f1e157]
+                - paragraph [ref=f1e158]: Entri jurnal transaksi
+            - link " Buku Besar Ringkasan akun per buku besar" [ref=f1e159] [cursor=pointer]:
+              - /url: http://localhost:8000/rootsuperuser/bukubesar
+              - generic [ref=f1e161]:
+                - generic [ref=f1e162]: 
+                - heading "Buku Besar" [level=6] [ref=f1e164]
+                - paragraph [ref=f1e165]: Ringkasan akun per buku besar
+            - link "NEW  Rekap Jurnal Rekapitulasi jurnal" [ref=f1e166] [cursor=pointer]:
+              - /url: http://localhost:8000/rootsuperuser/jurnaling/showing
+              - generic [ref=f1e167]:
+                - generic [ref=f1e168]: NEW
+                - generic [ref=f1e169]:
+                  - generic [ref=f1e170]: 
+                  - heading "Rekap Jurnal" [level=6] [ref=f1e172]
+                  - paragraph [ref=f1e173]: Rekapitulasi jurnal
+            - link " Neraca Saldo Neraca saldo periode" [ref=f1e174] [cursor=pointer]:
+              - /url: http://localhost:8000/rootsuperuser/neracasaldo
+              - generic [ref=f1e176]:
+                - generic [ref=f1e177]: 
+                - heading "Neraca Saldo" [level=6] [ref=f1e179]
+                - paragraph [ref=f1e180]: Neraca saldo periode
+          - generic [ref=f1e181]:
+            - generic [ref=f1e183]:
+              - generic [ref=f1e184]:
+                - heading "Aktivitas Terbaru" [level=5] [ref=f1e188]
+                - link "Lihat Semua" [ref=f1e189] [cursor=pointer]:
+                  - /url: http://localhost:8000/rootsuperuser/jurnaling/showing
+              - generic [ref=f1e191]:
+                - generic [ref=f1e198]:
+                  - generic [ref=f1e199]:
+                    - paragraph [ref=f1e200]: Pembelian bahan baku produksi secara kredit
+                    - paragraph [ref=f1e201]: BV/2025/000001 · Pembelian
+                  - generic [ref=f1e202]:
+                    - text: Rp 11.926.000
+                    - generic [ref=f1e203]: 8 months ago
+                - generic [ref=f1e210]:
+                  - generic [ref=f1e211]:
+                    - paragraph [ref=f1e212]: Pembelian bahan baku produksi secara kredit
+                    - paragraph [ref=f1e213]: BV/2025/000001 · Pembelian
+                  - generic [ref=f1e214]:
+                    - text: Rp 11.926.000
+                    - generic [ref=f1e215]: 8 months ago
+                - generic [ref=f1e222]:
+                  - generic [ref=f1e223]:
+                    - paragraph [ref=f1e224]: Pembelian peralatan kantor secara kredit
+                    - paragraph [ref=f1e225]: BV/2025/000002 · Pembelian Aset
+                  - generic [ref=f1e226]:
+                    - text: Rp 17.040.000
+                    - generic [ref=f1e227]: 1 year ago
+                - generic [ref=f1e234]:
+                  - generic [ref=f1e235]:
+                    - paragraph [ref=f1e236]: Pembelian peralatan kantor secara kredit
+                    - paragraph [ref=f1e237]: BV/2025/000002 · Pembelian Aset
+                  - generic [ref=f1e238]:
+                    - text: Rp 17.040.000
+                    - generic [ref=f1e239]: 1 year ago
+                - generic [ref=f1e246]:
+                  - generic [ref=f1e247]:
+                    - paragraph [ref=f1e248]: Pembelian kendaraan operasional perusahaan
+                    - paragraph [ref=f1e249]: BV/2025/000003 · Investasi Aset Tetap
+                  - generic [ref=f1e250]:
+                    - text: Rp 307.570.000
+                    - generic [ref=f1e251]: 8 months ago
+                - generic [ref=f1e258]:
+                  - generic [ref=f1e259]:
+                    - paragraph [ref=f1e260]: Pembelian kendaraan operasional perusahaan
+                    - paragraph [ref=f1e261]: BV/2025/000003 · Investasi Aset Tetap
+                  - generic [ref=f1e262]:
+                    - text: Rp 307.570.000
+                    - generic [ref=f1e263]: 8 months ago
+            - generic [ref=f1e265]:
+              - heading "Ringkasan Bulanan" [level=5] [ref=f1e270]
+              - table [ref=f1e273]:
+                - rowgroup [ref=f1e274]:
+                  - row [ref=f1e275]:
+                    - columnheader "Bulan" [ref=f1e276]
+                    - columnheader "Jurnal" [ref=f1e277]
+                    - columnheader "Debit" [ref=f1e278]
+                    - columnheader "Kredit" [ref=f1e279]
+                - rowgroup [ref=f1e280]:
+                  - row [ref=f1e281]:
+                    - cell "Jul 2025" [ref=f1e282]
+                    - cell "64" [ref=f1e283]
+                    - cell "Rp 705.405.000" [ref=f1e285]
+                    - cell "Rp 705.405.000" [ref=f1e286]
+                  - row [ref=f1e287]:
+                    - cell "Aug 2025" [ref=f1e288]
+                    - cell "82" [ref=f1e289]
+                    - cell "Rp 855.601.000" [ref=f1e291]
+                    - cell "Rp 855.601.000" [ref=f1e292]
+                  - row [ref=f1e293]:
+                    - cell "Sep 2025" [ref=f1e294]
+                    - cell "86" [ref=f1e295]
+                    - cell "Rp 753.535.000" [ref=f1e297]
+                    - cell "Rp 753.535.000" [ref=f1e298]
+                  - row [ref=f1e299]:
+                    - cell "Oct 2025" [ref=f1e300]
+                    - cell "90" [ref=f1e301]
+                    - cell "Rp 1.063.684.000" [ref=f1e303]
+                    - cell "Rp 1.063.684.000" [ref=f1e304]
+                  - row [ref=f1e305]:
+                    - cell "Nov 2025" [ref=f1e306]
+                    - cell "92" [ref=f1e307]
+                    - cell "Rp 1.810.296.000" [ref=f1e309]
+                    - cell "Rp 1.810.296.000" [ref=f1e310]
+                  - row [ref=f1e311]:
+                    - cell "Dec 2025" [ref=f1e312]
+                    - cell "78" [ref=f1e313]
+                    - cell "Rp 792.272.000" [ref=f1e315]
+                    - cell "Rp 792.272.000" [ref=f1e316]
+      - contentinfo [ref=f1e317]:
+        - generic [ref=f1e318]:
+          - generic [ref=f1e319]: © 2026 WAS — Web Accounting System
+          - generic [ref=f1e320]:
+            - text: was
+            - generic [ref=f1e321]: Root Superuser
+  - generic [ref=f1e322]:
+    - generic [ref=f1e324]:
+      - generic [ref=f1e326]:
+        - generic [ref=f1e327] [cursor=pointer]:
+          - text: 
+          - generic: Request
+        - text: 
+        - generic [ref=f1e328] [cursor=pointer]:
+          - text: 
+          - generic: Timeline
+        - text: 
+        - generic [ref=f1e329] [cursor=pointer]:
+          - text: 
+          - generic: Views
+          - generic [ref=f1e330]: "21"
+        - generic [ref=f1e331] [cursor=pointer]:
+          - text: 
+          - generic: Queries
+          - generic [ref=f1e332]: "9"
+        - generic [ref=f1e333] [cursor=pointer]:
+          - text: 
+          - generic: Models
+          - generic [ref=f1e334]: "22"
+        - text:   
+      - generic [ref=f1e335]:
+        - generic [ref=f1e338] [cursor=pointer]: 
+        - generic [ref=f1e340] [cursor=pointer]:
+          - generic: 
+          - generic [ref=f1e341]: "2"
+        - combobox [ref=f1e342] [cursor=pointer]:
+          - option "#1 login (stacked) (11:29:24)"
+          - option "#2 dashboard (11:29:24)" [selected]
+        - generic [ref=f1e343] [cursor=pointer]:
+          - generic: 
+          - generic: 36.42ms
+        - generic [ref=f1e344]:
+          - generic: 
+          - generic: 2MB
+        - generic [ref=f1e345]:
+          - generic: 
+          - generic: 11.x
+        - generic [ref=f1e346] [cursor=pointer]:
+          - generic: 
+          - generic: GET rootsuperuser/dashboard
+    - text:                                                                                                                                      
+  - text: 

@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
             'role' => CheckRole::class,
+            'no-cache' => \App\Http\Middleware\PreventBfcache::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

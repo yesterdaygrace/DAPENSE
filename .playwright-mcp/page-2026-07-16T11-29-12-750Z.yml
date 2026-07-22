@@ -1,0 +1,71 @@
+- generic [ref=e1]:
+  - generic [ref=e6]:
+    - generic [ref=e7]:
+      - heading "Masuk" [level=1] [ref=e11]
+      - paragraph [ref=e12]: Masukkan kredensial Anda untuk melanjutkan.
+    - generic [ref=e13]:
+      - generic [ref=e14]:
+        - generic [ref=e15]: Email
+        - textbox "Email" [active] [ref=e16]:
+          - /placeholder: nama@perusahaan.com
+      - generic [ref=e17]:
+        - generic [ref=e18]:
+          - generic [ref=e19]: Kata Sandi
+          - link "Lupa kata sandi?" [ref=e20] [cursor=pointer]:
+            - /url: http://localhost:8000/forgot-password
+        - generic [ref=e21]:
+          - textbox "Kata Sandi" [ref=e22]:
+            - /placeholder: Masukkan kata sandi
+          - button "Tampilkan kata sandi" [ref=e23]
+      - generic [ref=e27]:
+        - checkbox "Ingat saya" [ref=e28]
+        - generic [ref=e29]: Ingat saya
+      - button "Masuk" [ref=e30]
+    - paragraph [ref=e31]:
+      - text: Belum punya akun?
+      - link "Daftar" [ref=e32] [cursor=pointer]:
+        - /url: http://localhost:8000/register
+    - paragraph [ref=e33]:
+      - text: Dengan melanjutkan, Anda menyetujui
+      - link "Ketentuan Layanan" [ref=e34] [cursor=pointer]:
+        - /url: "#"
+      - text: dan
+      - link "Kebijakan Privasi" [ref=e35] [cursor=pointer]:
+        - /url: "#"
+  - generic [ref=e36]:
+    - generic [ref=e38]:
+      - generic [ref=e40]:
+        - generic [ref=e41] [cursor=pointer]:
+          - text: 
+          - generic: Request
+        - text: 
+        - generic [ref=e42] [cursor=pointer]:
+          - text: 
+          - generic: Timeline
+        - text: 
+        - generic [ref=e43] [cursor=pointer]:
+          - text: 
+          - generic: Views
+          - generic [ref=e44]: "3"
+        - generic [ref=e45] [cursor=pointer]:
+          - text: 
+          - generic: Queries
+          - generic [ref=e46]: "1"
+        - text:    
+      - generic [ref=e47]:
+        - generic [ref=e50] [cursor=pointer]: 
+        - generic [ref=e52] [cursor=pointer]: 
+        - generic [ref=e53] [cursor=pointer]:
+          - generic: 
+          - generic: 22.4ms
+        - generic [ref=e54]:
+          - generic: 
+          - generic: 2MB
+        - generic [ref=e55]:
+          - generic: 
+          - generic: 11.x
+        - generic [ref=e56] [cursor=pointer]:
+          - generic: 
+          - generic: GET login
+    - text:                           
+  - text: 
