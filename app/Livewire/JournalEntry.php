@@ -6,6 +6,7 @@ use App\Livewire\Concerns\HasRole;
 use App\Models\COA;
 use App\Models\Jurnaling;
 use App\Models\Periode;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
 
 class JournalEntry extends Component
@@ -82,6 +83,8 @@ class JournalEntry extends Component
 
     public function save()
     {
+        Gate::authorize('create', Jurnaling::class);
+
         if (!$this->isBalanced) {
             session()->flash('error', 'Debit dan Kredit harus seimbang.');
             return;

@@ -8,6 +8,7 @@ use App\Models\Jurnaling;
 use App\Models\NeracaSaldo;
 use App\Models\Periode;
 use App\Models\SaldoAwal;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
 
 class Posting extends Component
@@ -52,6 +53,8 @@ class Posting extends Component
 
     public function executeAction()
     {
+        Gate::authorize('post-journal');
+
         if (!$this->periodeId) {
             session()->flash('error', 'Pilih periode terlebih dahulu.');
             $this->showConfirmModal = false;

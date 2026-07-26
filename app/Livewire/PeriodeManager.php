@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Livewire\Concerns\HasRole;
 use App\Models\Periode;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
 
 class PeriodeManager extends Component
@@ -47,6 +48,8 @@ class PeriodeManager extends Component
 
     public function save()
     {
+        Gate::authorize($this->editing ? 'update' : 'create', Periode::class);
+
         $this->validate([
             'formData.nama_periode' => 'required|string|max:255',
             'formData.tanggal_awal' => 'required|date',
@@ -75,6 +78,8 @@ class PeriodeManager extends Component
 
     public function deletePeriode()
     {
+        Gate::authorize('delete', Periode::class);
+
         Periode::findOrFail($this->deleteId)->delete();
         session()->flash('success', 'Periode berhasil dihapus.');
         $this->showDeleteModal = false;

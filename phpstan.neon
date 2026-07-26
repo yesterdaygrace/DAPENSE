@@ -1,22 +1,12 @@
-includes:
-    - vendor/larastan/larastan/extension.neon
-
 parameters:
+    level: 6
     paths:
         - app
         - config
-        - database
         - routes
-        - tests
-
-    level: 5
-
-    ignoreErrors:
-        - '#Unused view data#'
-        - '#PHPDoc tag @var#'
-        - identifier: missingType.iterableValue
-        - identifier: missingType.generics
-
     excludePaths:
-        - ./*/*/File.php
-        - ./*/*/FileGeneration.php
+        - app/Providers/RouteServiceProvider.php
+    scanFiles:
+        - vendor/larastan/larastan/extension.neon
+    checkGenericClassInNonGenericObjectType: false
+    checkMissingIterableValueType: false

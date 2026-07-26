@@ -6,6 +6,7 @@ use App\Livewire\Concerns\HasRole;
 use App\Models\COA;
 use App\Models\Periode;
 use App\Models\SaldoAwal as SaldoAwalModel;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
 
 class SaldoAwal extends Component
@@ -64,6 +65,8 @@ class SaldoAwal extends Component
 
     public function save()
     {
+        Gate::authorize($this->editing ? 'update' : 'create', SaldoAwalModel::class);
+
         $this->validate([
             'formData.coa_id' => 'required|exists:coas,id',
             'formData.tanggal_saldo' => 'required|date',
@@ -108,6 +111,8 @@ class SaldoAwal extends Component
 
     public function deleteEntry()
     {
+        Gate::authorize('delete', SaldoAwalModel::class);
+
         SaldoAwalModel::findOrFail($this->deleteId)->delete();
         session()->flash('success', 'Saldo awal berhasil dihapus.');
         $this->showDeleteModal = false;

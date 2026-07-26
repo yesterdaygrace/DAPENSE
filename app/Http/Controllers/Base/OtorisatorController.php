@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Base;
 use App\Models\Otorisator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
+use Spatie\Activitylog\Facades\Activity;
 
 class OtorisatorController
 {
@@ -43,7 +46,14 @@ class OtorisatorController
             'jabatan_otorisator' => 'required|string|max:255',
         ]);
 
-        Otorisator::create($request->only(['nama_otorisator', 'jabatan_otorisator']));
+        DB::transaction(function () use ($request) {
+            Otorisator::create($request->only(['nama_otorisator', 'jabatan_otorisator']));
+        });
+
+        activity()
+            ->causedBy(Auth::user())
+            ->withProperties(['nama' => $request->nama_otorisator])
+            ->log('Otorisator ' . $request->nama_otorisator . ' ditambahkan');
 
         return redirect()->route($this->routePrefix() . '/otorisator/home')
             ->with('success', 'Otorisator berhasil ditambahkan.');
@@ -55,6 +65,7 @@ class OtorisatorController
     public function edit($id)
     {
         $otorisator = Otorisator::findOrFail($id);
+        Gate::authorize('update', $otorisator);
 
         return view($this->viewPrefix() . '.otorisator.update', compact('otorisator'));
     }
@@ -69,8 +80,17 @@ class OtorisatorController
             'jabatan_otorisator' => 'required|string|max:255',
         ]);
 
-        $otorisator = Otorisator::findOrFail($id);
-        $otorisator->update($request->only(['nama_otorisator', 'jabatan_otorisator']));
+        Gate::authorize('update', Otorisator::findOrFail($id));
+
+        DB::transaction(function () use ($request, $id) {
+            $otorisator = Otorisator::findOrFail($id);
+            $otorisator->update($request->only(['nama_otorisator', 'jabatan_otorisator']));
+        });
+
+        activity()
+            ->causedBy(Auth::user())
+            ->withProperties(['otorisator_id' => $id])
+            ->log('Otorisator ID ' . $id . ' diperbarui');
 
         return redirect()->route($this->routePrefix() . '/otorisator/home')
             ->with('success', 'Otorisator berhasil diperbarui.');
@@ -81,8 +101,17 @@ class OtorisatorController
      */
     public function destroy($id)
     {
-        $otorisator = Otorisator::findOrFail($id);
-        $otorisator->delete();
+        Gate::authorize('delete', Otorisator::findOrFail($id));
+
+        DB::transaction(function () use ($id) {
+            $otorisator = Otorisator::findOrFail($id);
+            $otorisator->delete();
+        });
+
+        activity()
+            ->causedBy(Auth::user())
+            ->withProperties(['otorisator_id' => $id])
+            ->log('Otorisator ID ' . $id . ' dihapus');
 
         return redirect()->route($this->routePrefix() . '/otorisator/home')
             ->with('success', 'Otorisator berhasil dihapus.');

@@ -8,6 +8,7 @@ use App\Imports\COAImport;
 use App\Models\COA;
 use App\Models\HeaderCOA;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Maatwebsite\Excel\Facades\Excel;
 
 class COAWorkspaceController extends Controller
@@ -118,6 +119,8 @@ class COAWorkspaceController extends Controller
 
     public function importStore(Request $request)
     {
+        Gate::authorize('import-data');
+
         $request->validate([
             'file' => 'required|file|mimes:xlsx,xls,csv,txt|max:5120',
         ]);

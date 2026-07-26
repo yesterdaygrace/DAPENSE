@@ -34,7 +34,12 @@ $u = Auth::user()->usertype;
                     @endif
                 </div>
                 <div class="hidden sm:block text-left">
-                    <p class="text-sm font-semibold text-gray-900 leading-tight">{{ Auth::user()->name }}</p>
+                    <p class="text-sm font-semibold text-gray-900 leading-tight flex items-center gap-1.5">
+                        {{ Auth::user()->name }}
+                        @if(Auth::user()->email === 'demo@dapense.app')
+                        <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-700 ring-1 ring-amber-200">Demo</span>
+                        @endif
+                    </p>
                     <p class="text-2xs text-gray-400 capitalize leading-tight font-medium">{{ $u === 'rootsuperuser' ? 'Root Superuser' : $u }}</p>
                 </div>
                 <i class="bx bx-chevron-down text-gray-300 text-sm" aria-hidden="true"></i>

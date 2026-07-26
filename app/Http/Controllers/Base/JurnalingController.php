@@ -11,6 +11,11 @@ use Carbon\Carbon;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
+use Spatie\Activitylog\Facades\Activity;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -57,12 +62,13 @@ class JurnalingController
 
     public function save(Request $request)
     {
-        $periode = Periode::create($request->all());
-        $request->validate([
+        $validated = $request->validate([
             'nama_periode' => 'required|string|max:255',
             'tanggal_awal' => 'required|date',
             'tanggal_akhir' => 'required|date|after_or_equal:tanggal_awal',
         ]);
+
+        $periode = Periode::create($validated);
 
         return redirect()->route($this->routePrefix() . '/jurnaling', ['periode_id' => $periode->id])
             ->with('successPeriode', 'Periode created successfully.');
@@ -242,6 +248,8 @@ class JurnalingController
 
     private function storeEntry(Request $request, string $type)
     {
+        Gate::authorize('create', Jurnaling::class);
+
         $validated = $this->validateJurnaling($request);
 
         if ($type !== 'km') {
@@ -265,24 +273,47 @@ class JurnalingController
         }
 
         $sortEntries = in_array($type, ['km', 'kk', 'bm', 'bk']);
-        $entries = [];
+        $lockKey = 'journal_store_' . ($validated['nomor_bukti'] ?? uniqid());
 
-        foreach ($validated['coa_id'] as $index => $coa_id) {
-            $entries[] = $this->buildEntry($validated, $index);
+        $lock = Cache::lock($lockKey, 10);
+
+        if (! $lock->get()) {
+            return response()->json(['errors' => ['Permintaan sedang diproses, harap tunggu.']], 429);
         }
 
-        if ($sortEntries) {
-            $this->sortEntriesByDebit($entries);
-        }
+        try {
+            return DB::transaction(function () use ($validated, $sortEntries, $type, $lock) {
+                $entries = [];
 
-        foreach ($entries as $entry) {
-            Jurnaling::create($entry);
-        }
+                foreach ($validated['coa_id'] as $index => $coa_id) {
+                    $entries[] = $this->buildEntry($validated, $index);
+                }
 
-        return response()->json([
-            'success' => 'Data berhasil diinputkan!',
-            'redirect' => route($this->routePrefix() . '/' . $this->routeSuffix($type)),
-        ]);
+                if ($sortEntries) {
+                    $this->sortEntriesByDebit($entries);
+                }
+
+                foreach ($entries as $entry) {
+                    Jurnaling::create($entry);
+                }
+
+                activity()
+                    ->causedBy(Auth::user())
+                    ->withProperties([
+                        'type' => $type,
+                        'nomor_bukti' => $validated['nomor_bukti'],
+                        'entries_count' => count($entries),
+                    ])
+                    ->log('Jurnal ' . strtoupper($type) . ' dibuat dengan nomor bukti ' . $validated['nomor_bukti']);
+
+                return response()->json([
+                    'success' => 'Data berhasil diinputkan!',
+                    'redirect' => route($this->routePrefix() . '/' . $this->routeSuffix($type)),
+                ]);
+            });
+        } finally {
+            $lock->release();
+        }
     }
 
     public function cekNomorBuktiKM(Request $request)
@@ -429,6 +460,8 @@ class JurnalingController
 
     private function updateEntry(Request $request, string $type, $id)
     {
+        Gate::authorize('update', Jurnaling::class);
+
         $this->validateUpdate($request);
 
         $debitSum = array_sum($request->debit);
@@ -444,70 +477,81 @@ class JurnalingController
         }
 
         $nomorBukti = trim($request->nomor_bukti);
-        $entries = Jurnaling::where('nomor_bukti', $nomorBukti)->get();
 
-        $isMemType = in_array($type, ['mem', 'mempenutup']);
-        if ($isMemType && $entries->isEmpty()) {
-            return back()->withErrors(['message' => "Nomor bukti {$nomorBukti} tidak ditemukan di database."]);
-        }
+        return DB::transaction(function () use ($request, $type, $nomorBukti) {
+            $entries = Jurnaling::where('nomor_bukti', $nomorBukti)->get();
 
-        $sortEntries = in_array($type, ['km', 'bm']);
-        $mergeMode = in_array($type, ['km', 'bm']);
-
-        if ($mergeMode) {
-            $existingEntries = $entries->values();
-            $finalEntries = [];
-
-            foreach ($request->coa_id as $index => $coa_id) {
-                $finalEntries[] = [
-                    'tanggal_jurnal' => $request->tanggal_jurnal,
-                    'nomor_bukti' => $nomorBukti,
-                    'keterangan' => $request->keterangan[$index] ?? '',
-                    'coa_id' => $coa_id,
-                    'debit' => is_numeric($request->debit[$index]) ? (float) str_replace(',', '', $request->debit[$index]) : 0,
-                    'kredit' => is_numeric($request->kredit[$index]) ? (float) str_replace(',', '', $request->kredit[$index]) : 0,
-                    'periode_id' => $request->periode_id,
-                    'kategori_jurnal' => $request->kategori_jurnal,
-                ];
+            $isMemType = in_array($type, ['mem', 'mempenutup']);
+            if ($isMemType && $entries->isEmpty()) {
+                return back()->withErrors(['message' => "Nomor bukti {$nomorBukti} tidak ditemukan di database."]);
             }
 
-            if ($sortEntries) {
-                $this->sortEntriesByDebit($finalEntries);
-            }
+            $sortEntries = in_array($type, ['km', 'bm']);
+            $mergeMode = in_array($type, ['km', 'bm']);
 
-            foreach ($finalEntries as $i => $entry) {
-                if (isset($existingEntries[$i])) {
-                    $existingEntries[$i]->update($entry);
-                } else {
-                    Jurnaling::create($entry);
+            if ($mergeMode) {
+                $existingEntries = $entries->values();
+                $finalEntries = [];
+
+                foreach ($request->coa_id as $index => $coa_id) {
+                    $finalEntries[] = [
+                        'tanggal_jurnal' => $request->tanggal_jurnal,
+                        'nomor_bukti' => $nomorBukti,
+                        'keterangan' => $request->keterangan[$index] ?? '',
+                        'coa_id' => $coa_id,
+                        'debit' => is_numeric($request->debit[$index]) ? (float) str_replace(',', '', $request->debit[$index]) : 0,
+                        'kredit' => is_numeric($request->kredit[$index]) ? (float) str_replace(',', '', $request->kredit[$index]) : 0,
+                        'periode_id' => $request->periode_id,
+                        'kategori_jurnal' => $request->kategori_jurnal,
+                    ];
+                }
+
+                if ($sortEntries) {
+                    $this->sortEntriesByDebit($finalEntries);
+                }
+
+                foreach ($finalEntries as $i => $entry) {
+                    if (isset($existingEntries[$i])) {
+                        $existingEntries[$i]->update($entry);
+                    } else {
+                        Jurnaling::create($entry);
+                    }
+                }
+
+                if ($existingEntries->count() > count($finalEntries)) {
+                    foreach ($existingEntries->slice(count($finalEntries)) as $entry) {
+                        $entry->delete();
+                    }
+                }
+            } else {
+                foreach ($entries as $index => $entry) {
+                    $entry->update([
+                        'tanggal_jurnal' => $request->tanggal_jurnal,
+                        'nomor_bukti' => $nomorBukti,
+                        'keterangan' => $request->keterangan[$index] ?? $entry->keterangan,
+                        'coa_id' => $request->coa_id[$index] ?? $entry->coa_id,
+                        'debit' => is_numeric($request->debit[$index]) ? (float) str_replace(',', '', $request->debit[$index]) : 0,
+                        'kredit' => is_numeric($request->kredit[$index]) ? (float) str_replace(',', '', $request->kredit[$index]) : 0,
+                        'periode_id' => $request->periode_id,
+                        'kategori_jurnal' => $request->kategori_jurnal,
+                    ]);
                 }
             }
 
-            if ($existingEntries->count() > count($finalEntries)) {
-                foreach ($existingEntries->slice(count($finalEntries)) as $entry) {
-                    $entry->delete();
-                }
-            }
-        } else {
-            foreach ($entries as $index => $entry) {
-                $entry->update([
-                    'tanggal_jurnal' => $request->tanggal_jurnal,
+            activity()
+                ->causedBy(Auth::user())
+                ->withProperties([
+                    'type' => $type,
                     'nomor_bukti' => $nomorBukti,
-                    'keterangan' => $request->keterangan[$index] ?? $entry->keterangan,
-                    'coa_id' => $request->coa_id[$index] ?? $entry->coa_id,
-                    'debit' => is_numeric($request->debit[$index]) ? (float) str_replace(',', '', $request->debit[$index]) : 0,
-                    'kredit' => is_numeric($request->kredit[$index]) ? (float) str_replace(',', '', $request->kredit[$index]) : 0,
-                    'periode_id' => $request->periode_id,
-                    'kategori_jurnal' => $request->kategori_jurnal,
+                ])
+                ->log('Jurnal ' . strtoupper($type) . ' diperbarui dengan nomor bukti ' . $nomorBukti);
+
+            return redirect()->route($this->routePrefix() . '/' . $this->routeSuffix($type))
+                ->with([
+                    'selectedPeriode' => $request->periode_id,
+                    'success' => 'Data berhasil diperbarui!',
                 ]);
-            }
-        }
-
-        return redirect()->route($this->routePrefix() . '/' . $this->routeSuffix($type))
-            ->with([
-                'selectedPeriode' => $request->periode_id,
-                'success' => 'Data berhasil diperbarui!',
-            ]);
+        });
     }
 
     public function deletekm(Request $request)
@@ -542,8 +586,11 @@ class JurnalingController
 
     private function deleteEntry(Request $request, string $type)
     {
-        try {
-            $nomorBukti = $request->input('nomor_bukti');
+        Gate::authorize('delete', Jurnaling::class);
+
+        $nomorBukti = $request->input('nomor_bukti');
+
+        return DB::transaction(function () use ($request, $type, $nomorBukti) {
             $jurnal = Jurnaling::where('nomor_bukti', $nomorBukti)->first();
 
             if (! $jurnal) {
@@ -556,18 +603,20 @@ class JurnalingController
 
             Jurnaling::where('nomor_bukti', $nomorBukti)->delete();
 
+            activity()
+                ->causedBy(Auth::user())
+                ->withProperties([
+                    'type' => $type,
+                    'nomor_bukti' => $nomorBukti,
+                ])
+                ->log('Jurnal ' . strtoupper($type) . ' dihapus dengan nomor bukti ' . $nomorBukti);
+
             return redirect()->route($this->routePrefix() . '/' . $this->routeSuffix($type))
                 ->with([
                     'selectedPeriode' => $request->periode_id,
                     'success' => 'Data berhasil dihapus!',
                 ]);
-        } catch (\Exception $e) {
-            return redirect()->route($this->routePrefix() . '/' . $this->routeSuffix($type))
-                ->with([
-                    'selectedPeriode' => $request->periode_id,
-                    'error' => 'Terjadi kesalahan saat menghapus jurnal: ' . $e->getMessage(),
-                ]);
-        }
+        });
     }
 
     public function showPerMonth(Request $request, $periode = null)
@@ -870,76 +919,97 @@ class JurnalingController
 
     public function rekapJurnal(Request $request, $periode_id)
     {
+        Gate::authorize('rekap', Jurnaling::class);
+
         $periode = Periode::findOrFail($periode_id);
 
         if ($periode->is_rekap) {
             return redirect()->back()->with('error', 'Jurnal sudah direkap untuk periode ini.');
         }
 
-        $journalEntries = Jurnaling::where('periode_id', $periode_id)->get();
-        $balanceByCoa = $journalEntries->groupBy('coa_id')->map(function ($group) {
-            return [
-                'debit' => $group->sum('debit'),
-                'kredit' => $group->sum('kredit'),
-            ];
-        });
+        return DB::transaction(function () use ($periode_id) {
+            $journalEntries = Jurnaling::where('periode_id', $periode_id)->get();
+            $balanceByCoa = $journalEntries->groupBy('coa_id')->map(function ($group) {
+                return [
+                    'debit' => $group->sum('debit'),
+                    'kredit' => $group->sum('kredit'),
+                ];
+            });
 
-        $coas = COA::all();
-        foreach ($coas as $coa) {
-            $existingSaldoAwal = SaldoAwal::where('coa_id', $coa->id)
-                ->where('periode_id', $periode_id)
-                ->first();
+            $coas = COA::all();
+            foreach ($coas as $coa) {
+                $existingSaldoAwal = SaldoAwal::where('coa_id', $coa->id)
+                    ->where('periode_id', $periode_id)
+                    ->first();
 
-            $saldoAwalDebit = $existingSaldoAwal ? $existingSaldoAwal->debit : 0;
-            $saldoAwalKredit = $existingSaldoAwal ? $existingSaldoAwal->kredit : 0;
+                $saldoAwalDebit = $existingSaldoAwal ? $existingSaldoAwal->debit : 0;
+                $saldoAwalKredit = $existingSaldoAwal ? $existingSaldoAwal->kredit : 0;
 
-            $debit = $balanceByCoa->has($coa->id) ? $balanceByCoa[$coa->id]['debit'] : 0;
-            $kredit = $balanceByCoa->has($coa->id) ? $balanceByCoa[$coa->id]['kredit'] : 0;
-            $saldoAkhir = ($saldoAwalDebit - $saldoAwalKredit) + ($debit - $kredit);
+                $debit = $balanceByCoa->has($coa->id) ? $balanceByCoa[$coa->id]['debit'] : 0;
+                $kredit = $balanceByCoa->has($coa->id) ? $balanceByCoa[$coa->id]['kredit'] : 0;
+                $saldoAkhir = ($saldoAwalDebit - $saldoAwalKredit) + ($debit - $kredit);
 
-            NeracaSaldo::updateOrCreate(
-                [
-                    'coa_id' => (string) $coa->kode_akun,
-                    'periode_id' => $periode_id,
-                ],
-                [
-                    'debit' => $debit,
-                    'kredit' => $kredit,
-                    'balance' => $saldoAkhir,
-                    'saldo_awal' => $saldoAwalDebit,
-                ]
-            );
-
-            $nextPeriode = Periode::where('id', '>', $periode_id)->orderBy('id', 'asc')->first();
-            if ($nextPeriode) {
-                SaldoAwal::updateOrCreate(
+                NeracaSaldo::updateOrCreate(
                     [
-                        'coa_id' => $coa->id,
-                        'periode_id' => $nextPeriode->id,
+                        'coa_id' => (string) $coa->kode_akun,
+                        'periode_id' => $periode_id,
                     ],
                     [
-                        'tanggal_saldo' => now(),
-                        'debit' => $saldoAkhir > 0 ? $saldoAkhir : 0,
-                        'kredit' => $saldoAkhir < 0 ? abs($saldoAkhir) : 0,
+                        'debit' => $debit,
+                        'kredit' => $kredit,
+                        'balance' => $saldoAkhir,
+                        'saldo_awal' => $saldoAwalDebit,
                     ]
                 );
+
+                $nextPeriode = Periode::where('id', '>', $periode_id)->orderBy('id', 'asc')->first();
+                if ($nextPeriode) {
+                    SaldoAwal::updateOrCreate(
+                        [
+                            'coa_id' => $coa->id,
+                            'periode_id' => $nextPeriode->id,
+                        ],
+                        [
+                            'tanggal_saldo' => now(),
+                            'debit' => $saldoAkhir > 0 ? $saldoAkhir : 0,
+                            'kredit' => $saldoAkhir < 0 ? abs($saldoAkhir) : 0,
+                        ]
+                    );
+                }
             }
-        }
 
-        $periode->is_rekap = true;
-        $periode->save();
+            $periode = Periode::findOrFail($periode_id);
+            $periode->is_rekap = true;
+            $periode->save();
 
-        return redirect()->route($this->routePrefix() . '/neracasaldo', ['periode_id' => $periode_id])
-            ->with('success', 'Jurnal berhasil direkap.');
+            activity()
+                ->causedBy(Auth::user())
+                ->performedOn($periode)
+                ->withProperties(['periode_id' => $periode_id])
+                ->log('Jurnal direkap untuk periode ID ' . $periode_id);
+
+            return redirect()->route($this->routePrefix() . '/neracasaldo', ['periode_id' => $periode_id])
+                ->with('success', 'Jurnal berhasil direkap.');
+        });
     }
 
     public function unrekapJurnal($periode_id)
     {
-        $periode = Periode::findOrFail($periode_id);
-        $periode->is_rekap = false;
-        $periode->save();
+        Gate::authorize('rekap', Jurnaling::class);
 
-        return redirect()->back()->with('success', 'Period has been unrekapped successfully.');
+        return DB::transaction(function () use ($periode_id) {
+            $periode = Periode::findOrFail($periode_id);
+            $periode->is_rekap = false;
+            $periode->save();
+
+            activity()
+                ->causedBy(Auth::user())
+                ->performedOn($periode)
+                ->withProperties(['periode_id' => $periode_id])
+                ->log('Jurnal unrekap untuk periode ID ' . $periode_id);
+
+            return redirect()->back()->with('success', 'Period has been unrekapped successfully.');
+        });
     }
 
     public function showJurnaling(Request $request)

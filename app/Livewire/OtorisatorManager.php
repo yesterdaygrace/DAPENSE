@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Livewire\Concerns\HasRole;
 use App\Models\Otorisator;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
 
 class OtorisatorManager extends Component
@@ -43,6 +44,8 @@ class OtorisatorManager extends Component
 
     public function save()
     {
+        Gate::authorize($this->editing ? 'update' : 'create', Otorisator::class);
+
         $this->validate([
             'formData.nama_otorisator' => 'required|string|max:255',
             'formData.jabatan_otorisator' => 'required|string|max:255',
@@ -67,6 +70,8 @@ class OtorisatorManager extends Component
 
     public function deleteOtorisator()
     {
+        Gate::authorize('delete', Otorisator::class);
+
         Otorisator::findOrFail($this->deleteId)->delete();
         session()->flash('success', 'Otorisator berhasil dihapus.');
         $this->showDeleteModal = false;

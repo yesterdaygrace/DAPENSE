@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\Periode;
 use Illuminate\Http\Request;
+use Spatie\Activitylog\Facades\Activity;
 
 class PeriodeController extends Controller
 {
@@ -29,7 +30,10 @@ class PeriodeController extends Controller
         ]);
 
         // Save the new periode
-        Periode::create($request->all());
+        Periode::create($request->validated());
+
+        activity()
+            ->log('Periode awal ' . $request->nama_periode . ' dibuat (sebelum login)');
 
         // Redirect to login page with success message
         return redirect()->route('login')->with('success', 'Periode created successfully. Please log in.');

@@ -8,6 +8,7 @@ use App\Models\Periode;
 use App\Models\SaldoAwal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Spatie\Activitylog\Facades\Activity;
 
 class PeriodeController extends Controller
 {
@@ -54,12 +55,17 @@ class PeriodeController extends Controller
             'tanggal_akhir' => $request->tanggal_akhir,
         ]);
 
+        activity()
+            ->causedBy(Auth::user())
+            ->log('Periode ' . $request->nama_periode . ' ditambahkan');
+
         return redirect()->route($this->routePrefix() . '/periodes')->with('success', 'Periode berhasil ditambahkan.');
     }
 
     public function update($id)
     {
         $periode = Periode::findOrFail($id);
+        $this->authorize('update', $periode);
 
         return view($this->viewPrefix() . '.periode.update', compact('periode'));
     }
@@ -82,6 +88,8 @@ class PeriodeController extends Controller
             return back()->with('error', "Periode untuk tahun $tahun sudah ada.")->withInput();
         }
 
+        $this->authorize('update', Periode::findOrFail($id));
+
         $periode = Periode::findOrFail($id);
         $periode->update([
             'nama_periode' => $request->nama_periode,
@@ -89,12 +97,18 @@ class PeriodeController extends Controller
             'tanggal_akhir' => $request->tanggal_akhir,
         ]);
 
+        activity()
+            ->causedBy(Auth::user())
+            ->performedOn($periode)
+            ->log('Periode ' . $periode->nama_periode . ' diperbarui');
+
         return redirect()->route($this->routePrefix() . '/periodes')->with('success', 'Periode berhasil diperbarui.');
     }
 
     public function delete($id)
     {
         $periode = Periode::findOrFail($id);
+        $this->authorize('delete', $periode);
 
         $usedInSaldoAwal = SaldoAwal::where('periode_id', $periode->id)->exists();
 
@@ -106,6 +120,10 @@ class PeriodeController extends Controller
         }
 
         $periode->delete();
+
+        activity()
+            ->causedBy(Auth::user())
+            ->log('Periode ' . $periode->nama_periode . ' dihapus');
 
         return redirect()->route($this->routePrefix() . '/periodes')->with('success', 'Periode berhasil dihapus.');
     }

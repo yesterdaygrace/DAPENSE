@@ -7,6 +7,9 @@ use App\Models\Periode;
 use App\Models\SaldoAwal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
+use Spatie\Activitylog\Facades\Activity;
 
 class SaldoAwalController
 {
@@ -71,7 +74,14 @@ class SaldoAwalController
 
         $validatedData['kredit'] = 0;
 
-        SaldoAwal::create($validatedData);
+        DB::transaction(function () use ($validatedData) {
+            SaldoAwal::create($validatedData);
+        });
+
+        activity()
+            ->causedBy(Auth::user())
+            ->withProperties(['coa_id' => $validatedData['coa_id'], 'periode_id' => $validatedData['periode_id']])
+            ->log('Saldo awal dibuat untuk COA ID ' . $validatedData['coa_id'] . ' periode ID ' . $validatedData['periode_id']);
 
         return redirect()->route($this->routePrefix() . '/saldoawal')->with('success', 'Saldo Awal berhasil dibuat.');
     }
@@ -79,6 +89,7 @@ class SaldoAwalController
     public function edit($id)
     {
         $saldo_awal = SaldoAwal::findOrFail($id);
+        Gate::authorize('update', $saldo_awal);
         $coas = COA::orderBy('kode_akun', 'asc')->get();
         $periodes = Periode::orderBy('tanggal_awal', 'desc')->get();
 
@@ -107,16 +118,34 @@ class SaldoAwalController
 
         $validatedData['kredit'] = 0;
 
-        $saldo_awal = SaldoAwal::findOrFail($id);
-        $saldo_awal->update($validatedData);
+        Gate::authorize('update', SaldoAwal::findOrFail($id));
+
+        DB::transaction(function () use ($id, $validatedData) {
+            $saldo_awal = SaldoAwal::findOrFail($id);
+            $saldo_awal->update($validatedData);
+        });
+
+        activity()
+            ->causedBy(Auth::user())
+            ->withProperties(['saldo_awal_id' => $id])
+            ->log('Saldo awal ID ' . $id . ' diperbarui');
 
         return redirect()->route($this->routePrefix() . '/saldoawal')->with('success', 'Saldo Awal berhasil diperbarui.');
     }
 
     public function destroy($id)
     {
-        $saldo_awal = SaldoAwal::findOrFail($id);
-        $saldo_awal->delete();
+        Gate::authorize('delete', SaldoAwal::findOrFail($id));
+
+        DB::transaction(function () use ($id) {
+            $saldo_awal = SaldoAwal::findOrFail($id);
+            $saldo_awal->delete();
+        });
+
+        activity()
+            ->causedBy(Auth::user())
+            ->withProperties(['saldo_awal_id' => $id])
+            ->log('Saldo awal ID ' . $id . ' dihapus');
 
         return redirect()->route($this->routePrefix() . '/saldoawal')->with('success', 'Saldo Awal berhasil dihapus.');
     }

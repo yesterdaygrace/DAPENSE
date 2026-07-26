@@ -6,6 +6,7 @@ use App\Livewire\Concerns\HasRole;
 use App\Models\COA;
 use App\Models\Jurnaling;
 use App\Models\Periode;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -81,6 +82,12 @@ class JurnalManager extends Component
 
     public function save()
     {
+        if ($this->editing && $this->editId) {
+            Gate::authorize('update', Jurnaling::class);
+        } else {
+            Gate::authorize('create', Jurnaling::class);
+        }
+
         $this->validate([
             'formData.tanggal_jurnal' => 'required|date',
             'formData.nomor_bukti' => 'required|string|max:255',
@@ -121,6 +128,8 @@ class JurnalManager extends Component
 
     public function deleteEntry()
     {
+        Gate::authorize('delete', Jurnaling::class);
+
         Jurnaling::findOrFail($this->deleteId)->delete();
         session()->flash('success', 'Jurnal berhasil dihapus.');
         $this->showDeleteModal = false;

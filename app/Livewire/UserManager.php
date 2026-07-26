@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Livewire\Concerns\HasRole;
 use App\Models\User;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Component;
 
@@ -50,6 +51,8 @@ class UserManager extends Component
 
     public function save()
     {
+        Gate::authorize('manage-users');
+
         $this->validate([
             'formData.name' => 'required|string|max:255',
             'formData.email' => 'required|email|max:255|unique:users,email,' . ($this->editId ?: 'NULL') . ',id',
@@ -95,6 +98,8 @@ class UserManager extends Component
 
     public function deleteUser()
     {
+        Gate::authorize('manage-users');
+
         if ($this->deleteId === auth()->id()) {
             session()->flash('error', 'Tidak dapat menghapus akun sendiri.');
             $this->showDeleteModal = false;

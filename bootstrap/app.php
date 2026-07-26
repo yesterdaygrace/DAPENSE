@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Middleware\CheckRole;
+use App\Http\Middleware\SecurityHeaders;
 use Illuminate\Foundation\Application;
+use Illuminate\Http\Request;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 
@@ -16,7 +18,13 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => CheckRole::class,
             'no-cache' => \App\Http\Middleware\PreventBfcache::class,
         ]);
+
+        $middleware->append(SecurityHeaders::class);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
+        $exceptions->shouldRenderJsonWhen(function (Request $request) {
+            return $request->is('api/*') || $request->expectsJson();
+        });
+
+        $exceptions->dontReportDuplicates();
     })->create();

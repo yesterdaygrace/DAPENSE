@@ -1,263 +1,765 @@
-# Task: Fix Dashboard Duplicate Rendering After Navigation
+# DAPENSE Security Hardening PRD
+Version: 2.0
 
-## Issue
+Project
+DAPENSE (Dana Pensiun Sekolah Kristen Salatiga)
 
-The Dashboard UI renders correctly on the first application load.
+Framework
+Laravel 13
 
-However, after navigating to another menu (Reports, Journal, COA, etc.) and returning to the Dashboard, the entire Dashboard UI becomes duplicated and overlaps itself.
+Priority
+Critical
 
-This issue only occurs on the Dashboard page.
+Objective
 
----
-
-# Expected Behavior
-
-- Dashboard renders exactly once.
-- Layout remains identical regardless of navigation.
-- No duplicated components.
-- No overlapping text.
-- Sidebar navigation should not affect Dashboard rendering.
-- Dashboard should behave the same on:
-  - Initial page load
-  - Returning from another page
-  - Browser Back/Forward
-  - Refresh (F5)
+Eliminate all Critical and High vulnerabilities while adopting Laravel 13 and OWASP best practices suitable for a production financial ERP.
 
 ---
 
-# Current Behavior
+# Success Criteria
 
-After leaving the Dashboard and navigating back:
-
-- Duplicate breadcrumb
-- Duplicate page title
-- Duplicate welcome banner
-- Duplicate statistic cards
-- Duplicate feature cards
-- Duplicate tables
-- Overlapping buttons
-- Overlapping typography
-- Broken spacing and alignment
-
-The Reports page and other pages render normally.
-
-Only Dashboard is affected.
+- Zero Critical vulnerabilities
+- Zero High vulnerabilities
+- All financial transactions atomic
+- Complete audit trail
+- Secure authentication
+- Secure authorization
+- Secure infrastructure
+- Automated security testing
+- Production-ready deployment
 
 ---
 
-# Investigation Checklist
+# Phase 1
+Financial Transaction Integrity
 
-## 1. Dashboard View
+Priority
 
-Inspect:
+★★★★★ Critical
 
-```
-resources/views/dashboard.blade.php
-```
+Problem
 
-Verify:
+Financial operations are not wrapped inside database transactions.
 
-- Dashboard content exists only once.
-- No duplicated partials.
-- No nested dashboard includes.
-- No duplicated Blade components.
+Risk
 
----
+Partial writes.
 
-## 2. Layout
+Example
 
-Inspect:
+Journal inserted
 
-```
-resources/views/layouts/app.blade.php
-```
+↓
 
-Verify:
+Ledger fails
 
-- Layout renders only one content slot.
+↓
 
-Correct example:
+Balance not updated
 
-```blade
-{{ $slot }}
-```
+↓
 
-or
+Database corrupted
 
-```blade
-@yield('content')
-```
+Implementation
 
-Ensure Dashboard is NOT directly included inside the layout.
+Every financial workflow must use
 
----
+DB::transaction()
 
-## 3. Routes
+Modules
 
-Inspect:
+- Journal
+- Cash
+- Bank
+- General Ledger
+- Pension
+- Payroll
+- Reports requiring updates
 
-```
-routes/web.php
-```
+Tasks
 
-Verify Dashboard route returns only one view.
+- Locate every create/update/delete financial operation
+- Wrap in DB::transaction()
+- Roll back on failure
+- Log exceptions
+- Test rollback
 
-Example:
+Acceptance
 
-```php
-Route::get('/dashboard', DashboardController::class);
-```
-
-or
-
-```php
-return view('dashboard');
-```
-
-Ensure Dashboard is not rendered twice.
+✓ No partial financial writes
 
 ---
 
-## 4. Controller
+# Phase 2
+Authorization Refactor
 
-Inspect:
+Priority
 
-```
-DashboardController
-```
+★★★★★
 
-Verify:
+Problem
 
-- Returns only one view.
-- Does not append another dashboard partial.
-- No duplicated render logic.
+Role middleware only.
 
----
+Implementation
 
-## 5. JavaScript Lifecycle
+Create
 
-Inspect:
+Policies
 
-- app.js
-- dashboard.js
-- navigation scripts
-- Vite entry files
+- JournalPolicy
+- LedgerPolicy
+- ReportPolicy
+- UserPolicy
+- EmployeePolicy
+- SettingPolicy
 
-Look for:
+Replace
 
-- duplicate initialization
-- repeated event listeners
-- repeated mount logic
+if(role)
 
-Example of problematic code:
+with
 
-```js
-document.addEventListener("DOMContentLoaded", initDashboard);
+authorize()
 
-document.addEventListener("livewire:navigated", initDashboard);
-```
+Acceptance
 
-If cleanup is missing, Dashboard initializes multiple times.
+Every CRUD operation protected by Policies.
 
 ---
 
-## 6. Livewire
+# Phase 3
+Remove Route Duplication
 
-If using:
+Priority
 
-```
-wire:navigate
-```
+★★★★★
 
-Verify:
+Problem
 
-- Components are destroyed before remounting.
-- No duplicated listeners.
-- No repeated Alpine initialization.
+Duplicate route groups.
 
----
+Implementation
 
-## 7. AlpineJS
+Replace
 
-Verify:
+/rootsuperuser
 
-```
-Alpine.start()
-```
+/operator
 
-is executed only once.
+/bod
 
----
+with
 
-## 8. Event Listeners
+shared controllers
 
-Search for:
++
 
-```
-addEventListener(
-```
+Policies
 
-Verify listeners are not registered every navigation.
+Acceptance
 
-Use cleanup if necessary.
+Single route definition.
 
 ---
 
-## 9. Browser DevTools
+# Phase 4
+Fix IDOR
 
-Inspect DOM.
+Priority
 
-Expected:
+★★★★★
 
-```
-<div class="dashboard">
-```
+Implementation
 
-appears once.
+Every resource
 
-If Dashboard root appears twice, the page is being mounted twice.
+↓
+
+Policy
+
+↓
+
+Ownership
+
+↓
+
+Permission
+
+↓
+
+404 or 403
+
+Acceptance
+
+Changing IDs in URL never exposes unauthorized data.
 
 ---
 
-## 10. Console
+# Phase 5
+Mass Assignment
 
-Check for repeated logs such as:
+Priority
 
-```
-Dashboard initialized
-```
+★★★★★
 
-If printed multiple times after navigation, initialization is duplicated.
+Replace
+
+$request->all()
+
+with
+
+$request->validated()
+
+or DTO.
+
+Create
+
+DTO
+
+- StoreJournalData
+- UpdateJournalData
+- StoreUserData
+- StoreEmployeeData
+
+Acceptance
+
+No request()->all()
 
 ---
 
-# Acceptance Criteria
+# Phase 6
+Livewire Security
 
-- Dashboard renders once.
-- Navigation between all menus is stable.
-- No duplicated DOM nodes.
-- No duplicated JavaScript initialization.
-- No overlapping UI.
-- Browser Back/Forward works correctly.
-- Refresh behaves correctly.
-- Dashboard matches the original design shown in the reference screenshot.
+Priority
+
+★★★★★
+
+Review
+
+- Public properties
+- Locked properties
+- Validation
+- Authorization
+- File uploads
+- Component actions
+
+Move business logic
+
+↓
+
+Services
+
+Acceptance
+
+Thin Livewire components.
+
+---
+
+# Phase 7
+Secure File Uploads
+
+Priority
+
+★★★★★
+
+Implement
+
+- MIME validation
+- Extension validation
+- Max size
+- Random filename
+- Storage outside public
+- Download controller
+- Authorization
+
+Reject
+
+php
+
+exe
+
+js
+
+svg (unless sanitized)
+
+Acceptance
+
+Uploads inaccessible directly.
+
+---
+
+# Phase 8
+Audit Logging
+
+Priority
+
+★★★★★
+
+Using
+
+Spatie Activitylog
+
+Log
+
+- Login
+- Logout
+- Journal
+- Ledger
+- Export
+- Import
+- Settings
+- Permission changes
+- Failed authorization
+
+Do not log
+
+Passwords
+
+Tokens
+
+Secrets
+
+Acceptance
+
+Every sensitive action traceable.
+
+---
+
+# Phase 9
+Security Headers
+
+Priority
+
+★★★★☆
+
+Configure Nginx
+
+Add
+
+Content-Security-Policy
+
+Strict-Transport-Security
+
+X-Frame-Options
+
+Permissions-Policy
+
+Referrer-Policy
+
+X-Content-Type-Options
+
+Acceptance
+
+Mozilla Observatory grade A.
+
+---
+
+# Phase 10
+Docker Hardening
+
+Priority
+
+★★★★★
+
+Tasks
+
+Run as
+
+www-data
+
+Read-only filesystem where possible
+
+Limit capabilities
+
+Use .dockerignore
+
+Hide ports
+
+Redis private network
+
+No root containers
+
+Acceptance
+
+No container runs as root.
+
+---
+
+# Phase 11
+Redis Security
+
+Priority
+
+★★★★☆
+
+Tasks
+
+Require password
+
+Internal Docker network
+
+Memory limits
+
+Persistence
+
+Queue isolation
+
+Acceptance
+
+Redis inaccessible publicly.
+
+---
+
+# Phase 12
+Environment Security
+
+Priority
+
+★★★★★
+
+Verify
+
+APP_DEBUG=false
+
+APP_ENV=production
+
+Secure APP_KEY
+
+Encrypted backups
+
+No .env committed
+
+Acceptance
+
+Production ready.
+
+---
+
+# Phase 13
+Dependency Security
+
+Priority
+
+★★★★☆
+
+Run
+
+composer audit
+
+npm audit
+
+Update vulnerable packages
+
+Remove abandoned packages
+
+Acceptance
+
+Zero known vulnerabilities.
+
+---
+
+# Phase 14
+Rate Limiting
+
+Priority
+
+★★★★☆
+
+Protect
+
+Login
+
+Export
+
+Import
+
+Password reset
+
+Livewire endpoints
+
+Acceptance
+
+No brute-force attacks.
+
+---
+
+# Phase 15
+Validation
+
+Priority
+
+★★★★★
+
+Every request uses
+
+Form Request
+
+No validation inside controllers.
+
+Acceptance
+
+100% validation coverage.
+
+---
+
+# Phase 16
+Exception Handling
+
+Priority
+
+★★★★☆
+
+Hide
+
+Stack traces
+
+SQL errors
+
+Internal paths
+
+Create
+
+Friendly error pages
+
+Acceptance
+
+No sensitive information leaks.
+
+---
+
+# Phase 17
+Business Logic Refactor
+
+Priority
+
+★★★★★
+
+Move logic
+
+Controller
+
+↓
+
+Service
+
+↓
+
+Repository
+
+↓
+
+Model
+
+Acceptance
+
+Controllers under 200 lines.
+
+---
+
+# Phase 18
+Testing
+
+Priority
+
+★★★★★
+
+Pest
+
+Feature tests
+
+Authorization tests
+
+Transaction rollback
+
+File uploads
+
+Policies
+
+Validation
+
+Acceptance
+
+Minimum 90% coverage for business logic.
+
+---
+
+# Phase 19
+Static Analysis
+
+Priority
+
+★★★★☆
+
+Run
+
+PHPStan Level 9
+
+Larastan
+
+Laravel Pint
+
+Fix
+
+Every warning.
+
+Acceptance
+
+Zero analysis errors.
+
+---
+
+# Phase 20
+ERP Integrity Rules
+
+Priority
+
+★★★★★
+
+Validate
+
+Debit == Credit
+
+Unique journal numbers
+
+Closed periods immutable
+
+Ledger consistency
+
+Balance reconciliation
+
+Foreign keys
+
+No orphan records
+
+Acceptance
+
+Accounting integrity guaranteed.
+
+---
+
+# Phase 21
+Concurrency & Race Conditions
+
+Priority
+
+★★★★★
+
+Protect
+
+Double-click submissions
+
+Concurrent journal posting
+
+Queue duplication
+
+Duplicate exports
+
+Implementation
+
+Database transactions
+
+Unique constraints
+
+Cache locks
+
+Redis locks
+
+Idempotency keys
+
+Acceptance
+
+Concurrent requests cannot corrupt financial data.
+
+---
+
+# Phase 22
+Backup & Recovery
+
+Priority
+
+★★★★☆
+
+Implement
+
+Daily encrypted database backups
+
+Restore testing
+
+Disaster recovery documentation
+
+Retention policy
+
+Acceptance
+
+Recovery tested successfully.
+
+---
+
+# Phase 23
+CI/CD Security
+
+Priority
+
+★★★★☆
+
+GitHub Actions pipeline
+
+Run
+
+- composer audit
+- npm audit
+- phpstan
+- larastan
+- pest
+- pint
+
+Block merges on failure.
+
+Acceptance
+
+No insecure code reaches main.
 
 ---
 
 # Deliverables
 
-- Identify the root cause.
-- Explain why duplicate rendering occurs.
-- Implement a proper fix rather than hiding the symptom with CSS.
-- Remove duplicate initialization if present.
-- Ensure navigation lifecycle correctly destroys and remounts the Dashboard.
-- Verify the Dashboard remains stable after repeated navigation between pages.
+- Hardened Laravel application
+- Security report
+- Updated Docker configuration
+- Updated Nginx configuration
+- Automated security pipeline
+- Security documentation
+- OWASP compliance checklist
+- ERP integrity verification report
 
 ---
 
-# Priority
+# Final Acceptance
 
-**Critical**
+✔ Zero Critical findings
 
-This issue affects the primary Dashboard page and creates severe UI corruption after navigation.
-```
+✔ Zero High findings
+
+✔ Laravel 13 Best Practices
+
+✔ OWASP Top 10 compliant
+
+✔ Secure Docker deployment
+
+✔ Secure Redis
+
+✔ Secure Livewire components
+
+✔ Financial transactions atomic
+
+✔ Complete audit logging
+
+✔ PHPStan Level 9 passes
+
+✔ Pest tests pass
+
+✔ Composer audit clean
+
+✔ Production-ready financial ERP
