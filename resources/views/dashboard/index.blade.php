@@ -36,7 +36,7 @@ $roleLabel = match($u) { 'rootsuperuser' => 'Root Superuser', 'bod' => 'BOD', 'o
         ['name' => 'Saldo Awal', 'route' => 'operator/saldoawal', 'icon' => 'bx bx-money', 'desc' => 'Saldo awal periode'],
         ['name' => 'Jurnaling', 'route' => 'operator/jurnaling', 'icon' => 'bx bx-notepad', 'desc' => 'Entri jurnal transaksi'],
         ['name' => 'Buku Besar', 'route' => 'operator/bukubesar', 'icon' => 'bx bx-book', 'desc' => 'Ringkasan akun per buku besar'],
-        ['name' => 'Rekap Jurnal', 'route' => 'operator/jurnaling/showing', 'icon' => 'bx bx-receipt', 'desc' => 'Rekapitulasi jurnal', 'badge' => 'NEW'],
+        ['name' => 'Rekap Jurnal', 'route' => $prefix . '/jurnaling/showing', 'icon' => 'bx bx-receipt', 'desc' => 'Rekapitulasi jurnal'],
         ['name' => 'Neraca Saldo', 'route' => 'operator/neracasaldo/', 'icon' => 'bx bx-calculator', 'desc' => 'Neraca saldo periode'],
     ] as $menu)
     <x-dashboard.module-card :name="$menu['name']" :route="$menu['route']" :icon="$menu['icon']" :desc="$menu['desc']" :badge="($menu['badge'] ?? null)" />
@@ -48,9 +48,7 @@ $roleLabel = match($u) { 'rootsuperuser' => 'Root Superuser', 'bod' => 'BOD', 'o
         ['name' => 'COA', 'route' => $prefix . '/account/coa', 'icon' => 'bx bx-spreadsheet', 'desc' => 'Kode akun'],
         ['name' => 'Saldo Awal', 'route' => $prefix . '/saldoawal', 'icon' => 'bx bx-money', 'desc' => 'Saldo awal periode'],
         ['name' => 'Jurnaling', 'route' => $prefix . '/jurnaling', 'icon' => 'bx bx-notepad', 'desc' => 'Entri jurnal transaksi'],
-        ['name' => 'Buku Besar', 'route' => $prefix . '/bukubesar', 'icon' => 'bx bx-book', 'desc' => 'Ringkasan akun per buku besar'],
-        ['name' => 'Rekap Jurnal', 'route' => $prefix . '/jurnaling/showing', 'icon' => 'bx bx-receipt', 'desc' => 'Rekapitulasi jurnal', 'badge' => 'NEW'],
-        ['name' => 'Neraca Saldo', 'route' => $prefix . '/neracasaldo/', 'icon' => 'bx bx-calculator', 'desc' => 'Neraca saldo periode'],
+        ['name' => 'Buku Besar', 'route' => $prefix . '/bukubesar', 'icon' => 'bx bx-book', 'desc' => 'Ringkasan akun per buku besar'],['name' => 'Rekap Jurnal', 'route' => $prefix . '/jurnaling/showing', 'icon' => 'bx bx-receipt', 'desc' => 'Rekapitulasi jurnal'],['name' => 'Neraca Saldo', 'route' => $prefix . '/neracasaldo/', 'icon' => 'bx bx-calculator', 'desc' => 'Neraca saldo periode'],
     ] as $menu)
     <x-dashboard.module-card :name="$menu['name']" :route="$menu['route']" :icon="$menu['icon']" :desc="$menu['desc']" :badge="($menu['badge'] ?? null)" />
     @endforeach

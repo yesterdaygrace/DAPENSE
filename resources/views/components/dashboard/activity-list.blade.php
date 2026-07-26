@@ -6,7 +6,7 @@
             <i data-lucide="activity" class="w-4 h-4 text-primary"></i>
             <h5 class="font-semibold text-sm">Aktivitas Terbaru</h5>
         </div>
-        <a href="{{ route('jurnaling') }}" class="btn-ghost text-xs px-2.5 py-1">Lihat Semua</a>
+        <a href="{{ route('activity') }}" class="btn-ghost text-xs px-2.5 py-1">Lihat Semua</a>
     </div>
     <div class="card-body !p-0">
         @if($activities->count() > 0)

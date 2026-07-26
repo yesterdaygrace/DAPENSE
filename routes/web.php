@@ -16,6 +16,7 @@ use App\Http\Controllers\Modules\JournalEntryController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\rootsuperuser\PostingControllerRootSuperuser;
 use App\Http\Controllers\rootsuperuser\ProductControllerRootSuperuser;
+use App\Http\Controllers\ActivityController;
 use App\Livewire\BukuBesar;
 use App\Livewire\COAWorkspace;
 use App\Livewire\Dashboard;
@@ -82,6 +83,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Livewire full-page components (role-aware — no role prefix needed)
     Route::get('/dashboard', Dashboard::class)->name('dashboard')->middleware('no-cache');
+    Route::get('/activity', [ActivityController::class, 'index'])->name('activity');
     Route::view('/master-data', 'modules.master-data.index')->name('master-data');
     Route::get('/coa-workspace', COAWorkspace::class)->name('coa-workspace');
     Route::post('/coa-workspace/export', [COAWorkspaceController::class, 'exportData'])->name('coa-workspace.export')->middleware('throttle:export');
