@@ -74,18 +74,18 @@ foreach (['/tmp/views', '/tmp/cache', '/tmp/sessions'] as $dir) {
 }
 
 // ---------------------------------------------------------------------------
-// Step 3: Check critical environment variables
+// Step 3: Auto-generate APP_KEY if missing
+// Laravel's Encrypter throws without APP_KEY. Since SESSION_DRIVER=array
+// doesn't need persistent encryption, we generate a per-request key.
+// For production with cookie sessions, set a real APP_KEY in Vercel env.
 // ---------------------------------------------------------------------------
 
-$appKey = getenv('APP_KEY');
-if (!$appKey) {
-    $message = 'APP_KEY environment variable is not configured.'
-        . ' Please set it in your Vercel project dashboard:'
-        . ' Settings → Environment Variables → add APP_KEY'
-        . ' (copy from your local .env file).';
-    error_log('[VERCEL] ' . $message);
-    // Don't exit — let Laravel handle it gracefully if possible,
-    // or the exception handler above will catch the error.
+if (!getenv('APP_KEY') && !($_ENV['APP_KEY'] ?? null)) {
+    $key = 'base64:' . base64_encode(random_bytes(32));
+    putenv("APP_KEY=$key");
+    $_ENV['APP_KEY'] = $key;
+    $_SERVER['APP_KEY'] = $key;
+    error_log('[VERCEL] APP_KEY auto-generated (per-request). Set a permanent one in Vercel dashboard for persistent encryption.');
 }
 
 // ---------------------------------------------------------------------------
