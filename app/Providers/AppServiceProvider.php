@@ -45,10 +45,10 @@ class AppServiceProvider extends ServiceProvider
 
     private function configureForVercel(): void
     {
-        config()->set('session.driver', 'cookie');
-        config()->set('cache.default', 'array');
+        // These are not covered by vercel.json env block:
         config()->set('queue.default', 'sync');
-        config()->set('logging.default', 'stderr');
-        config()->set('view.compiled', '/tmp');
+
+        // Log Vercel detection for debugging
+        error_log('[VERCEL] Vercel environment detected. Serverless config applied.');
     }
 }
