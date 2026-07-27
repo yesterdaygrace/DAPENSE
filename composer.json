@@ -57,6 +57,7 @@
             "@php artisan migrate --graceful --ansi"
         ],
         "vercel": [
+            "npm run build",
             "@php -v",
             "composer install --no-dev --optimize-autoloader",
             "@php artisan optimize"
