@@ -1,0 +1,17 @@
+/vendor
+/node_modules
+.git
+.github
+docker/
+docker-compose.yml
+Dockerfile
+.dockerignore
+supervisor.conf
+*.md
+.phpunit*
+pint.json
+phpstan.neon
+tests/
+.omo/
+.playwright-mcp/
+.codegraph/

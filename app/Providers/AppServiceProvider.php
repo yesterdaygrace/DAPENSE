@@ -5,6 +5,7 @@ namespace App\Providers;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -16,6 +17,16 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // Force HTTPS in non-local environments (required for Vercel)
+        if ($this->app->environment('production')) {
+            URL::forceScheme('https');
+        }
+
+        // Auto-detect Vercel serverless environment and configure drivers
+        if (env('VERCEL') || env('VERCEL_ENV')) {
+            $this->configureForVercel();
+        }
+
         RateLimiter::for('export', function (Request $request) {
             return Limit::perMinute(3)
                 ->by($request->user()?->id ?: $request->ip());
@@ -30,5 +41,14 @@ class AppServiceProvider extends ServiceProvider
             return Limit::perMinute(10)
                 ->by($request->user()?->id ?: $request->ip());
         });
+    }
+
+    private function configureForVercel(): void
+    {
+        config()->set('session.driver', 'cookie');
+        config()->set('cache.default', 'array');
+        config()->set('queue.default', 'sync');
+        config()->set('logging.default', 'stderr');
+        config()->set('view.compiled', '/tmp');
     }
 }
