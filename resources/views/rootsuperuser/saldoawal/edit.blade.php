@@ -10,7 +10,7 @@
 
 <div class="card">
   <div class="card-body">
-    <form action="{{ route('rootsuperuser.saldoawal.update', $saldo_awal->id) }}" method="POST">
+    <form action="{{ route('rootsuperuser/saldoawal/update', $saldo_awal->id) }}" method="POST">
       @csrf
       @method('PUT')
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">

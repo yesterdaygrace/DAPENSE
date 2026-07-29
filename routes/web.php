@@ -183,10 +183,16 @@ Route::middleware(['auth', 'role:rootsuperuser'])->prefix('rootsuperuser')->name
     Route::put('/jurnaling/editkm/{id}', [JurnalingController::class, 'updatekm'])->name('jurnaling/updatekm');
 
     Route::get('/bukubesar', [BukuBesarController::class, 'showLedgerForm'])->name('bukubesar');
+    Route::get('/bukubesar/searchCoaByPeriod', [BukuBesarController::class, 'searchCoaByPeriod'])->name('bukubesar/searchCoaByPeriod');
+    Route::get('/bukubesar/showAll', [BukuBesarController::class, 'showAll'])->name('bukubesar/showAll');
+    Route::get('/bukubesar/export', [BukuBesarController::class, 'exportExcel'])->name('bukubesar/export');
 
     Route::get('/saldoawal', [SaldoAwalController::class, 'index'])->name('saldoawal');
     Route::get('/saldoawal/create', [SaldoAwalController::class, 'create'])->name('saldoawal/create');
     Route::post('/saldoawal/store', [SaldoAwalController::class, 'store'])->name('saldoawal/store');
+    Route::get('/saldoawal/{id}/edit', [SaldoAwalController::class, 'edit'])->name('saldoawal/edit');
+    Route::put('/saldoawal/{id}/update', [SaldoAwalController::class, 'update'])->name('saldoawal/update');
+    Route::delete('/saldoawal/{id}/destroy', [SaldoAwalController::class, 'destroy'])->name('saldoawal/destroy');
 
     Route::get('/posting', [PostingControllerRootSuperuser::class, 'index'])->name('posting');
     Route::post('/posting', [PostingControllerRootSuperuser::class, 'postJurnal'])->name('posting/post')->middleware('throttle:posting');

@@ -200,7 +200,7 @@
     <div class="space-y-6">
         <div class="card">
             <div class="card-body">
-                <form action="{{ route($this->routePrefix() . '.coa-workspace.import') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('coa-workspace.import') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="text-center py-12 border-2 border-dashed border-gray-300 rounded-[16px]">
                         <i data-lucide="upload" class="w-12 h-12 text-gray-300 mx-auto mb-4"></i>
@@ -212,7 +212,7 @@
                     </div>
                     <div class="mt-4 flex gap-3">
                         <button type="submit" class="btn btn-primary"><i data-lucide="upload" class="w-4 h-4"></i> Impor Data</button>
-                        <a href="{{ route($this->routePrefix() . '.coa-workspace.template') }}" class="btn btn-ghost"><i data-lucide="download" class="w-4 h-4"></i> Unduh Template</a>
+                        <a href="{{ route('coa-workspace.template') }}" class="btn btn-ghost"><i data-lucide="download" class="w-4 h-4"></i> Unduh Template</a>
                     </div>
                 </form>
             </div>
@@ -226,7 +226,7 @@
         <div class="card">
             <div class="card-header"><h2 class="text-lg font-semibold">Ekspor Kode Akun</h2></div>
             <div class="card-body">
-                <form action="{{ route($this->routePrefix() . '.coa-workspace.export') }}" method="POST">
+                <form action="{{ route('coa-workspace.export') }}" method="POST">
                     @csrf
                     <div class="space-y-4">
                         <div>

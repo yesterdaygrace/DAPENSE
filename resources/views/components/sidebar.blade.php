@@ -28,7 +28,7 @@ $navItems = [
     ['id' => 'master-data', 'label' => 'Data Master', 'icon' => 'bx bx-data', 'route' => 'master-data', 'visible' => true],
     ['id' => 'transactions', 'label' => 'Transaksi', 'icon' => 'bx bx-transfer', 'route' => 'transactions', 'visible' => true],
     ['id' => 'reports', 'label' => 'Laporan', 'icon' => 'bx bx-bar-chart-alt-2', 'route' => 'reports', 'visible' => true],
-    ['id' => 'finance', 'label' => 'Keuangan', 'icon' => 'bx bx-dollar', 'route' => 'finance', 'visible' => true],
+    ['id' => 'finance', 'label' => 'Keuangan', 'icon' => 'bx bx-dollar', 'route' => 'finance', 'visible' => false],
     ['id' => 'administration', 'label' => 'Administrasi', 'icon' => 'bx bx-shield-quarter', 'route' => 'administration', 'visible' => in_array($u, ['rootsuperuser', 'admin'])],
     ['id' => 'settings', 'label' => 'Pengaturan', 'icon' => 'bx bx-cog', 'route' => 'settings', 'visible' => true],
 ];

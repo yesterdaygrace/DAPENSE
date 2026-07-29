@@ -21,7 +21,9 @@
         <i class='bx bx-chevron-right text-gray-400'></i>
         <a href="{{ $prefix }}/master-data" class="hover:text-primary transition-colors">Data Master</a>
         <i class='bx bx-chevron-right text-gray-400'></i>
-        <span class="text-gray-900 font-medium">Ruang Kerja COA</span>
+        <span class="hover:text-primary transition-colors">Ruang Kerja COA</span>
+        <i class='bx bx-chevron-right text-gray-400'></i>
+        <span class="text-gray-900 font-medium">Kode Akun</span>
     </nav>
 
     <!-- Page Header -->
@@ -78,30 +80,6 @@
 
     <!-- Accounts Tab -->
     <div x-show="activeTab === 'accounts'" class="space-y-6">
-        <!-- Stats Row -->
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <div class="bg-white rounded-[--radius-card] p-6 shadow-card">
-                <p class="text-sm text-gray-600">Total Akun</p>
-                <p class="text-2xl font-bold text-gray-900 mt-1">{{ $coas->total() }}</p>
-            </div>
-            <div class="bg-white rounded-[--radius-card] p-6 shadow-card">
-                <p class="text-sm text-gray-600">Active</p>
-                <p class="text-2xl font-bold text-green-600 mt-1">
-                    {{ $coas->where('status', 'active')->count() }}
-                </p>
-            </div>
-            <div class="bg-white rounded-[--radius-card] p-6 shadow-card">
-                <p class="text-sm text-gray-600">Inactive</p>
-                <p class="text-2xl font-bold text-gray-400 mt-1">
-                    {{ $coas->where('status', 'inactive')->count() }}
-                </p>
-            </div>
-            <div class="bg-white rounded-[--radius-card] p-6 shadow-card">
-                <p class="text-sm text-gray-600">Headers</p>
-                <p class="text-2xl font-bold text-gray-900 mt-1">{{ $headers->total() }}</p>
-            </div>
-        </div>
-
         <!-- Action Bar -->
         <div class="bg-white rounded-[--radius-card] shadow-card p-6">
             <div class="flex flex-wrap items-center gap-3 mb-4">
@@ -224,22 +202,6 @@
 
     <!-- Headers Tab -->
     <div x-show="activeTab === 'headers'" class="space-y-6">
-        <!-- Stats Row -->
-        <div class="grid grid-cols-2 lg:grid-cols-3 gap-4">
-            <div class="bg-white rounded-[--radius-card] p-6 shadow-card">
-                <p class="text-sm text-gray-600">Total Header</p>
-                <p class="text-2xl font-bold text-gray-900 mt-1">{{ $headers->total() }}</p>
-            </div>
-            <div class="bg-white rounded-[--radius-card] p-6 shadow-card">
-                <p class="text-sm text-gray-600">Level 1</p>
-                <p class="text-2xl font-bold text-gray-900 mt-1">{{ $headers->where('level', 1)->count() }}</p>
-            </div>
-            <div class="bg-white rounded-[--radius-card] p-6 shadow-card">
-                <p class="text-sm text-gray-600">Level 2</p>
-                <p class="text-2xl font-bold text-gray-900 mt-1">{{ $headers->where('level', 2)->count() }}</p>
-            </div>
-        </div>
-
         <!-- Action Bar -->
         <div class="bg-white rounded-[--radius-card] shadow-card p-6">
             <div class="flex flex-wrap items-center gap-3 mb-4">

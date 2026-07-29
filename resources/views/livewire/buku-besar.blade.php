@@ -6,7 +6,7 @@
             <h1 class="page-title">Buku Besar</h1>
             <p class="page-subtitle">Ringkasan akun per buku besar</p>
         </div>
-        <a href="{{ route($this->routePrefix() . '.bukubesar.export') }}" class="btn btn-primary">
+        <a href="{{ route('bukubesar.export') }}" class="btn btn-primary">
             <i data-lucide="download" class="w-4 h-4"></i> Ekspor
         </a>
     </div>

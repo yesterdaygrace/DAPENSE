@@ -15,11 +15,10 @@
                 <label class="label">Filter Kategori Jurnal</label>
                 <div class="flex flex-wrap gap-2">
                     <button id="show-all" class="btn-secondary btn-sm">Semua</button>
-                    <button id="show-KM" class="btn-secondary btn-sm" data-category="KM-">Kas Masuk</button>
-                    <button id="show-KK" class="btn-secondary btn-sm" data-category="KK-">Kas Keluar</button>
+                    <button id="show-KM" class="btn-secondary btn-sm" data-category="-KM-">Kas Masuk</button>
+                    <button id="show-KK" class="btn-secondary btn-sm" data-category="-KK-">Kas Keluar</button>
                     <button id="show-BM" class="btn-secondary btn-sm" data-category="-BM-">Bank Masuk</button>
                     <button id="show-BK" class="btn-secondary btn-sm" data-category="-BK-">Bank Keluar</button>
-                    <button id="show-JM" class="btn-secondary btn-sm" data-category="JM-">Memorial</button>
                 </div>
             </div>
         </div>
@@ -160,8 +159,6 @@
 
                 if (category === 'all') {
                     row.style.display = '';
-                } else if (category === 'KM-' || category === 'KK-' || category === 'JM-') {
-                    row.style.display = nomorBukti.startsWith(category) ? '' : 'none';
                 } else {
                     row.style.display = nomorBukti.includes(category) ? '' : 'none';
                 }

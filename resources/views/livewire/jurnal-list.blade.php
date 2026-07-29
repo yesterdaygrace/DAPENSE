@@ -6,7 +6,7 @@
             <h1 class="page-title">Daftar Jurnal</h1>
             <p class="page-subtitle">Lihat dan cari semua entri jurnal</p>
         </div>
-        <a href="{{ route($this->routePrefix() . '.jurnal-entry') }}" class="btn btn-primary">
+        <a href="{{ route('jurnal-entry') }}" class="btn btn-primary">
             <i data-lucide="plus" class="w-4 h-4"></i> Entri Baru
         </a>
     </div>

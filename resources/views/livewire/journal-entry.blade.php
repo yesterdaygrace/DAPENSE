@@ -113,7 +113,7 @@
             <button type="submit" class="btn btn-primary" @unless($this->isBalanced) disabled @endunless>
                 <i data-lucide="check" class="w-4 h-4"></i> Posting Jurnal
             </button>
-            <a href="{{ route($this->routePrefix() . '.transactions') }}" class="btn btn-ghost">Batal</a>
+            <a href="{{ route('transactions') }}" class="btn btn-ghost">Batal</a>
         </div>
     </form>
 </div>

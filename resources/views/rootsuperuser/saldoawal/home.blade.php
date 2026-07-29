@@ -87,8 +87,8 @@
             <td>{{ $saldo_awal->periode->nama_periode }}</td>
             <td>
               <div class="flex items-center gap-2">
-                <a href="{{ route('rootsuperuser.saldoawal.edit', $saldo_awal->id) }}" class="btn-warning btn-sm">Edit</a>
-                <button type="button" class="btn-danger btn-sm" onclick="window.dispatchEvent(new CustomEvent('delete-modal-open', {detail: '{{ route('rootsuperuser.saldoawal.destroy', $saldo_awal->id) }}'}))">Hapus</button>
+                <a href="{{ route('rootsuperuser/saldoawal/edit', $saldo_awal->id) }}" class="btn-warning btn-sm">Edit</a>
+                <button type="button" class="btn-danger btn-sm" onclick="window.dispatchEvent(new CustomEvent('delete-modal-open', {detail: '{{ route('rootsuperuser/saldoawal/destroy', $saldo_awal->id) }}'}))">Hapus</button>
               </div>
             </td>
           </tr>
