@@ -38,7 +38,15 @@ return [
     |
     */
 
-    'layout' => 'components.layouts.app',
+    'layout' => 'layouts.applayout',
+
+    /*
+    |---------------------------------------------------------------------------
+    | Component Layout (overrides layout when set by service provider)
+    |---------------------------------------------------------------------------
+    */
+
+    'component_layout' => 'layouts.applayout',
 
     /*
     |---------------------------------------------------------------------------
