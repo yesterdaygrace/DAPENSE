@@ -17,7 +17,7 @@
     <!-- Breadcrumb -->
     <nav class="flex items-center gap-2 text-sm text-gray-600">
         <a href="{{ $prefix }}/dashboard" class="hover:text-primary transition-colors">Dasbor</a>
-        <i class='bx bx-chevron-right text-gray-400'></i>
+        <i data-lucide='chevron-right' class='text-gray-400' aria-hidden="true"></i>
         <span class="text-gray-900 font-medium">Data Master</span>
     </nav>
 
@@ -36,7 +36,7 @@
                     <p class="text-2xl font-bold text-gray-900 mt-1">245</p>
                 </div>
                 <div class="w-12 h-12 rounded-[--radius-button] bg-blue-50 flex items-center justify-center">
-                    <i class='bx bx-spreadsheet text-2xl text-blue-600'></i>
+                    <i data-lucide='spreadsheet' class='text-2xl text-blue-600' aria-hidden="true"></i>
                 </div>
             </div>
             <div class="mt-3 flex items-center gap-1 text-sm">
@@ -52,7 +52,7 @@
                     <p class="text-2xl font-bold text-gray-900 mt-1">2024</p>
                 </div>
                 <div class="w-12 h-12 rounded-[--radius-button] bg-green-50 flex items-center justify-center">
-                    <i class='bx bx-calendar text-2xl text-green-600'></i>
+                    <i data-lucide='calendar' class='text-2xl text-green-600' aria-hidden="true"></i>
                 </div>
             </div>
             <div class="mt-3 flex items-center gap-1 text-sm">
@@ -67,7 +67,7 @@
                     <p class="text-2xl font-bold text-gray-900 mt-1">Set</p>
                 </div>
                 <div class="w-12 h-12 rounded-[--radius-button] bg-amber-50 flex items-center justify-center">
-                    <i class='bx bx-money text-2xl text-amber-600'></i>
+                    <i data-lucide='money' class='text-2xl text-amber-600' aria-hidden="true"></i>
                 </div>
             </div>
             <div class="mt-3 flex items-center gap-1 text-sm">
@@ -82,39 +82,39 @@
         <!-- Accounting Period -->
         <a href="{{ $prefix }}/periodes" class="bg-white rounded-[--radius-card] p-6 shadow-card hover:shadow-card-hover transition-shadow cursor-pointer group">
             <div class="w-12 h-12 rounded-[--radius-button] bg-primary-50 flex items-center justify-center text-primary mb-4 group-hover:scale-110 transition-transform">
-                <i class='bx bx-calendar text-2xl'></i>
+                <i data-lucide='calendar' class='text-2xl' aria-hidden="true"></i>
             </div>
             <h3 class="text-lg font-semibold text-gray-900 mb-2">Periode Akuntansi</h3>
             <p class="text-sm text-gray-600 mb-4">Kelola tahun fiskal dan periode akuntansi</p>
             <div class="flex items-center text-primary text-sm font-medium">
                 <span>Buka</span>
-                <i class='bx bx-right-arrow-alt ml-1 group-hover:translate-x-1 transition-transform'></i>
+                <i data-lucide='right-arrow-alt' class='ml-1 group-hover:translate-x-1 transition-transform' aria-hidden="true"></i>
             </div>
         </a>
 
         <!-- Chart of Accounts + Headers -->
         <a href="{{ $prefix }}/master-data/coa-workspace" class="bg-white rounded-[--radius-card] p-6 shadow-card hover:shadow-card-hover transition-shadow cursor-pointer group">
             <div class="w-12 h-12 rounded-[--radius-button] bg-primary-50 flex items-center justify-center text-primary mb-4 group-hover:scale-110 transition-transform">
-                <i class='bx bx-spreadsheet text-2xl'></i>
+                <i data-lucide='spreadsheet' class='text-2xl' aria-hidden="true"></i>
             </div>
             <h3 class="text-lg font-semibold text-gray-900 mb-2">Kode Akun</h3>
             <p class="text-sm text-gray-600 mb-4">Kelola struktur akun dan header akun</p>
             <div class="flex items-center text-primary text-sm font-medium">
                 <span>Buka</span>
-                <i class='bx bx-right-arrow-alt ml-1 group-hover:translate-x-1 transition-transform'></i>
+                <i data-lucide='right-arrow-alt' class='ml-1 group-hover:translate-x-1 transition-transform' aria-hidden="true"></i>
             </div>
         </a>
 
         <!-- Opening Balance -->
         <a href="{{ $prefix }}/saldoawal" class="bg-white rounded-[--radius-card] p-6 shadow-card hover:shadow-card-hover transition-shadow cursor-pointer group">
             <div class="w-12 h-12 rounded-[--radius-button] bg-primary-50 flex items-center justify-center text-primary mb-4 group-hover:scale-110 transition-transform">
-                <i class='bx bx-money text-2xl'></i>
+                <i data-lucide='money' class='text-2xl' aria-hidden="true"></i>
             </div>
             <h3 class="text-lg font-semibold text-gray-900 mb-2">Saldo Awal</h3>
             <p class="text-sm text-gray-600 mb-4">Atur saldo awal akun</p>
             <div class="flex items-center text-primary text-sm font-medium">
                 <span>Buka</span>
-                <i class='bx bx-right-arrow-alt ml-1 group-hover:translate-x-1 transition-transform'></i>
+                <i data-lucide='right-arrow-alt' class='ml-1 group-hover:translate-x-1 transition-transform' aria-hidden="true"></i>
             </div>
         </a>
     </div>
@@ -124,11 +124,11 @@
         <h2 class="text-lg font-semibold text-gray-900 mb-4">Aksi Cepat</h2>
         <div class="flex flex-wrap gap-3">
             <a href="{{ $prefix }}/master-data/coa-workspace?action=new" class="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-[--radius-button] hover:bg-primary-600 transition-colors text-sm font-medium">
-                <i class='bx bx-plus'></i>
+                <i class='plus'></i>
                 <span>Akun Baru</span>
             </a>
             <a href="{{ $prefix }}/periodes?action=new" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-[--radius-button] hover:bg-gray-200 transition-colors text-sm font-medium">
-                <i class='bx bx-calendar-plus'></i>
+                <i data-lucide='calendar-plus' aria-hidden="true"></i>
                 <span>Periode Baru</span>
             </a>
         </div>

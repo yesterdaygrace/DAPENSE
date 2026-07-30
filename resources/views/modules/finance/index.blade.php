@@ -17,7 +17,7 @@
     <!-- Breadcrumb -->
     <nav class="flex items-center gap-2 text-sm text-gray-600">
         <a href="{{ $prefix }}/dashboard" class="hover:text-primary transition-colors">Dasbor</a>
-        <i class='bx bx-chevron-right text-gray-400'></i>
+        <i data-lucide='chevron-right' class='text-gray-400' aria-hidden="true"></i>
         <span class="text-gray-900 font-medium">Keuangan</span>
     </nav>
 
@@ -36,7 +36,7 @@
                     <p class="text-2xl font-bold text-gray-900 mt-1">8</p>
                 </div>
                 <div class="w-12 h-12 rounded-[--radius-button] bg-blue-50 flex items-center justify-center">
-                    <i class='bx bx-bank text-2xl text-blue-600'></i>
+                    <i data-lucide='bank' class='text-2xl text-blue-600' aria-hidden="true"></i>
                 </div>
             </div>
             <div class="mt-3 flex items-center gap-1 text-sm">
@@ -52,7 +52,7 @@
                     <p class="text-2xl font-bold text-gray-900 mt-1">78%</p>
                 </div>
                 <div class="w-12 h-12 rounded-[--radius-button] bg-green-50 flex items-center justify-center">
-                    <i class='bx bx-dollar text-2xl text-green-600'></i>
+                    <i data-lucide='dollar' class='text-2xl text-green-600' aria-hidden="true"></i>
                 </div>
             </div>
             <div class="mt-3 flex items-center gap-1 text-sm">
@@ -67,7 +67,7 @@
                     <p class="text-2xl font-bold text-gray-900 mt-1">Open</p>
                 </div>
                 <div class="w-12 h-12 rounded-[--radius-button] bg-amber-50 flex items-center justify-center">
-                    <i class='bx bx-calendar-check text-2xl text-amber-600'></i>
+                    <i data-lucide='calendar-check' class='text-2xl text-amber-600' aria-hidden="true"></i>
                 </div>
             </div>
             <div class="mt-3 flex items-center gap-1 text-sm">
@@ -82,7 +82,7 @@
                     <p class="text-2xl font-bold text-gray-900 mt-1">142</p>
                 </div>
                 <div class="w-12 h-12 rounded-[--radius-button] bg-purple-50 flex items-center justify-center">
-                    <i class='bx bx-file text-2xl text-purple-600'></i>
+                    <i data-lucide='file' class='text-2xl text-purple-600' aria-hidden="true"></i>
                 </div>
             </div>
             <div class="mt-3 flex items-center gap-1 text-sm">
@@ -96,15 +96,15 @@
         <h2 class="text-lg font-semibold text-gray-900 mb-4">Aksi Tersedia</h2>
         <div class="flex flex-wrap gap-3">
             <a href="{{ $prefix }}/neracasaldo/" class="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-[--radius-button] hover:bg-primary-600 transition-colors text-sm font-medium">
-                <i class='bx bx-calculator'></i>
+                <i class='calculator'></i>
                 <span>Lihat Neraca Saldo</span>
             </a>
             <a href="{{ $prefix }}/bukubesar" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-[--radius-button] hover:bg-gray-200 transition-colors text-sm font-medium">
-                <i class='bx bx-book'></i>
+                <i class='book-open'></i>
                 <span>Lihat Buku Besar</span>
             </a>
             <a href="{{ $prefix }}/jurnaling/showing" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-[--radius-button] hover:bg-gray-200 transition-colors text-sm font-medium">
-                <i class='bx bx-receipt'></i>
+                <i class='receipt'></i>
                 <span>Lihat Jurnal</span>
             </a>
         </div>

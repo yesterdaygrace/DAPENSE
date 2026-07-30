@@ -49,7 +49,7 @@
                     <tr>
                         <th class="sticky top-0 bg-gray-50 z-10" id="sort-tanggal-jurnal" class="cursor-pointer" data-sort="asc">
                             Tanggal Jurnal
-                            <i id="sort-icon" class="bx bx-sort-down ml-1"></i>
+                            <i id="sort-icon" data-lucide="arrow-down" class="ml-1 w-4 h-4" aria-hidden="true"></i>
                         </th>
                         <th class="sticky top-0 bg-gray-50 z-10">Nomor Bukti</th>
                         <th class="sticky top-0 bg-gray-50 z-10">Keterangan</th>
@@ -187,7 +187,7 @@
             const order = this.getAttribute('data-sort') === 'asc' ? 'desc' : 'asc';
             this.setAttribute('data-sort', order);
             const icon = document.getElementById('sort-icon');
-            icon.className = order === 'asc' ? 'bx bx-sort-up' : 'bx bx-sort-down';
+            if (icon.hasAttribute('data-lucide')) { icon.setAttribute('data-lucide', order === 'asc' ? 'arrow-up' : 'arrow-down'); if (typeof lucide !== 'undefined') lucide.createIcons({icons: lucide.icons}); } else { icon.className = order === 'asc' ? 'sort-up ml-1 w-4 h-4' : 'sort-down ml-1 w-4 h-4'; }
 
             sortTable(order);
             updateTotals();

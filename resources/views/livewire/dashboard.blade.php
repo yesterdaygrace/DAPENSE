@@ -14,35 +14,35 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         @if($this->isRole('bod'))
             @foreach([
-                ['name' => 'Jurnaling', 'route' => 'jurnaling', 'icon' => 'bx bx-notepad', 'desc' => 'Lihat jurnal transaksi'],
-                ['name' => 'Buku Besar', 'route' => 'bukubesar', 'icon' => 'bx bx-book', 'desc' => 'Ringkasan akun per buku besar'],
-                ['name' => 'Rekap Jurnal', 'route' => 'jurnaling-list', 'icon' => 'bx bx-receipt', 'desc' => 'Rekapitulasi jurnal', 'badge' => 'NEW'],
-                ['name' => 'Neraca Saldo', 'route' => 'neraca-saldo', 'icon' => 'bx bx-calculator', 'desc' => 'Neraca saldo periode'],
+                ['name' => 'Jurnaling', 'route' => 'jurnaling', 'icon' => 'file-text', 'desc' => 'Lihat jurnal transaksi'],
+                ['name' => 'Buku Besar', 'route' => 'bukubesar', 'icon' => 'book-open', 'desc' => 'Ringkasan akun per buku besar'],
+                ['name' => 'Rekap Jurnal', 'route' => 'jurnaling-list', 'icon' => 'receipt', 'desc' => 'Rekapitulasi jurnal', 'badge' => 'NEW'],
+                ['name' => 'Neraca Saldo', 'route' => 'neraca-saldo', 'icon' => 'calculator', 'desc' => 'Neraca saldo periode'],
             ] as $menu)
                 <x-dashboard.module-card :name="$menu['name']" :route="$menu['route']" :icon="$menu['icon']" :desc="$menu['desc']" :badge="($menu['badge'] ?? null)" />
             @endforeach
         @elseif($this->isRole('operator'))
             @foreach([
-                ['name' => 'Periode', 'route' => 'periodes', 'icon' => 'bx bx-calendar', 'desc' => 'Atur periode akuntansi'],
-                ['name' => 'COA', 'route' => 'coa-workspace', 'icon' => 'bx bx-spreadsheet', 'desc' => 'Kode akun'],
-                ['name' => 'Saldo Awal', 'route' => 'saldo-awal', 'icon' => 'bx bx-money', 'desc' => 'Saldo awal periode'],
-                ['name' => 'Jurnaling', 'route' => 'jurnaling', 'icon' => 'bx bx-notepad', 'desc' => 'Entri jurnal transaksi'],
-                ['name' => 'Buku Besar', 'route' => 'bukubesar', 'icon' => 'bx bx-book', 'desc' => 'Ringkasan akun per buku besar'],
-                ['name' => 'Rekap Jurnal', 'route' => 'jurnaling-list', 'icon' => 'bx bx-receipt', 'desc' => 'Rekapitulasi jurnal', 'badge' => 'NEW'],
-                ['name' => 'Neraca Saldo', 'route' => 'neraca-saldo', 'icon' => 'bx bx-calculator', 'desc' => 'Neraca saldo periode'],
+                ['name' => 'Periode', 'route' => 'periodes', 'icon' => 'calendar', 'desc' => 'Atur periode akuntansi'],
+                ['name' => 'COA', 'route' => 'coa-workspace', 'icon' => 'grid-3x3', 'desc' => 'Kode akun'],
+                ['name' => 'Saldo Awal', 'route' => 'saldo-awal', 'icon' => 'wallet', 'desc' => 'Saldo awal periode'],
+                ['name' => 'Jurnaling', 'route' => 'jurnaling', 'icon' => 'file-text', 'desc' => 'Entri jurnal transaksi'],
+                ['name' => 'Buku Besar', 'route' => 'bukubesar', 'icon' => 'book-open', 'desc' => 'Ringkasan akun per buku besar'],
+                ['name' => 'Rekap Jurnal', 'route' => 'jurnaling-list', 'icon' => 'receipt', 'desc' => 'Rekapitulasi jurnal', 'badge' => 'NEW'],
+                ['name' => 'Neraca Saldo', 'route' => 'neraca-saldo', 'icon' => 'calculator', 'desc' => 'Neraca saldo periode'],
             ] as $menu)
                 <x-dashboard.module-card :name="$menu['name']" :route="$menu['route']" :icon="$menu['icon']" :desc="$menu['desc']" :badge="($menu['badge'] ?? null)" />
             @endforeach
         @else
             @foreach([
-                ['name' => 'Manajemen Pengguna', 'route' => 'users', 'icon' => 'bx bx-user', 'desc' => 'Kelola pengguna sistem'],
-                ['name' => 'Periode', 'route' => 'periodes', 'icon' => 'bx bx-calendar', 'desc' => 'Atur periode akuntansi'],
-                ['name' => 'COA', 'route' => 'coa-workspace', 'icon' => 'bx bx-spreadsheet', 'desc' => 'Kode akun'],
-                ['name' => 'Saldo Awal', 'route' => 'saldo-awal', 'icon' => 'bx bx-money', 'desc' => 'Saldo awal periode'],
-                ['name' => 'Jurnaling', 'route' => 'jurnaling', 'icon' => 'bx bx-notepad', 'desc' => 'Entri jurnal transaksi'],
-                ['name' => 'Buku Besar', 'route' => 'bukubesar', 'icon' => 'bx bx-book', 'desc' => 'Ringkasan akun per buku besar'],
-                ['name' => 'Rekap Jurnal', 'route' => 'jurnaling-list', 'icon' => 'bx bx-receipt', 'desc' => 'Rekapitulasi jurnal', 'badge' => 'NEW'],
-                ['name' => 'Neraca Saldo', 'route' => 'neraca-saldo', 'icon' => 'bx bx-calculator', 'desc' => 'Neraca saldo periode'],
+                ['name' => 'Manajemen Pengguna', 'route' => 'users', 'icon' => 'user', 'desc' => 'Kelola pengguna sistem'],
+                ['name' => 'Periode', 'route' => 'periodes', 'icon' => 'calendar', 'desc' => 'Atur periode akuntansi'],
+                ['name' => 'COA', 'route' => 'coa-workspace', 'icon' => 'grid-3x3', 'desc' => 'Kode akun'],
+                ['name' => 'Saldo Awal', 'route' => 'saldo-awal', 'icon' => 'wallet', 'desc' => 'Saldo awal periode'],
+                ['name' => 'Jurnaling', 'route' => 'jurnaling', 'icon' => 'file-text', 'desc' => 'Entri jurnal transaksi'],
+                ['name' => 'Buku Besar', 'route' => 'bukubesar', 'icon' => 'book-open', 'desc' => 'Ringkasan akun per buku besar'],
+                ['name' => 'Rekap Jurnal', 'route' => 'jurnaling-list', 'icon' => 'receipt', 'desc' => 'Rekapitulasi jurnal', 'badge' => 'NEW'],
+                ['name' => 'Neraca Saldo', 'route' => 'neraca-saldo', 'icon' => 'calculator', 'desc' => 'Neraca saldo periode'],
             ] as $menu)
                 <x-dashboard.module-card :name="$menu['name']" :route="$menu['route']" :icon="$menu['icon']" :desc="$menu['desc']" :badge="($menu['badge'] ?? null)" />
             @endforeach

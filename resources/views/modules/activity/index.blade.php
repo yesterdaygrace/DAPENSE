@@ -17,7 +17,7 @@
     {{-- Breadcrumb --}}
     <nav class="flex items-center gap-2 text-sm text-gray-600">
         <a href="{{ $prefix }}/dashboard" class="hover:text-primary transition-colors">Dasbor</a>
-        <i class='bx bx-chevron-right text-gray-400'></i>
+        <i data-lucide='chevron-right' class='text-gray-400' aria-hidden="true"></i>
         <span class="text-gray-900 font-medium">Aktivitas Terbaru</span>
     </nav>
 
@@ -38,7 +38,7 @@
                     <p class="text-2xl font-bold text-gray-900 mt-1">{{ number_format($stats['total'], 0, ',', '.') }}</p>
                 </div>
                 <div class="w-12 h-12 rounded-[--radius-button] bg-blue-50 flex items-center justify-center">
-                    <i class='bx bx-history text-2xl text-blue-600'></i>
+                    <i data-lucide='history' class='text-2xl text-blue-600' aria-hidden="true"></i>
                 </div>
             </div>
         </div>
@@ -50,7 +50,7 @@
                     <p class="text-2xl font-bold text-gray-900 mt-1">{{ number_format($stats['today'], 0, ',', '.') }}</p>
                 </div>
                 <div class="w-12 h-12 rounded-[--radius-button] bg-green-50 flex items-center justify-center">
-                    <i class='bx bx-calendar-check text-2xl text-green-600'></i>
+                    <i data-lucide='calendar-check' class='text-2xl text-green-600' aria-hidden="true"></i>
                 </div>
             </div>
         </div>
@@ -62,7 +62,7 @@
                     <p class="text-2xl font-bold text-gray-900 mt-1">{{ number_format($stats['logins'], 0, ',', '.') }}</p>
                 </div>
                 <div class="w-12 h-12 rounded-[--radius-button] bg-purple-50 flex items-center justify-center">
-                    <i class='bx bx-log-in-circle text-2xl text-purple-600'></i>
+                    <i data-lucide='log-in-circle' class='text-2xl text-purple-600' aria-hidden="true"></i>
                 </div>
             </div>
         </div>
@@ -74,7 +74,7 @@
                     <p class="text-2xl font-bold text-gray-900 mt-1">{{ number_format($stats['creates'], 0, ',', '.') }}</p>
                 </div>
                 <div class="w-12 h-12 rounded-[--radius-button] bg-amber-50 flex items-center justify-center">
-                    <i class='bx bx-plus-circle text-2xl text-amber-600'></i>
+                    <i data-lucide='plus-circle' class='text-2xl text-amber-600' aria-hidden="true"></i>
                 </div>
             </div>
         </div>
@@ -84,7 +84,7 @@
     <div class="bg-white rounded-[--radius-card] p-4 shadow-card">
         <form method="GET" action="{{ route('activity') }}" class="flex items-center gap-3">
             <div class="relative flex-1">
-                <i class='bx bx-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg'></i>
+                <i data-lucide='search' class='absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg' aria-hidden="true"></i>
                 <input type="text" name="search" value="{{ $search ?? '' }}"
                        placeholder="Cari aktivitas berdasarkan deskripsi atau pengguna..."
                        class="w-full pl-10 pr-4 py-2.5 rounded-[--radius-button] border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all">
@@ -103,12 +103,12 @@
             @foreach($activities as $activity)
             @php
                 $icon = match(true) {
-                    str_contains($activity->description, 'login') || str_contains($activity->description, 'logout') => 'bx bx-log-in-circle',
-                    $activity->event === 'created' => 'bx bx-plus-circle',
-                    $activity->event === 'updated' || $activity->event === 'deleted' => 'bx bx-edit-alt',
-                    str_contains($activity->description, 'Jurnal') || str_contains($activity->description, 'jurnal') => 'bx bx-notepad',
-                    str_contains($activity->description, 'Saldo') || str_contains($activity->description, 'saldo') => 'bx bx-money',
-                    default => 'bx bx-check-circle',
+                    str_contains($activity->description, 'login') || str_contains($activity->description, 'logout') => 'log-in',
+                    $activity->event === 'created' => 'plus-circle',
+                    $activity->event === 'updated' || $activity->event === 'deleted' => 'edit',
+                    str_contains($activity->description, 'Jurnal') || str_contains($activity->description, 'jurnal') => 'file-text',
+                    str_contains($activity->description, 'Saldo') || str_contains($activity->description, 'saldo') => 'wallet',
+                    default => 'check-circle',
                 };
                 $iconBg = match(true) {
                     str_contains($activity->description, 'login') => 'rgba(139,92,246,0.1)',
@@ -174,7 +174,7 @@
         @else
         <div class="py-16 text-center">
             <div class="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
-                <i class='bx bx-history text-3xl text-gray-400'></i>
+                <i data-lucide='history' class='text-3xl text-gray-400' aria-hidden="true"></i>
             </div>
             <h3 class="text-lg font-semibold text-gray-900 mb-1">Belum Ada Aktivitas</h3>
             <p class="text-sm text-gray-500">Log aktivitas akan muncul setelah ada aktivitas pengguna atau sistem</p>

@@ -17,7 +17,7 @@
     <!-- Breadcrumb -->
     <nav class="flex items-center gap-2 text-sm text-gray-600">
         <a href="{{ $prefix }}/dashboard" class="hover:text-primary transition-colors">Dasbor</a>
-        <i class='bx bx-chevron-right text-gray-400'></i>
+        <i data-lucide='chevron-right' class='text-gray-400' aria-hidden="true"></i>
         <span class="text-gray-900 font-medium">Pengaturan</span>
     </nav>
 
@@ -36,7 +36,7 @@
                     <p class="text-2xl font-bold text-gray-900 mt-1">Online</p>
                 </div>
                 <div class="w-12 h-12 rounded-[--radius-button] bg-green-50 flex items-center justify-center">
-                    <i class='bx bx-check-circle text-2xl text-green-600'></i>
+                    <i data-lucide='check-circle' class='text-2xl text-green-600' aria-hidden="true"></i>
                 </div>
             </div>
             <div class="mt-3 flex items-center gap-1 text-sm">
@@ -52,7 +52,7 @@
                     <p class="text-2xl font-bold text-gray-900 mt-1">Connected</p>
                 </div>
                 <div class="w-12 h-12 rounded-[--radius-button] bg-blue-50 flex items-center justify-center">
-                    <i class='bx bx-data text-2xl text-blue-600'></i>
+                    <i data-lucide='data' class='text-2xl text-blue-600' aria-hidden="true"></i>
                 </div>
             </div>
             <div class="mt-3 flex items-center gap-1 text-sm">
@@ -67,7 +67,7 @@
                     <p class="text-2xl font-bold text-gray-900 mt-1">Enabled</p>
                 </div>
                 <div class="w-12 h-12 rounded-[--radius-button] bg-purple-50 flex items-center justify-center">
-                    <i class='bx bx-lock text-2xl text-purple-600'></i>
+                    <i data-lucide='lock' class='text-2xl text-purple-600' aria-hidden="true"></i>
                 </div>
             </div>
             <div class="mt-3 flex items-center gap-1 text-sm">
@@ -83,7 +83,7 @@
                     <p class="text-2xl font-bold text-gray-900 mt-1">Active</p>
                 </div>
                 <div class="w-12 h-12 rounded-[--radius-button] bg-amber-50 flex items-center justify-center">
-                    <i class='bx bx-envelope text-2xl text-amber-600'></i>
+                    <i data-lucide='envelope' class='text-2xl text-amber-600' aria-hidden="true"></i>
                 </div>
             </div>
             <div class="mt-3 flex items-center gap-1 text-sm">
@@ -99,7 +99,7 @@
             <div class="flex items-center justify-between p-3 bg-gray-50 rounded-[--radius-button]">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-[--radius-button] bg-blue-100 flex items-center justify-center">
-                        <i class='bx bx-code-alt text-blue-600'></i>
+                        <i data-lucide='code-alt' class='text-blue-600' aria-hidden="true"></i>
                     </div>
                     <div>
                         <p class="text-xs text-gray-500">Versi Aplikasi</p>
@@ -110,7 +110,7 @@
             <div class="flex items-center justify-between p-3 bg-gray-50 rounded-[--radius-button]">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-[--radius-button] bg-green-100 flex items-center justify-center">
-                        <i class='bx bx-server text-green-600'></i>
+                        <i data-lucide='server' class='text-green-600' aria-hidden="true"></i>
                     </div>
                     <div>
                         <p class="text-xs text-gray-500">Versi PHP</p>
@@ -121,7 +121,7 @@
             <div class="flex items-center justify-between p-3 bg-gray-50 rounded-[--radius-button]">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-[--radius-button] bg-purple-100 flex items-center justify-center">
-                        <i class='bx bx-package text-purple-600'></i>
+                        <i data-lucide='package' class='text-purple-600' aria-hidden="true"></i>
                     </div>
                     <div>
                         <p class="text-xs text-gray-500">Versi Laravel</p>
@@ -132,7 +132,7 @@
             <div class="flex items-center justify-between p-3 bg-gray-50 rounded-[--radius-button]">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-[--radius-button] bg-amber-100 flex items-center justify-center">
-                        <i class='bx bx-time text-amber-600'></i>
+                        <i data-lucide='time' class='text-amber-600' aria-hidden="true"></i>
                     </div>
                     <div>
                         <p class="text-xs text-gray-500">Zona Waktu</p>
@@ -148,11 +148,11 @@
         <h2 class="text-lg font-semibold text-gray-900 mb-4">Tautan Cepat</h2>
         <div class="flex flex-wrap gap-3">
             <a href="{{ $prefix }}/dashboard" class="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-[--radius-button] hover:bg-primary-600 transition-colors text-sm font-medium">
-                <i class='bx bx-home'></i>
+                <i class='home'></i>
                 <span>Kembali ke Dasbor</span>
             </a>
             <a href="{{ $prefix }}/products" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-[--radius-button] hover:bg-gray-200 transition-colors text-sm font-medium">
-                <i class='bx bx-user'></i>
+                <i class='user'></i>
                 <span>Kelola Pengguna</span>
             </a>
         </div>

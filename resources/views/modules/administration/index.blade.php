@@ -17,7 +17,7 @@
     <!-- Breadcrumb -->
     <nav class="flex items-center gap-2 text-sm text-gray-600">
         <a href="{{ $prefix }}/dashboard" class="hover:text-primary transition-colors">Dasbor</a>
-        <i class='bx bx-chevron-right text-gray-400'></i>
+        <i data-lucide='chevron-right' class='text-gray-400' aria-hidden="true"></i>
         <span class="text-gray-900 font-medium">Administrasi</span>
     </nav>
 
@@ -36,7 +36,7 @@
                     <p class="text-2xl font-bold text-gray-900 mt-1">24</p>
                 </div>
                 <div class="w-12 h-12 rounded-[--radius-button] bg-blue-50 flex items-center justify-center">
-                    <i class='bx bx-user text-2xl text-blue-600'></i>
+                    <i data-lucide='user' class='text-2xl text-blue-600' aria-hidden="true"></i>
                 </div>
             </div>
             <div class="mt-3 flex items-center gap-1 text-sm">
@@ -52,7 +52,7 @@
                     <p class="text-2xl font-bold text-gray-900 mt-1">18</p>
                 </div>
                 <div class="w-12 h-12 rounded-[--radius-button] bg-green-50 flex items-center justify-center">
-                    <i class='bx bx-check-circle text-2xl text-green-600'></i>
+                    <i data-lucide='check-circle' class='text-2xl text-green-600' aria-hidden="true"></i>
                 </div>
             </div>
             <div class="mt-3 flex items-center gap-1 text-sm">
@@ -67,7 +67,7 @@
                     <p class="text-2xl font-bold text-gray-900 mt-1">5</p>
                 </div>
                 <div class="w-12 h-12 rounded-[--radius-button] bg-purple-50 flex items-center justify-center">
-                    <i class='bx bx-shield-quarter text-2xl text-purple-600'></i>
+                    <i data-lucide='shield-quarter' class='text-2xl text-purple-600' aria-hidden="true"></i>
                 </div>
             </div>
             <div class="mt-3 flex items-center gap-1 text-sm">
@@ -82,7 +82,7 @@
                     <p class="text-2xl font-bold text-gray-900 mt-1">3,428</p>
                 </div>
                 <div class="w-12 h-12 rounded-[--radius-button] bg-amber-50 flex items-center justify-center">
-                    <i class='bx bx-history text-2xl text-amber-600'></i>
+                    <i data-lucide='history' class='text-2xl text-amber-600' aria-hidden="true"></i>
                 </div>
             </div>
             <div class="mt-3 flex items-center gap-1 text-sm">
@@ -96,13 +96,13 @@
         <!-- User Management -->
         <a href="{{ $prefix }}/products" class="bg-white rounded-[--radius-card] p-6 shadow-card hover:shadow-card-hover transition-shadow cursor-pointer group">
             <div class="w-12 h-12 rounded-[--radius-button] bg-primary-50 flex items-center justify-center text-primary mb-4 group-hover:scale-110 transition-transform">
-                <i class='bx bx-user text-2xl'></i>
+                <i data-lucide='user' class='text-2xl' aria-hidden="true"></i>
             </div>
             <h3 class="text-lg font-semibold text-gray-900 mb-2">Manajemen Pengguna</h3>
             <p class="text-sm text-gray-600 mb-4">Tambah, edit, dan kelola akun serta akses pengguna</p>
             <div class="flex items-center text-primary text-sm font-medium">
                 <span>Buka</span>
-                <i class='bx bx-right-arrow-alt ml-1 group-hover:translate-x-1 transition-transform'></i>
+                <i data-lucide='right-arrow-alt' class='ml-1 group-hover:translate-x-1 transition-transform' aria-hidden="true"></i>
             </div>
         </a>
 
@@ -111,11 +111,11 @@
             <h2 class="text-lg font-semibold text-gray-900 mb-4">Aksi Cepat</h2>
             <div class="flex flex-wrap gap-3">
                 <a href="{{ $prefix }}/products?action=new" class="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-[--radius-button] hover:bg-primary-600 transition-colors text-sm font-medium">
-                    <i class='bx bx-plus'></i>
+                    <i class='plus'></i>
                     <span>Tambah Pengguna Baru</span>
                 </a>
                 <a href="{{ $prefix }}/products" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-[--radius-button] hover:bg-gray-200 transition-colors text-sm font-medium">
-                    <i class='bx bx-search'></i>
+                    <i class='search'></i>
                     <span>Cari Pengguna</span>
                 </a>
             </div>
@@ -128,7 +128,7 @@
             <div class="flex items-center justify-between p-3 bg-gray-50 rounded-[--radius-button]">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-[--radius-button] bg-blue-100 flex items-center justify-center">
-                        <i class='bx bx-user-plus text-blue-600'></i>
+                        <i data-lucide='user-plus' class='text-blue-600' aria-hidden="true"></i>
                     </div>
                     <div>
                         <p class="text-sm font-medium text-gray-900">Pengguna baru terdaftar</p>
@@ -142,7 +142,7 @@
             <div class="flex items-center justify-between p-3 bg-gray-50 rounded-[--radius-button]">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-[--radius-button] bg-green-100 flex items-center justify-center">
-                        <i class='bx bx-log-in text-green-600'></i>
+                        <i data-lucide='log-in' class='text-green-600' aria-hidden="true"></i>
                     </div>
                     <div>
                         <p class="text-sm font-medium text-gray-900">Pengguna login</p>
@@ -156,7 +156,7 @@
             <div class="flex items-center justify-between p-3 bg-gray-50 rounded-[--radius-button]">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-[--radius-button] bg-purple-100 flex items-center justify-center">
-                        <i class='bx bx-shield text-purple-600'></i>
+                        <i data-lucide='shield' class='text-purple-600' aria-hidden="true"></i>
                     </div>
                     <div>
                         <p class="text-sm font-medium text-gray-900">Peran diperbarui</p>

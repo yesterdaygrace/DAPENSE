@@ -18,19 +18,19 @@ if (!$activeMenu) {
 $u = Auth::user()->usertype;
 
 $navItems = [
-    ['id' => 'dashboard', 'label' => 'Dasbor', 'icon' => 'bx bx-home-circle', 'route' => match($u) {
+    ['id' => 'dashboard', 'label' => 'Dasbor', 'icon' => 'layout-dashboard', 'route' => match($u) {
         'rootsuperuser' => 'rootsuperuser/dashboard',
         'admin' => 'admin/dashboard',
         'operator' => 'operator/dashboard',
         'bod' => 'bod/dashboard',
         default => 'dashboard',
     }, 'visible' => true],
-    ['id' => 'master-data', 'label' => 'Data Master', 'icon' => 'bx bx-data', 'route' => 'master-data', 'visible' => true],
-    ['id' => 'transactions', 'label' => 'Transaksi', 'icon' => 'bx bx-transfer', 'route' => 'transactions', 'visible' => true],
-    ['id' => 'reports', 'label' => 'Laporan', 'icon' => 'bx bx-bar-chart-alt-2', 'route' => 'reports', 'visible' => true],
-    ['id' => 'finance', 'label' => 'Keuangan', 'icon' => 'bx bx-dollar', 'route' => 'finance', 'visible' => false],
-    ['id' => 'administration', 'label' => 'Administrasi', 'icon' => 'bx bx-shield-quarter', 'route' => 'administration', 'visible' => in_array($u, ['rootsuperuser', 'admin'])],
-    ['id' => 'settings', 'label' => 'Pengaturan', 'icon' => 'bx bx-cog', 'route' => 'settings', 'visible' => true],
+    ['id' => 'master-data', 'label' => 'Data Master', 'icon' => 'database', 'route' => 'master-data', 'visible' => true],
+    ['id' => 'transactions', 'label' => 'Transaksi', 'icon' => 'arrow-left-right', 'route' => 'transactions', 'visible' => true],
+    ['id' => 'reports', 'label' => 'Laporan', 'icon' => 'bar-chart-3', 'route' => 'reports', 'visible' => true],
+    ['id' => 'finance', 'label' => 'Keuangan', 'icon' => 'dollar-sign', 'route' => 'finance', 'visible' => false],
+    ['id' => 'administration', 'label' => 'Administrasi', 'icon' => 'shield-half', 'route' => 'administration', 'visible' => in_array($u, ['rootsuperuser', 'admin'])],
+    ['id' => 'settings', 'label' => 'Pengaturan', 'icon' => 'settings', 'route' => 'settings', 'visible' => true],
 ];
 @endphp
 
@@ -77,7 +77,7 @@ $navItems = [
             <a href="{{ route($item['route']) }}"
                class="flex items-center justify-center h-10 mx-2 rounded-[--radius-button] transition-colors duration-150
                       {{ $activeMenu === $item['id'] ? 'bg-primary-50 text-primary-700' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900' }}">
-                <i class="{{ $item['icon'] }} text-lg"></i>
+                <i data-lucide="{{ $item['icon'] }}" class="w-5 h-5" aria-hidden="true"></i>
             </a>
             @endif
             @endforeach
@@ -89,7 +89,7 @@ $navItems = [
                 @csrf
                 <button type="submit"
                         class="flex items-center justify-center h-10 mx-auto w-10 rounded-[--radius-button] text-gray-400 hover:text-red-600 hover:bg-gray-100 transition-colors duration-150">
-                    <i class="bx bx-log-out text-lg"></i>
+                    <i data-lucide="log-out" class="w-5 h-5" aria-hidden="true"></i>
                 </button>
             </form>
         </div>

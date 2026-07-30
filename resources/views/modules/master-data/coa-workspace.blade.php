@@ -18,11 +18,11 @@
     <!-- Breadcrumb -->
     <nav class="flex items-center gap-2 text-sm text-gray-600 mb-6">
         <a href="{{ $prefix }}/dashboard" class="hover:text-primary transition-colors">Dasbor</a>
-        <i class='bx bx-chevron-right text-gray-400'></i>
+        <i data-lucide='chevron-right' class='text-gray-400' aria-hidden="true"></i>
         <a href="{{ $prefix }}/master-data" class="hover:text-primary transition-colors">Data Master</a>
-        <i class='bx bx-chevron-right text-gray-400'></i>
+        <i data-lucide='chevron-right' class='text-gray-400' aria-hidden="true"></i>
         <span class="hover:text-primary transition-colors">Ruang Kerja COA</span>
-        <i class='bx bx-chevron-right text-gray-400'></i>
+        <i data-lucide='chevron-right' class='text-gray-400' aria-hidden="true"></i>
         <span class="text-gray-900 font-medium">Kode Akun</span>
     </nav>
 
@@ -85,7 +85,7 @@
             <div class="flex flex-wrap items-center gap-3 mb-4">
                 <!-- Search -->
                 <div class="relative flex-1 max-w-md">
-                    <i class='bx bx-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400'></i>
+                    <i data-lucide='search' class='absolute left-3 top-1/2 -translate-y-1/2 text-gray-400' aria-hidden="true"></i>
                     <input type="text" placeholder="Cari akun..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-[--radius-button] focus:ring-2 focus:ring-primary focus:border-primary">
                 </div>
                 
@@ -99,16 +99,16 @@
                         <option value="revenue">Pendapatan</option>
                         <option value="expense">Beban</option>
                     </select>
-                    <i class='bx bx-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-gray-400'></i>
+                    <i data-lucide='chevron-down' class='absolute right-3 top-1/2 -translate-y-1/2 text-gray-400' aria-hidden="true"></i>
                 </div>
                 
                 <!-- Create Button -->
                 <a href="{{ route($routePrefix . '/account/coa/create') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-[--radius-button] hover:bg-primary-600 transition-colors text-sm font-medium">
-                    <i class='bx bx-plus'></i>
+                    <i class='plus'></i>
                     <span>Buat Akun</span>
                 </a>
                 <button class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-[--radius-button] hover:bg-gray-50 transition-colors text-sm font-medium">
-                    <i class='bx bx-filter'></i>
+                    <i class='filter'></i>
                     <span>Filter</span>
                 </button>
             </div>
@@ -152,10 +152,10 @@
                             </td>
                             <td class="px-4 py-3 text-right space-x-2">
                                 <a href="{{ route($routePrefix . '/account/coa/edit', $coa->id) }}" class="text-primary hover:text-primary-600 inline-block">
-                                    <i class='bx bx-edit'></i>
+                                    <i class='edit'></i>
                                 </a>
                                 <a href="{{ route($routePrefix . '/account/coa/delete', $coa->id) }}" class="text-danger hover:text-danger-600 inline-block" onclick="return confirm('Apakah Anda yakin ingin menghapus akun ini?')">
-                                    <i class='bx bx-trash'></i>
+                                    <i class='trash'></i>
                                 </a>
                             </td>
                         </tr>
@@ -207,13 +207,13 @@
             <div class="flex flex-wrap items-center gap-3 mb-4">
                 <!-- Search -->
                 <div class="relative flex-1 max-w-md">
-                    <i class='bx bx-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400'></i>
+                    <i data-lucide='search' class='absolute left-3 top-1/2 -translate-y-1/2 text-gray-400' aria-hidden="true"></i>
                     <input type="text" placeholder="Cari header..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-[--radius-button] focus:ring-2 focus:ring-primary focus:border-primary">
                 </div>
                 
                 <!-- Create Button -->
                 <a href="{{ route($routePrefix . '/account/header/create') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-[--radius-button] hover:bg-primary-600 transition-colors text-sm font-medium">
-                    <i class='bx bx-plus'></i>
+                    <i class='plus'></i>
                     <span>Buat Header</span>
                 </a>
             </div>
@@ -241,10 +241,10 @@
                             <td class="px-4 py-3">{{ $header->coas_count ?? 0 }}</td>
                             <td class="px-4 py-3 text-right space-x-2">
                                 <a href="{{ route($routePrefix . '/account/header/edit', $header->id) }}" class="text-primary hover:text-primary-600 inline-block">
-                                    <i class='bx bx-edit'></i>
+                                    <i class='edit'></i>
                                 </a>
                                 <a href="{{ route($routePrefix . '/account/header/delete', $header->id) }}" class="text-danger hover:text-danger-600 inline-block" onclick="return confirm('Apakah Anda yakin ingin menghapus header ini?')">
-                                    <i class='bx bx-trash'></i>
+                                    <i class='trash'></i>
                                 </a>
                             </td>
                         </tr>
@@ -342,7 +342,7 @@
 
         <!-- Drag and Drop Placeholder -->
         <div class="mt-8 border-2 border-dashed border-gray-300 rounded-[--radius-card] p-8 text-center">
-            <i class='bx bx-move-horizontal text-4xl text-gray-300 mb-3'></i>
+            <i data-lucide='move-horizontal' class='text-4xl text-gray-300 mb-3' aria-hidden="true"></i>
             <h3 class="text-lg font-medium text-gray-900">Seret & Jatuhkan Pemetaan</h3>
             <p class="text-gray-600 mt-2">Seret akun COA ke header untuk menugaskannya</p>
             <p class="text-sm text-gray-500 mt-2 italic">Segera Hadir</p>
@@ -368,12 +368,12 @@
                 @csrf
 
                 <div class="border-2 border-dashed border-gray-300 rounded-[--radius-card] p-12 text-center hover:border-primary-400 transition-colors bg-gray-50" id="drop-zone">
-                    <i class='bx bx-cloud-upload text-5xl text-gray-300 mb-4'></i>
+                    <i data-lucide='cloud-upload' class='text-5xl text-gray-300 mb-4' aria-hidden="true"></i>
                     <h3 class="text-lg font-medium text-gray-900 mb-2">Seret & Jatuhkan File Excel atau CSV</h3>
                     <p class="text-gray-600 mb-4">atau klik untuk menelusuri</p>
                     <input type="file" name="file" accept=".xlsx,.xls,.csv" class="hidden" id="import-file-input" required>
                     <button type="button" onclick="document.getElementById('import-file-input').click()" class="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-[--radius-button] hover:bg-primary-600 transition-colors text-sm font-medium">
-                        <i class='bx bx-folder'></i>
+                        <i data-lucide='folder' aria-hidden="true"></i>
                         <span>Jelajahi File</span>
                     </button>
                     <p class="text-sm text-gray-500 mt-3" id="file-name-display">Tidak ada file dipilih</p>
@@ -401,11 +401,11 @@
 
                 <div class="mt-6 flex gap-3">
                     <button type="submit" class="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-[--radius-button] hover:bg-primary-600 transition-colors text-sm font-medium">
-                        <i class='bx bx-import'></i>
+                        <i data-lucide='import' aria-hidden="true"></i>
                         <span>Impor Data</span>
                     </button>
                     <a href="{{ route($routePrefix . '/master-data/coa-workspace.template') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-100 text-gray-700 rounded-[--radius-button] hover:bg-gray-200 transition-colors text-sm font-medium">
-                        <i class='bx bx-download'></i>
+                        <i class='download'></i>
                         <span>Unduh Template</span>
                     </a>
                 </div>
@@ -479,7 +479,7 @@
                 <!-- Export Button -->
                 <div>
                     <button type="submit" class="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-[--radius-button] hover:bg-primary-600 transition-colors text-sm font-medium">
-                        <i class='bx bx-export'></i>
+                        <i class='download'></i>
                         <span>Ekspor Data</span>
                     </button>
                 </div>

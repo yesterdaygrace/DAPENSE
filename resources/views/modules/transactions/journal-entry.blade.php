@@ -39,9 +39,9 @@
     <!-- Breadcrumb -->
     <nav class="flex items-center gap-2 text-sm text-gray-600">
         <a href="{{ $prefix }}/dashboard" class="hover:text-primary transition-colors">Dasbor</a>
-        <i class='bx bx-chevron-right text-gray-400'></i>
+        <i data-lucide='chevron-right' class='text-gray-400' aria-hidden="true"></i>
         <a href="{{ $prefix }}/transactions" class="hover:text-primary transition-colors">Transaksi</a>
-        <i class='bx bx-chevron-right text-gray-400'></i>
+        <i data-lucide='chevron-right' class='text-gray-400' aria-hidden="true"></i>
         <span class="text-gray-900 font-medium">Entri Jurnal</span>
     </nav>
 
@@ -53,7 +53,7 @@
         </div>
         <div class="text-right">
             <span class="inline-flex items-center gap-2 px-4 py-2 bg-primary-50 text-primary-700 rounded-full text-sm font-semibold">
-                <i class="bx bx-edit text-lg"></i>
+                <i data-lucide="edit" class="text-lg" aria-hidden="true"></i>
                 <span x-text="jenisLabel"></span>
             </span>
         </div>
@@ -90,7 +90,7 @@
                 <div class="flex items-center justify-between mb-3">
                     <h3 class="text-sm font-semibold text-gray-900">Baris Akun</h3>
                     <button type="button" @click="addEntry()" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-primary bg-primary-50 rounded-lg hover:bg-primary-100 transition-colors">
-                        <i class="bx bx-plus text-base"></i>
+                        <i data-lucide="plus" class="text-base" aria-hidden="true"></i>
                         Tambah Baris
                     </button>
                 </div>
@@ -128,7 +128,7 @@
                                     </td>
                                     <td class="py-2 text-center">
                                         <button type="button" @click="removeEntry(i)" x-show="entries.length > 1" class="p-1 text-gray-400 hover:text-red-500 transition-colors">
-                                            <i class="bx bx-trash text-lg"></i>
+                                            <i data-lucide="trash" class="text-lg" aria-hidden="true"></i>
                                         </button>
                                     </td>
                                 </tr>
@@ -149,13 +149,13 @@
                 <div class="mt-3 flex items-center gap-2">
                     <template x-if="isBalanced">
                         <span class="inline-flex items-center gap-1.5 text-sm text-emerald-600 font-medium">
-                            <i class="bx bx-check-circle"></i>
+                            <i class="check-circle"></i>
                             Seimbang
                         </span>
                     </template>
                     <template x-if="!isBalanced">
                         <span class="inline-flex items-center gap-1.5 text-sm text-red-600 font-medium">
-                            <i class="bx bx-error-circle"></i>
+                            <i class="alert-circle"></i>
                             <span x-text="'Selisih: Rp ' + Math.abs(totalDebit - totalKredit).toLocaleString('id-ID')"></span>
                         </span>
                     </template>
@@ -165,11 +165,11 @@
             <!-- Actions -->
             <div class="flex items-center gap-3 pt-4 border-t border-gray-100">
                 <button type="submit" class="px-6 py-2.5 bg-primary text-white font-semibold rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" :disabled="!isBalanced">
-                    <i class="bx bx-check mr-1"></i>
+                    <i data-lucide="check" class="mr-1" aria-hidden="true"></i>
                     Posting Jurnal
                 </button>
                 <button type="button" class="px-6 py-2.5 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors">
-                    <i class="bx bx-save mr-1"></i>
+                    <i data-lucide="save" class="mr-1" aria-hidden="true"></i>
                     Simpan Draft
                 </button>
                 <a href="{{ $prefix }}/transactions" class="px-6 py-2.5 text-gray-500 font-medium rounded-lg hover:bg-gray-50 transition-colors">
