@@ -235,7 +235,7 @@ Route::middleware(['auth'])->group(function () {
 
 Route::get('/health', function () {
     return response()->json([
-        'status' => 'healthy',
+        'status' => 'ok',
         'timestamp' => now()->toIso8601String(),
         'app' => config('app.name'),
         'env' => config('app.env'),
