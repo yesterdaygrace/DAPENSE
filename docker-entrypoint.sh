@@ -35,7 +35,8 @@ mkdir -p "${APP_DIR}/storage/framework/views" \
     "${APP_DIR}/storage/framework/cache/data" \
     "${APP_DIR}/storage/framework/sessions" \
     "${APP_DIR}/storage/logs"
-chown -R www-data:www-data "${APP_DIR}/storage" "${APP_DIR}/bootstrap/cache"
+chown -R www-data:www-data "${APP_DIR}/storage" 2>/dev/null || true
+chown -R www-data:www-data "${APP_DIR}/bootstrap/cache" 2>/dev/null || true
 
 # Verify storage is writable
 if ! su -s /bin/sh www-data -c "test -w ${APP_DIR}/storage" 2>/dev/null; then
@@ -48,14 +49,30 @@ log "Storage directories ready."
 PORT="${PORT:-8080}"
 log "Configuring Nginx to listen on port ${PORT}..."
 
-# Copy nginx config if running outside Railway build
-if [ ! -f /etc/nginx/sites-enabled/default ]; then
-    cp "${APP_DIR}/docker/nginx.conf" /etc/nginx/sites-enabled/default
-fi
+# Generate nginx config in writable /tmp (container may be read-only)
+NGINX_CONF="/tmp/nginx-default.conf"
+cp "${APP_DIR}/docker/nginx.conf" "${NGINX_CONF}"
+sed -i "s/listen 80;/listen ${PORT};/" "${NGINX_CONF}"
+sed -i "s/listen \[::\]:80;/listen \[::\]:${PORT};/" "${NGINX_CONF}"
 
-# Substitute the PORT into the nginx config
-sed -i "s/listen 80;/listen ${PORT};/" /etc/nginx/sites-enabled/default
-sed -i "s/listen \[::\]:80;/listen \[::\]:${PORT};/" /etc/nginx/sites-enabled/default
+# Wrap server block in full nginx.conf for standalone -c usage
+NGINX_CONF="/tmp/nginx-wrapper.conf"
+cat > "${NGINX_CONF}" <<WRAPPER
+events {
+    worker_connections 1024;
+}
+
+http {
+    include /etc/nginx/mime.types;
+    default_type application/octet-stream;
+    sendfile on;
+    types_hash_max_size 2048;
+    server_tokens off;
+    client_max_body_size 20M;
+
+$(cat /tmp/nginx-default.conf)
+}
+WRAPPER
 
 # Create nginx temp directories (tmpfs mounts are empty at boot)
 mkdir -p /var/lib/nginx/body /var/lib/nginx/proxy \
@@ -79,4 +96,4 @@ php-fpm -D
 
 # ── Start Nginx in foreground ───────────────────────────────────────
 log "Starting Nginx..."
-exec nginx -g 'daemon off;'
+exec nginx -c "${NGINX_CONF}" -g 'pid /tmp/nginx.pid; daemon off;'

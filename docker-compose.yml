@@ -6,15 +6,15 @@ services:
     container_name: dapense-app
     restart: unless-stopped
     ports:
-      - "8080:80"
+      - "8080:8080"
     environment:
       - APP_ENV=production
       - APP_DEBUG=false
+      - DB_HOST=dapense-mysql
     env_file:
       - .env
     volumes:
       - storage_data:/var/www/html/storage
-      - nginx_logs:/var/log/nginx
     depends_on:
       - mysql
       - redis
@@ -36,6 +36,7 @@ services:
       - /var/www/html/storage/framework/cache
       - /var/www/html/storage/framework/sessions
       - /var/www/html/storage/logs
+      - /var/www/html/bootstrap/cache
       - /var/log/nginx
       - /var/lib/nginx
       - /tmp
@@ -47,8 +48,6 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       MYSQL_DATABASE: ${DB_DATABASE}
-      MYSQL_USER: ${DB_USERNAME}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
     volumes:
       - mysql_data:/var/lib/mysql
     networks:
@@ -85,4 +84,3 @@ volumes:
   mysql_data:
   redis_data:
   storage_data:
-  nginx_logs:
