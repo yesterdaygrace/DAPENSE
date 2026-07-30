@@ -27,8 +27,6 @@ RUN mkdir -p /var/www/html/storage/framework/views \
     /var/log/nginx \
     && chmod +x /usr/local/bin/docker-entrypoint.sh
 
-USER www-data
-
 EXPOSE 80
 
 ENTRYPOINT ["docker-entrypoint.sh"]
