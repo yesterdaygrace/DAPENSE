@@ -8,6 +8,7 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip \
     curl \
+    libzip-dev \
     gettext-base \
     && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
 
