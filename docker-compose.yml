@@ -10,7 +10,9 @@ services:
     environment:
       - APP_ENV=production
       - APP_DEBUG=false
+      - DOCKER=true
       - DB_HOST=dapense-mysql
+      - APP_URL=http://localhost:8080
     env_file:
       - .env
     volumes:
