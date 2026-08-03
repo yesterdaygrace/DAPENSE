@@ -67,7 +67,7 @@
                     <p class="text-2xl font-bold text-gray-900 mt-1">5</p>
                 </div>
                 <div class="w-12 h-12 rounded-[--radius-button] bg-purple-50 flex items-center justify-center">
-                    <i data-lucide='shield-quarter' class='text-2xl text-purple-600' aria-hidden="true"></i>
+                    <i data-lucide='shield' class='text-2xl text-purple-600' aria-hidden="true"></i>
                 </div>
             </div>
             <div class="mt-3 flex items-center gap-1 text-sm">
@@ -102,7 +102,7 @@
             <p class="text-sm text-gray-600 mb-4">Tambah, edit, dan kelola akun serta akses pengguna</p>
             <div class="flex items-center text-primary text-sm font-medium">
                 <span>Buka</span>
-                <i data-lucide='right-arrow-alt' class='ml-1 group-hover:translate-x-1 transition-transform' aria-hidden="true"></i>
+                <i data-lucide='arrow-right' class='ml-1 group-hover:translate-x-1 transition-transform' aria-hidden="true"></i>
             </div>
         </a>
 

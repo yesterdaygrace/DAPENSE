@@ -4,7 +4,6 @@
 
 @php
 $u = Auth::user()->usertype;
-$prefix = match($u) { 'rootsuperuser' => 'rootsuperuser', 'bod' => 'bod', 'operator' => 'operator', default => 'admin' };
 $roleLabel = match($u) { 'rootsuperuser' => 'Root Superuser', 'bod' => 'BOD', 'operator' => 'Operator', default => 'Admin' };
 @endphp
 
@@ -22,33 +21,35 @@ $roleLabel = match($u) { 'rootsuperuser' => 'Root Superuser', 'bod' => 'BOD', 'o
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-6">
     @if($u === 'bod')
     @foreach([
-        ['name' => 'Jurnaling', 'route' => 'bod/jurnaling/showing', 'icon' => 'file-text', 'desc' => 'Lihat jurnal transaksi'],
-        ['name' => 'Buku Besar', 'route' => 'bod/bukubesar', 'icon' => 'book-open', 'desc' => 'Ringkasan akun per buku besar'],
-        ['name' => 'Rekap Jurnal', 'route' => 'bod/jurnaling/showing', 'icon' => 'receipt', 'desc' => 'Rekapitulasi jurnal', 'badge' => 'NEW'],
-        ['name' => 'Neraca Saldo', 'route' => 'bod/neracasaldo/', 'icon' => 'calculator', 'desc' => 'Neraca saldo periode'],
+        ['name' => 'Jurnaling', 'route' => 'jurnaling', 'icon' => 'file-text', 'desc' => 'Lihat jurnal transaksi'],
+        ['name' => 'Buku Besar', 'route' => 'bukubesar', 'icon' => 'book-open', 'desc' => 'Ringkasan akun per buku besar'],
+        ['name' => 'Rekap Jurnal', 'route' => 'jurnaling-list', 'icon' => 'receipt', 'desc' => 'Rekapitulasi jurnal', 'badge' => 'NEW'],
+        ['name' => 'Neraca Saldo', 'route' => 'neraca-saldo', 'icon' => 'calculator', 'desc' => 'Neraca saldo periode'],
     ] as $menu)
     <x-dashboard.module-card :name="$menu['name']" :route="$menu['route']" :icon="$menu['icon']" :desc="$menu['desc']" :badge="($menu['badge'] ?? null)" />
     @endforeach
     @elseif($u === 'operator')
     @foreach([
-        ['name' => 'Periode', 'route' => 'operator/periodes', 'icon' => 'calendar', 'desc' => 'Atur periode akuntansi'],
-        ['name' => 'COA', 'route' => 'operator/account/coa', 'icon' => 'grid-3x3', 'desc' => 'Kode akun'],
-        ['name' => 'Saldo Awal', 'route' => 'operator/saldoawal', 'icon' => 'wallet', 'desc' => 'Saldo awal periode'],
-        ['name' => 'Jurnaling', 'route' => 'operator/jurnaling', 'icon' => 'file-text', 'desc' => 'Entri jurnal transaksi'],
-        ['name' => 'Buku Besar', 'route' => 'operator/bukubesar', 'icon' => 'book-open', 'desc' => 'Ringkasan akun per buku besar'],
-        ['name' => 'Rekap Jurnal', 'route' => $prefix . '/jurnaling/showing', 'icon' => 'receipt', 'desc' => 'Rekapitulasi jurnal'],
-        ['name' => 'Neraca Saldo', 'route' => 'operator/neracasaldo/', 'icon' => 'calculator', 'desc' => 'Neraca saldo periode'],
+        ['name' => 'Periode', 'route' => 'periodes', 'icon' => 'calendar', 'desc' => 'Atur periode akuntansi'],
+        ['name' => 'COA', 'route' => 'coa-workspace', 'icon' => 'grid-3x3', 'desc' => 'Kode akun'],
+        ['name' => 'Saldo Awal', 'route' => 'saldo-awal', 'icon' => 'wallet', 'desc' => 'Saldo awal periode'],
+        ['name' => 'Jurnaling', 'route' => 'jurnaling', 'icon' => 'file-text', 'desc' => 'Entri jurnal transaksi'],
+        ['name' => 'Buku Besar', 'route' => 'bukubesar', 'icon' => 'book-open', 'desc' => 'Ringkasan akun per buku besar'],
+        ['name' => 'Rekap Jurnal', 'route' => 'jurnaling-list', 'icon' => 'receipt', 'desc' => 'Rekapitulasi jurnal'],
+        ['name' => 'Neraca Saldo', 'route' => 'neraca-saldo', 'icon' => 'calculator', 'desc' => 'Neraca saldo periode'],
     ] as $menu)
     <x-dashboard.module-card :name="$menu['name']" :route="$menu['route']" :icon="$menu['icon']" :desc="$menu['desc']" :badge="($menu['badge'] ?? null)" />
     @endforeach
     @else
     @foreach([
-        ['name' => 'Manajemen Pengguna', 'route' => $prefix . '/products', 'icon' => 'user', 'desc' => 'Kelola pengguna sistem'],
-        ['name' => 'Periode', 'route' => $prefix . '/periodes', 'icon' => 'calendar', 'desc' => 'Atur periode akuntansi'],
-        ['name' => 'COA', 'route' => $prefix . '/account/coa', 'icon' => 'grid-3x3', 'desc' => 'Kode akun'],
-        ['name' => 'Saldo Awal', 'route' => $prefix . '/saldoawal', 'icon' => 'wallet', 'desc' => 'Saldo awal periode'],
-        ['name' => 'Jurnaling', 'route' => $prefix . '/jurnaling', 'icon' => 'file-text', 'desc' => 'Entri jurnal transaksi'],
-        ['name' => 'Buku Besar', 'route' => $prefix . '/bukubesar', 'icon' => 'book-open', 'desc' => 'Ringkasan akun per buku besar'],['name' => 'Rekap Jurnal', 'route' => $prefix . '/jurnaling/showing', 'icon' => 'receipt', 'desc' => 'Rekapitulasi jurnal'],['name' => 'Neraca Saldo', 'route' => $prefix . '/neracasaldo/', 'icon' => 'calculator', 'desc' => 'Neraca saldo periode'],
+        ['name' => 'Manajemen Pengguna', 'route' => 'users', 'icon' => 'user', 'desc' => 'Kelola pengguna sistem'],
+        ['name' => 'Periode', 'route' => 'periodes', 'icon' => 'calendar', 'desc' => 'Atur periode akuntansi'],
+        ['name' => 'COA', 'route' => 'coa-workspace', 'icon' => 'grid-3x3', 'desc' => 'Kode akun'],
+        ['name' => 'Saldo Awal', 'route' => 'saldo-awal', 'icon' => 'wallet', 'desc' => 'Saldo awal periode'],
+        ['name' => 'Jurnaling', 'route' => 'jurnaling', 'icon' => 'file-text', 'desc' => 'Entri jurnal transaksi'],
+        ['name' => 'Buku Besar', 'route' => 'bukubesar', 'icon' => 'book-open', 'desc' => 'Ringkasan akun per buku besar'],
+        ['name' => 'Rekap Jurnal', 'route' => 'jurnaling-list', 'icon' => 'receipt', 'desc' => 'Rekapitulasi jurnal'],
+        ['name' => 'Neraca Saldo', 'route' => 'neraca-saldo', 'icon' => 'calculator', 'desc' => 'Neraca saldo periode'],
     ] as $menu)
     <x-dashboard.module-card :name="$menu['name']" :route="$menu['route']" :icon="$menu['icon']" :desc="$menu['desc']" :badge="($menu['badge'] ?? null)" />
     @endforeach

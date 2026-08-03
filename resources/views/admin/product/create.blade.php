@@ -5,7 +5,7 @@
 <x-dashboard.page-header
   title="Tambah User"
   description="Buat akun pengguna baru"
-  :actions="'<a href=\"' . route('admin/products') . '\" class=\"btn-secondary\"><i data-lucide=\"arrow-left\" class=\"w-4 h-4\"></i> Kembali</a>'"
+  :actions="'<a href=\"' . route('products') . '\" class=\"btn-secondary\"><i data-lucide=\"arrow-left\" class=\"w-4 h-4\"></i> Kembali</a>'"
 />
 
 <div class="card">
@@ -14,7 +14,7 @@
     <p class="text-sm text-gray-500">Lengkapi data berikut untuk menambahkan pengguna baru.</p>
   </div>
   <div class="card-body">
-    <form action="{{ route('admin/products/save') }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('products/save') }}" method="POST" enctype="multipart/form-data">
       @csrf
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="mb-4">
@@ -71,7 +71,7 @@
           <i data-lucide="save" class="w-4 h-4"></i>
           Submit
         </button>
-        <a href="{{ route('admin/products') }}" class="btn-secondary">Batal</a>
+        <a href="{{ route('products') }}" class="btn-secondary">Batal</a>
       </div>
     </form>
   </div>

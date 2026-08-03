@@ -149,13 +149,13 @@
                 <div class="mt-3 flex items-center gap-2">
                     <template x-if="isBalanced">
                         <span class="inline-flex items-center gap-1.5 text-sm text-emerald-600 font-medium">
-                            <i class="check-circle"></i>
+                            <i data-lucide="check-circle" class="w-4 h-4" aria-hidden="true"></i>
                             Seimbang
                         </span>
                     </template>
                     <template x-if="!isBalanced">
                         <span class="inline-flex items-center gap-1.5 text-sm text-red-600 font-medium">
-                            <i class="alert-circle"></i>
+                            <i data-lucide="alert-circle" class="w-4 h-4" aria-hidden="true"></i>
                             <span x-text="'Selisih: Rp ' + Math.abs(totalDebit - totalKredit).toLocaleString('id-ID')"></span>
                         </span>
                     </template>

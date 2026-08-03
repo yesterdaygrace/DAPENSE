@@ -62,7 +62,7 @@
                     <p class="text-2xl font-bold text-gray-900 mt-1">{{ number_format($stats['logins'], 0, ',', '.') }}</p>
                 </div>
                 <div class="w-12 h-12 rounded-[--radius-button] bg-purple-50 flex items-center justify-center">
-                    <i data-lucide='log-in-circle' class='text-2xl text-purple-600' aria-hidden="true"></i>
+                    <i data-lucide='log-in' class='text-2xl text-purple-600' aria-hidden="true"></i>
                 </div>
             </div>
         </div>

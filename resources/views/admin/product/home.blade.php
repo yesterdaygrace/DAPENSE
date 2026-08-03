@@ -5,7 +5,7 @@
 <x-dashboard.page-header
   title="User Management"
   description="Kelola pengguna sistem"
-  :actions="'<a href=\"' . route('admin/products/create') . '\" class=\"btn-primary\"><i data-lucide=\"plus\" class=\"w-4 h-4\"></i> Tambah User</a>'"
+  :actions="'<a href=\"' . route('products/create') . '\" class=\"btn-primary\"><i data-lucide=\"plus\" class=\"w-4 h-4\"></i> Tambah User</a>'"
 />
 
 <div class="card">
@@ -41,11 +41,11 @@
             <td>
               @if(!in_array($user->usertype, ['rootsuperuser', 'admin']))
               <div class="flex items-center gap-2">
-                <a href="{{ route('admin/products/status', $user->id) }}" class="btn-{{ $user->status ? 'danger' : 'success' }} btn-sm">
+                <a href="{{ route('products/status', $user->id) }}" class="btn-{{ $user->status ? 'danger' : 'success' }} btn-sm">
                   {{ $user->status ? 'Deactivate' : 'Activate' }}
                 </a>
-                <a href="{{ route('admin/products/edit', $user->id) }}" class="btn-warning btn-sm">Edit</a>
-                <button type="button" class="btn-danger btn-sm" onclick="window.dispatchEvent(new CustomEvent('delete-modal-open', {detail: '{{ route('admin/products/delete', $user->id) }}'}))">Hapus</button>
+                <a href="{{ route('products/edit', $user->id) }}" class="btn-warning btn-sm">Edit</a>
+                <button type="button" class="btn-danger btn-sm" onclick="window.dispatchEvent(new CustomEvent('delete-modal-open', {detail: '{{ route('products/delete', $user->id) }}'}))">Hapus</button>
               </div>
               @endif
             </td>
@@ -57,7 +57,7 @@
                 icon="users"
                 title="Belum ada user"
                 description="Mulai dengan menambahkan user baru ke sistem."
-                :action="'<a href=\"' . route('admin/products/create') . '\" class=\"btn-primary btn-sm\">Tambah User</a>'"
+                :action="'<a href=\"' . route('products/create') . '\" class=\"btn-primary btn-sm\">Tambah User</a>'"
               />
             </td>
           </tr>

@@ -9,3 +9,8 @@ public/storage
 .phpunit.result.cache
 .omo/
 .playwright-mcp/
+
+# Tool configs
+.envsitter/
+task.md
+opencode.json

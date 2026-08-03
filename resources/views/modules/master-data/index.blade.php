@@ -36,7 +36,7 @@
                     <p class="text-2xl font-bold text-gray-900 mt-1">245</p>
                 </div>
                 <div class="w-12 h-12 rounded-[--radius-button] bg-blue-50 flex items-center justify-center">
-                    <i data-lucide='spreadsheet' class='text-2xl text-blue-600' aria-hidden="true"></i>
+                    <i data-lucide='table-2' class='text-2xl text-blue-600' aria-hidden="true"></i>
                 </div>
             </div>
             <div class="mt-3 flex items-center gap-1 text-sm">
@@ -67,7 +67,7 @@
                     <p class="text-2xl font-bold text-gray-900 mt-1">Set</p>
                 </div>
                 <div class="w-12 h-12 rounded-[--radius-button] bg-amber-50 flex items-center justify-center">
-                    <i data-lucide='money' class='text-2xl text-amber-600' aria-hidden="true"></i>
+                    <i data-lucide='banknote' class='text-2xl text-amber-600' aria-hidden="true"></i>
                 </div>
             </div>
             <div class="mt-3 flex items-center gap-1 text-sm">
@@ -88,33 +88,33 @@
             <p class="text-sm text-gray-600 mb-4">Kelola tahun fiskal dan periode akuntansi</p>
             <div class="flex items-center text-primary text-sm font-medium">
                 <span>Buka</span>
-                <i data-lucide='right-arrow-alt' class='ml-1 group-hover:translate-x-1 transition-transform' aria-hidden="true"></i>
+                <i data-lucide='arrow-right' class='ml-1 group-hover:translate-x-1 transition-transform' aria-hidden="true"></i>
             </div>
         </a>
 
         <!-- Chart of Accounts + Headers -->
         <a href="{{ $prefix }}/master-data/coa-workspace" class="bg-white rounded-[--radius-card] p-6 shadow-card hover:shadow-card-hover transition-shadow cursor-pointer group">
             <div class="w-12 h-12 rounded-[--radius-button] bg-primary-50 flex items-center justify-center text-primary mb-4 group-hover:scale-110 transition-transform">
-                <i data-lucide='spreadsheet' class='text-2xl' aria-hidden="true"></i>
+                <i data-lucide='table-2' class='text-2xl' aria-hidden="true"></i>
             </div>
             <h3 class="text-lg font-semibold text-gray-900 mb-2">Kode Akun</h3>
             <p class="text-sm text-gray-600 mb-4">Kelola struktur akun dan header akun</p>
             <div class="flex items-center text-primary text-sm font-medium">
                 <span>Buka</span>
-                <i data-lucide='right-arrow-alt' class='ml-1 group-hover:translate-x-1 transition-transform' aria-hidden="true"></i>
+                <i data-lucide='arrow-right' class='ml-1 group-hover:translate-x-1 transition-transform' aria-hidden="true"></i>
             </div>
         </a>
 
         <!-- Opening Balance -->
         <a href="{{ $prefix }}/saldoawal" class="bg-white rounded-[--radius-card] p-6 shadow-card hover:shadow-card-hover transition-shadow cursor-pointer group">
             <div class="w-12 h-12 rounded-[--radius-button] bg-primary-50 flex items-center justify-center text-primary mb-4 group-hover:scale-110 transition-transform">
-                <i data-lucide='money' class='text-2xl' aria-hidden="true"></i>
+                <i data-lucide='banknote' class='text-2xl' aria-hidden="true"></i>
             </div>
             <h3 class="text-lg font-semibold text-gray-900 mb-2">Saldo Awal</h3>
             <p class="text-sm text-gray-600 mb-4">Atur saldo awal akun</p>
             <div class="flex items-center text-primary text-sm font-medium">
                 <span>Buka</span>
-                <i data-lucide='right-arrow-alt' class='ml-1 group-hover:translate-x-1 transition-transform' aria-hidden="true"></i>
+                <i data-lucide='arrow-right' class='ml-1 group-hover:translate-x-1 transition-transform' aria-hidden="true"></i>
             </div>
         </a>
     </div>

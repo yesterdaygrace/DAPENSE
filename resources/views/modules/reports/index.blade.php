@@ -103,7 +103,7 @@
             <p class="text-sm text-gray-600 mb-4">Lihat ringkasan entri jurnal per periode</p>
             <div class="flex items-center text-primary text-sm font-medium">
                 <span>Buka</span>
-                <i data-lucide='right-arrow-alt' class='ml-1 group-hover:translate-x-1 transition-transform' aria-hidden="true"></i>
+                <i data-lucide='arrow-right' class='ml-1 group-hover:translate-x-1 transition-transform' aria-hidden="true"></i>
             </div>
         </a>
 
@@ -116,7 +116,7 @@
             <p class="text-sm text-gray-600 mb-4">Lihat pergerakan dan saldo akun</p>
             <div class="flex items-center text-primary text-sm font-medium">
                 <span>Buka</span>
-                <i data-lucide='right-arrow-alt' class='ml-1 group-hover:translate-x-1 transition-transform' aria-hidden="true"></i>
+                <i data-lucide='arrow-right' class='ml-1 group-hover:translate-x-1 transition-transform' aria-hidden="true"></i>
             </div>
         </a>
 
@@ -129,7 +129,7 @@
             <p class="text-sm text-gray-600 mb-4">Verifikasi saldo debit dan kredit</p>
             <div class="flex items-center text-primary text-sm font-medium">
                 <span>Buka</span>
-                <i data-lucide='right-arrow-alt' class='ml-1 group-hover:translate-x-1 transition-transform' aria-hidden="true"></i>
+                <i data-lucide='arrow-right' class='ml-1 group-hover:translate-x-1 transition-transform' aria-hidden="true"></i>
             </div>
         </a>
 

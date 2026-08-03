@@ -7,7 +7,7 @@
         @endif
         <div class="px-4 py-6">
             <div class="w-12 h-12 rounded-xl bg-primary-50 flex items-center justify-center mx-auto mb-3">
-                <i class="{{ $icon }}" style="font-size: 1.4rem; color: #1D4ED8;"></i>
+                <i data-lucide="{{ $icon }}" class="w-6 h-6" style="color: #1D4ED8;" aria-hidden="true"></i>
             </div>
             <h6 class="font-semibold text-sm text-gray-900 mb-1">{{ $name }}</h6>
             @if($desc)

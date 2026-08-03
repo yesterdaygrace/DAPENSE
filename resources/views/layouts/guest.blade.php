@@ -8,7 +8,10 @@
     <meta property="og:title" content="WAS" />
     <meta property="og:description" content="Web Accounting System — Sistem akuntansi terintegrasi untuk pengelolaan keuangan perusahaan." />
     <meta property="og:type" content="website" />
-    <title>{{ config('app.name', 'WAS') }}</title>
+    <title>{{ config('app.name', 'DAPENSE') }}</title>
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('favicon-16x16.png') }}" />
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}" />
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700,800&display=swap" rel="stylesheet" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])

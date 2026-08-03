@@ -52,7 +52,7 @@
                     <p class="text-2xl font-bold text-gray-900 mt-1">Connected</p>
                 </div>
                 <div class="w-12 h-12 rounded-[--radius-button] bg-blue-50 flex items-center justify-center">
-                    <i data-lucide='data' class='text-2xl text-blue-600' aria-hidden="true"></i>
+                    <i data-lucide='database' class='text-2xl text-blue-600' aria-hidden="true"></i>
                 </div>
             </div>
             <div class="mt-3 flex items-center gap-1 text-sm">
@@ -83,7 +83,7 @@
                     <p class="text-2xl font-bold text-gray-900 mt-1">Active</p>
                 </div>
                 <div class="w-12 h-12 rounded-[--radius-button] bg-amber-50 flex items-center justify-center">
-                    <i data-lucide='envelope' class='text-2xl text-amber-600' aria-hidden="true"></i>
+                    <i data-lucide='mail' class='text-2xl text-amber-600' aria-hidden="true"></i>
                 </div>
             </div>
             <div class="mt-3 flex items-center gap-1 text-sm">
@@ -99,7 +99,7 @@
             <div class="flex items-center justify-between p-3 bg-gray-50 rounded-[--radius-button]">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-[--radius-button] bg-blue-100 flex items-center justify-center">
-                        <i data-lucide='code-alt' class='text-blue-600' aria-hidden="true"></i>
+                        <i data-lucide='code' class='text-blue-600' aria-hidden="true"></i>
                     </div>
                     <div>
                         <p class="text-xs text-gray-500">Versi Aplikasi</p>
@@ -132,7 +132,7 @@
             <div class="flex items-center justify-between p-3 bg-gray-50 rounded-[--radius-button]">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-[--radius-button] bg-amber-100 flex items-center justify-center">
-                        <i data-lucide='time' class='text-amber-600' aria-hidden="true"></i>
+                        <i data-lucide='clock' class='text-amber-600' aria-hidden="true"></i>
                     </div>
                     <div>
                         <p class="text-xs text-gray-500">Zona Waktu</p>

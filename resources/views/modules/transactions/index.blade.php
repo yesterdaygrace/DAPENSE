@@ -36,7 +36,7 @@
                     <p class="text-2xl font-bold text-gray-900 mt-1">1,284</p>
                 </div>
                 <div class="w-12 h-12 rounded-[--radius-button] bg-blue-50 flex items-center justify-center">
-                    <i data-lucide='list-ul' class='text-2xl text-blue-600' aria-hidden="true"></i>
+                    <i data-lucide='list' class='text-2xl text-blue-600' aria-hidden="true"></i>
                 </div>
             </div>
             <div class="mt-3 flex items-center gap-1 text-sm">
@@ -52,7 +52,7 @@
                     <p class="text-2xl font-bold text-gray-900 mt-1">12</p>
                 </div>
                 <div class="w-12 h-12 rounded-[--radius-button] bg-amber-50 flex items-center justify-center">
-                    <i data-lucide='file-blank' class='text-2xl text-amber-600' aria-hidden="true"></i>
+                    <i data-lucide='file' class='text-2xl text-amber-600' aria-hidden="true"></i>
                 </div>
             </div>
             <div class="mt-3 flex items-center gap-1 text-sm">
@@ -103,20 +103,20 @@
             <p class="text-sm text-gray-600 mb-4">Buat entri jurnal baru dan catat transaksi</p>
             <div class="flex items-center text-primary text-sm font-medium">
                 <span>Buka</span>
-                <i data-lucide='right-arrow-alt' class='ml-1 group-hover:translate-x-1 transition-transform' aria-hidden="true"></i>
+                <i data-lucide='arrow-right' class='ml-1 group-hover:translate-x-1 transition-transform' aria-hidden="true"></i>
             </div>
         </a>
 
         <!-- Journal List -->
         <a href="{{ $prefix }}/jurnaling/showing" class="bg-white rounded-[--radius-card] p-6 shadow-card hover:shadow-card-hover transition-shadow cursor-pointer group">
             <div class="w-12 h-12 rounded-[--radius-button] bg-primary-50 flex items-center justify-center text-primary mb-4 group-hover:scale-110 transition-transform">
-                <i data-lucide='list-ul' class='text-2xl' aria-hidden="true"></i>
+                <i data-lucide='list' class='text-2xl' aria-hidden="true"></i>
             </div>
             <h3 class="text-lg font-semibold text-gray-900 mb-2">Daftar Jurnal</h3>
             <p class="text-sm text-gray-600 mb-4">Lihat dan cari semua entri jurnal yang sudah diposting</p>
             <div class="flex items-center text-primary text-sm font-medium">
                 <span>Buka</span>
-                <i data-lucide='right-arrow-alt' class='ml-1 group-hover:translate-x-1 transition-transform' aria-hidden="true"></i>
+                <i data-lucide='arrow-right' class='ml-1 group-hover:translate-x-1 transition-transform' aria-hidden="true"></i>
             </div>
         </a>
 
@@ -125,13 +125,13 @@
         <!-- Export -->
         <a href="{{ $prefix }}/jurnaling/export" class="bg-white rounded-[--radius-card] p-6 shadow-card hover:shadow-card-hover transition-shadow cursor-pointer group">
             <div class="w-12 h-12 rounded-[--radius-button] bg-primary-50 flex items-center justify-center text-primary mb-4 group-hover:scale-110 transition-transform">
-                <i data-lucide='export' class='text-2xl' aria-hidden="true"></i>
+                <i data-lucide='download' class='text-2xl' aria-hidden="true"></i>
             </div>
             <h3 class="text-lg font-semibold text-gray-900 mb-2">Ekspor</h3>
             <p class="text-sm text-gray-600 mb-4">Unduh entri jurnal ke Excel atau PDF</p>
             <div class="flex items-center text-primary text-sm font-medium">
                 <span>Buka</span>
-                <i data-lucide='right-arrow-alt' class='ml-1 group-hover:translate-x-1 transition-transform' aria-hidden="true"></i>
+                <i data-lucide='arrow-right' class='ml-1 group-hover:translate-x-1 transition-transform' aria-hidden="true"></i>
             </div>
         </a>
     </div>

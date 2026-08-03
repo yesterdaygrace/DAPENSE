@@ -3,9 +3,11 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
-    <title>WAS | {{ ucfirst(Auth::user()->usertype === 'rootsuperuser' ? 'Root Superuser' : (Auth::user()->usertype === 'bod' ? 'BOD' : Auth::user()->usertype)) }}</title>
-    <meta name="description" content="WAS — Web Accounting System" />
+    <title>DAPENSE | {{ ucfirst(Auth::user()->usertype === 'rootsuperuser' ? 'Root Superuser' : (Auth::user()->usertype === 'bod' ? 'BOD' : Auth::user()->usertype)) }}</title>
+    <meta name="description" content="DAPENSE — Web Accounting System" />
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('favicon-16x16.png') }}" />
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -61,6 +63,7 @@
         <main id="main-content" class="flex-1 overflow-y-auto">
             <div class="content-container px-6 lg:px-8 py-6 lg:py-8">
                 @yield('content')
+                {{ $slot ?? '' }}
             </div>
         </main>
 

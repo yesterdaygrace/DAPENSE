@@ -65,9 +65,15 @@ $navItems = [
     <div class="absolute inset-0 w-[72px] flex flex-col bg-white border-r border-gray-200 z-10">
         <!-- Brand icon -->
         <div class="h-16 flex items-center justify-center border-b border-gray-100 flex-shrink-0">
-            <div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center shadow-sm">
-                <span class="text-white font-bold text-sm">W</span>
-            </div>
+            <a href="{{ route(match(Auth::user()->usertype) {
+                'rootsuperuser' => 'rootsuperuser/dashboard',
+                'admin' => 'admin/dashboard',
+                'operator' => 'operator/dashboard',
+                'bod' => 'bod/dashboard',
+                default => 'dashboard',
+            }) }}">
+                <img src="{{ asset('logo.svg') }}" alt="DAPENSE" class="w-8 h-8" />
+            </a>
         </div>
 
         <!-- Nav icons -->
@@ -106,9 +112,12 @@ $navItems = [
                 overflow-hidden">
         <!-- Brand text -->
         <div class="h-16 flex items-center border-b border-gray-100 px-5 flex-shrink-0">
-            <div>
-                <span class="font-bold text-sm text-gray-900">WAS</span>
-                <span class="block text-[10px] text-gray-400 font-semibold tracking-wider uppercase">Sistem Akuntansi</span>
+            <div class="flex items-center gap-2.5">
+                <img src="{{ asset('logo.svg') }}" alt="DAPENSE" class="w-7 h-7" />
+                <div>
+                    <span class="font-bold text-sm text-gray-900">DAPENSE</span>
+                    <span class="block text-[10px] text-gray-400 font-semibold tracking-wider uppercase">Sistem Akuntansi</span>
+                </div>
             </div>
         </div>
 

@@ -36,7 +36,7 @@
                     <p class="text-2xl font-bold text-gray-900 mt-1">8</p>
                 </div>
                 <div class="w-12 h-12 rounded-[--radius-button] bg-blue-50 flex items-center justify-center">
-                    <i data-lucide='bank' class='text-2xl text-blue-600' aria-hidden="true"></i>
+                    <i data-lucide='landmark' class='text-2xl text-blue-600' aria-hidden="true"></i>
                 </div>
             </div>
             <div class="mt-3 flex items-center gap-1 text-sm">
@@ -52,7 +52,7 @@
                     <p class="text-2xl font-bold text-gray-900 mt-1">78%</p>
                 </div>
                 <div class="w-12 h-12 rounded-[--radius-button] bg-green-50 flex items-center justify-center">
-                    <i data-lucide='dollar' class='text-2xl text-green-600' aria-hidden="true"></i>
+                    <i data-lucide='dollar-sign' class='text-2xl text-green-600' aria-hidden="true"></i>
                 </div>
             </div>
             <div class="mt-3 flex items-center gap-1 text-sm">
