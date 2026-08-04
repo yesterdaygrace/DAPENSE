@@ -457,7 +457,7 @@ class LaporanArusKas implements FromCollection, WithColumnWidths, WithEvents, Wi
                         ]);
                     }
 
-                    if (trim(strtoupper($val)) === 'Kas Pada Akhir Periode') {
+                    if (trim(strtoupper($val)) === 'KAS PADA AKHIR PERIODE') {
                         $sheet->getStyle('B' . ($row - 1) . ':C' . ($row - 1))->applyFromArray([
                             'borders' => [
                                 'bottom' => [

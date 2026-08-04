@@ -10,6 +10,7 @@ use App\Models\HeaderCOA;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Maatwebsite\Excel\Facades\Excel;
+use Maatwebsite\Excel\Validators\ValidationException;
 
 class COAWorkspaceController extends Controller
 {
@@ -20,76 +21,11 @@ class COAWorkspaceController extends Controller
 
     public function index()
     {
-        return $this->accounts();
-    }
-
-    public function accounts()
-    {
         $coas = COA::with('headerCoa')->paginate(20);
         $headers = HeaderCOA::withCount('coas')->with('parent')->paginate(20);
 
         return view('modules.master-data.coa-workspace', [
             'activeTab' => 'accounts',
-            'coas' => $coas,
-            'headers' => $headers,
-        ]);
-    }
-
-    public function headers()
-    {
-        $coas = COA::with('headerCoa')->paginate(20);
-        $headers = HeaderCOA::withCount('coas')->with('parent')->paginate(20);
-
-        return view('modules.master-data.coa-workspace', [
-            'activeTab' => 'headers',
-            'coas' => $coas,
-            'headers' => $headers,
-        ]);
-    }
-
-    public function mapping()
-    {
-        $coas = COA::with('headerCoa')->paginate(20);
-        $headers = HeaderCOA::withCount('coas')->with('parent', 'coas')->paginate(20);
-
-        return view('modules.master-data.coa-workspace', [
-            'activeTab' => 'mapping',
-            'coas' => $coas,
-            'headers' => $headers,
-        ]);
-    }
-
-    public function import()
-    {
-        $coas = COA::with('headerCoa')->paginate(20);
-        $headers = HeaderCOA::withCount('coas')->with('parent')->paginate(20);
-
-        return view('modules.master-data.coa-workspace', [
-            'activeTab' => 'import',
-            'coas' => $coas,
-            'headers' => $headers,
-        ]);
-    }
-
-    public function export()
-    {
-        $coas = COA::with('headerCoa')->paginate(20);
-        $headers = HeaderCOA::withCount('coas')->with('parent')->paginate(20);
-
-        return view('modules.master-data.coa-workspace', [
-            'activeTab' => 'export',
-            'coas' => $coas,
-            'headers' => $headers,
-        ]);
-    }
-
-    public function audit()
-    {
-        $coas = COA::with('headerCoa')->paginate(20);
-        $headers = HeaderCOA::withCount('coas')->with('parent')->paginate(20);
-
-        return view('modules.master-data.coa-workspace', [
-            'activeTab' => 'audit',
             'coas' => $coas,
             'headers' => $headers,
         ]);
@@ -127,7 +63,7 @@ class COAWorkspaceController extends Controller
 
         $file = $request->file('file');
 
-        $import = new COAImport();
+        $import = new COAImport;
 
         try {
             Excel::import($import, $file);
@@ -137,7 +73,7 @@ class COAWorkspaceController extends Controller
             return redirect()
                 ->route($this->prefix() . '/master-data/coa-workspace', ['tab' => 'import'])
                 ->with('success', 'Data COA berhasil diimpor. Total akun: ' . $importCount);
-        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+        } catch (ValidationException $e) {
             $failures = $e->failures();
 
             $errorMessages = collect($failures)->map(function ($failure) {

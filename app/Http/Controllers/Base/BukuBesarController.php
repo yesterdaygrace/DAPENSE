@@ -53,7 +53,7 @@ class BukuBesarController
         })->get();
 
         $availableMonths = Jurnaling::where('periode_id', $periodeId)
-            ->selectRaw('DISTINCT MONTH(tanggal_jurnal) as bulan')
+            ->selectRaw('DISTINCT EXTRACT(MONTH FROM tanggal_jurnal) as bulan')
             ->orderBy('bulan', 'asc')
             ->pluck('bulan');
 
@@ -86,7 +86,7 @@ class BukuBesarController
 
         $availableMonths = $periodeId
             ? Jurnaling::where('periode_id', $periodeId)
-                ->selectRaw('DISTINCT MONTH(tanggal_jurnal) as bulan')
+                ->selectRaw('DISTINCT EXTRACT(MONTH FROM tanggal_jurnal) as bulan')
                 ->orderBy('bulan')
                 ->pluck('bulan')
             : collect();
@@ -130,9 +130,9 @@ class BukuBesarController
         $transactions = Jurnaling::where('coa_id', $coaId)
             ->where('periode_id', $periodeId)
             ->whereBetween('tanggal_jurnal', [$tanggalAwal, $tanggalAkhir])
-            ->orderBy('tanggal_jurnal', 'ASC')
-            ->orderBy('nomor_bukti', 'ASC')
-            ->orderBy('id', 'ASC')
+            ->orderBy('tanggal_jurnal', 'asc')
+            ->orderBy('nomor_bukti', 'asc')
+            ->orderBy('id', 'asc')
             ->get();
 
         $runningTotal = $saldoAwal;
@@ -248,7 +248,7 @@ class BukuBesarController
         $selectedCoa = COA::findOrFail($coaId);
 
         $availableMonths = Jurnaling::where('periode_id', $periodeId)
-            ->selectRaw('DISTINCT MONTH(tanggal_jurnal) as bulan')
+            ->selectRaw('DISTINCT EXTRACT(MONTH FROM tanggal_jurnal) as bulan')
             ->orderBy('bulan', 'asc')
             ->pluck('bulan');
 
@@ -275,7 +275,7 @@ class BukuBesarController
             ->where('periode_id', $periodeId)
             ->whereMonth('tanggal_jurnal', $bulan)
             ->orderBy('tanggal_jurnal', 'asc')
-            ->orderBy('nomor_bukti', 'ASC')
+            ->orderBy('nomor_bukti', 'asc')
             ->get(['tanggal_jurnal', 'nomor_bukti', 'keterangan', 'debit', 'kredit']);
 
         $keteranganGabungan = Jurnaling::where('periode_id', $periodeId)

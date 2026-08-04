@@ -7,7 +7,6 @@ use App\Models\COA;
 use App\Models\Jurnaling;
 use App\Models\NeracaSaldo;
 use App\Models\Periode;
-use App\Models\SaldoAwal;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
 
@@ -21,12 +20,13 @@ class Posting extends Component
     public bool $showConfirmModal = false;
     public string $postingAction = '';
 
+    public function boot()
+    {
+        abort_unless($this->canAccess('posting'), 403);
+    }
+
     public function mount()
     {
-        if (!$this->canAccess('posting')) {
-            return;
-        }
-
         $this->periodes = Periode::orderBy('tanggal_awal', 'desc')->get();
     }
 
@@ -55,9 +55,10 @@ class Posting extends Component
     {
         Gate::authorize('post-journal');
 
-        if (!$this->periodeId) {
+        if (! $this->periodeId) {
             session()->flash('error', 'Pilih periode terlebih dahulu.');
             $this->showConfirmModal = false;
+
             return;
         }
 
@@ -69,7 +70,9 @@ class Posting extends Component
 
             foreach ($coas as $coa) {
                 $totals = $entries->where('coa_id', $coa->id);
-                if ($totals->isEmpty()) continue;
+                if ($totals->isEmpty()) {
+                    continue;
+                }
 
                 $totalDebit = $totals->sum('debit');
                 $totalKredit = $totals->sum('kredit');

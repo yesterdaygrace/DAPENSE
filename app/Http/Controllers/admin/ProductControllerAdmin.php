@@ -47,15 +47,9 @@ class ProductControllerAdmin
 
         event(new Registered($data));
 
-        if ($data) {
-            session()->flash('success', 'User Added Successfully');
+        session()->flash('success', 'User Added Successfully');
 
-            return redirect()->route('admin/products');
-        } else {
-            session()->flash('error', 'Some problem occurred');
-
-            return redirect()->route('admin/products/create');
-        }
+        return redirect()->route('products');
     }
 
     public function edit($id)
@@ -100,11 +94,11 @@ class ProductControllerAdmin
         if ($user->save()) {
             session()->flash('success', 'User Updated Successfully');
 
-            return redirect()->route('admin/products');
+            return redirect()->route('products');
         } else {
             session()->flash('error', 'Some problem occurred');
 
-            return redirect()->route('admin/products/edit', $id);
+            return redirect()->route('products/edit', $id);
         }
     }
 
@@ -118,11 +112,11 @@ class ProductControllerAdmin
             }
             session()->flash('success', 'User Deleted Successfully');
 
-            return redirect()->route('admin/products');
+            return redirect()->route('products');
         } else {
             session()->flash('error', 'Some problem occurred');
 
-            return redirect()->route('admin/products');
+            return redirect()->route('products');
         }
     }
 
@@ -134,6 +128,6 @@ class ProductControllerAdmin
 
         session()->flash('success', 'User status updated successfully');
 
-        return redirect()->route('admin/products');
+        return redirect()->route('products');
     }
 }

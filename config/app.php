@@ -123,4 +123,19 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Platform Detection Flags
+    |--------------------------------------------------------------------------
+    |
+    | These values are read from the environment so they can be consumed via
+    | config() (cache-safe) instead of env() at runtime. DOCKER is set in
+    | docker-compose; VERCEL / VERCEL_ENV are set by the Vercel platform.
+    |
+    */
+
+    'docker' => (bool) env('DOCKER', false),
+    'vercel' => (bool) env('VERCEL', false),
+    'vercel_env' => (bool) env('VERCEL_ENV', false),
+
 ];

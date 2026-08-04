@@ -1,6 +1,9 @@
 <?php
 
+use App\Livewire\PeriodeManager;
 use App\Models\User;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Livewire\Livewire;
 
 beforeEach(function () {
     $this->admin = User::factory()->create(['usertype' => 'admin', 'status' => 1]);
@@ -8,13 +11,13 @@ beforeEach(function () {
 
 test('unauthenticated user gets 302 redirect on protected routes', function () {
     $protectedRoutes = [
+        '/dashboard',
         '/admin/dashboard',
-        '/admin/periodes',
-        '/admin/account/coa',
-        '/admin/products',
-        '/admin/jurnaling',
-        '/admin/bukubesar',
-        '/admin/neracasaldo/',
+        '/periodes',
+        '/coa-workspace',
+        '/users',
+        '/jurnaling',
+        '/bukubesar',
         '/profile',
     ];
 
@@ -28,15 +31,16 @@ test('authenticated user gets 200 on protected routes', function () {
 
     $protectedRoutes = [
         '/admin/dashboard',
-        '/admin/periodes',
-        '/admin/account/coa',
-        '/admin/account/header',
-        '/admin/saldoawal',
-        '/admin/products',
-        '/admin/otorisator/home',
-        '/admin/jurnaling',
-        '/admin/bukubesar',
-        '/admin/neracasaldo/',
+        '/dashboard',
+        '/periodes',
+        '/coa-workspace',
+        '/saldo-awal',
+        '/users',
+        '/otorisator',
+        '/jurnaling',
+        '/jurnaling-list',
+        '/bukubesar',
+        '/neraca-saldo',
         '/profile',
     ];
 
@@ -109,34 +113,48 @@ test('POST to profile without auth returns 302', function () {
         ->assertRedirect('/login');
 });
 
-test('role middleware blocks wrong role', function () {
+test('role middleware blocks wrong role on dashboard routes', function () {
     $user = User::factory()->create(['usertype' => 'bod', 'status' => 1]);
-    $this->actingAs($user)->get('/admin/products')->assertRedirect('/');
+    $this->actingAs($user)->get('/admin/dashboard')->assertRedirect('/');
 });
 
-test('COA edit page returns 404 for non-existent COA', function () {
-    $this->actingAs($this->admin)->get('/admin/account/coa/edit/99999')->assertNotFound();
+test('role middleware blocks wrong role on products routes', function () {
+    $user = User::factory()->create(['usertype' => 'bod', 'status' => 1]);
+    $this->actingAs($user)->get('/products')->assertRedirect('/');
 });
 
-test('periode edit page returns 404 for non-existent periode', function () {
-    $this->actingAs($this->admin)->get('/admin/periodes/edit/99999')->assertNotFound();
+test('products page returns 200 for admin', function () {
+    $this->actingAs($this->admin)->get('/products')->assertOk();
+});
+
+test('product edit page returns 404 for non-existent user', function () {
+    $this->actingAs($this->admin)->get('/products/edit/99999')->assertNotFound();
+});
+
+test('periode edit throws ModelNotFoundException for non-existent periode', function () {
+    $this->actingAs($this->admin);
+    $this->expectException(ModelNotFoundException::class);
+    Livewire::test(PeriodeManager::class)->call('edit', 99999);
 });
 
 test('BOD routes are accessible by BOD user', function () {
     $bod = User::factory()->create(['usertype' => 'bod', 'status' => 1]);
     $this->actingAs($bod);
     $this->get('/bod/dashboard')->assertOk();
-    $this->get('/bod/bukubesar')->assertOk();
-    $this->get('/bod/neracasaldo/')->assertOk();
+    $this->get('/jurnaling')->assertOk();
+    $this->get('/jurnaling-list')->assertOk();
+    $this->get('/bukubesar')->assertOk();
+    $this->get('/neraca-saldo')->assertOk();
 });
 
 test('operator routes are accessible by operator user', function () {
     $operator = User::factory()->create(['usertype' => 'operator', 'status' => 1]);
     $this->actingAs($operator);
     $this->get('/operator/dashboard')->assertOk();
-    $this->get('/operator/periodes')->assertOk();
-    $this->get('/operator/jurnaling')->assertOk();
-    $this->get('/operator/bukubesar')->assertOk();
+    $this->get('/periodes')->assertOk();
+    $this->get('/coa-workspace')->assertOk();
+    $this->get('/jurnaling')->assertOk();
+    $this->get('/bukubesar')->assertOk();
 });
 
 test('rootsuperuser routes are accessible by rootsuperuser', function () {

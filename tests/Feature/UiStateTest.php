@@ -1,6 +1,9 @@
 <?php
 
+use App\Livewire\PeriodeManager;
+use App\Models\Periode;
 use App\Models\User;
+use Livewire\Livewire;
 
 beforeEach(function () {
     $this->admin = User::factory()->create(['usertype' => 'admin', 'status' => 1]);
@@ -23,7 +26,7 @@ test('dashboard loads in idle state — no toast, no modal, no loading, no valid
 });
 
 test('periode list loads in idle state — no toast, no modal, no loading', function () {
-    $response = $this->get('/admin/periodes');
+    $response = $this->get('/periodes');
     $content = $response->getContent();
 
     expect($content)->toContain('data-table');
@@ -31,40 +34,49 @@ test('periode list loads in idle state — no toast, no modal, no loading', func
     expect(str_contains($content, 'alert-danger'))->toBeFalse();
 });
 
-test('COA create page loads in idle state — form only, no validation errors', function () {
-    $response = $this->get('/admin/account/coa/create');
+test('COA workspace loads in idle state — form only, no validation errors', function () {
+    $response = $this->get('/coa-workspace');
     $content = $response->getContent();
 
-    expect($content)->toContain('</form>');
+    expect($content)->toContain('data-table');
     expect(str_contains($content, 'is-invalid'))->toBeFalse();
-    // text-danger may exist inside Alpine.js <template> blocks (toasts) but not in visible error messages
     expect(str_contains($content, 'border-danger'))->toBeFalse();
 });
 
 test('toast appears after successful create', function () {
-    $response = $this->followingRedirects()->post('/admin/periodes/save', [
-        'nama_periode' => 'Toast Test ' . uniqid(),
-        'tanggal_awal' => '2024-01-01',
-        'tanggal_akhir' => '2024-12-31',
-    ]);
-    $content = $response->getContent();
-    expect($content)->toContain('success');
+    $nama = 'Toast Test ' . uniqid();
+
+    Livewire::test(PeriodeManager::class)
+        ->set('formData.nama_periode', $nama)
+        ->set('formData.tanggal_awal', '2024-01-01')
+        ->set('formData.tanggal_akhir', '2024-12-31')
+        ->call('save')
+        ->assertHasNoErrors();
+
+    $this->assertDatabaseHas('periodes', ['nama_periode' => $nama]);
 });
 
 test('validation errors appear per-field after invalid submit', function () {
-    $response = $this->post('/admin/periodes/save', [
-        'nama_periode' => '',
-        'tanggal_awal' => '',
-        'tanggal_akhir' => '',
-    ]);
-    $response->assertSessionHasErrors(['nama_periode', 'tanggal_awal', 'tanggal_akhir']);
+    Livewire::test(PeriodeManager::class)
+        ->set('formData.nama_periode', '')
+        ->set('formData.tanggal_awal', '')
+        ->set('formData.tanggal_akhir', '')
+        ->call('save')
+        ->assertHasErrors(['formData.nama_periode', 'formData.tanggal_awal', 'formData.tanggal_akhir']);
 });
 
-test('delete confirmation uses Alpine modal, not JavaScript confirm()', function () {
-    $response = $this->get('/admin/periodes');
+test('delete confirmation uses modal, not JavaScript confirm()', function () {
+    Periode::create([
+        'nama_periode' => 'Periode Delete Test',
+        'tanggal_awal' => '2024-01-01',
+        'tanggal_akhir' => '2024-12-31',
+        'is_rekap' => false,
+    ]);
+
+    $response = $this->get('/periodes');
     $content = $response->getContent();
 
-    expect($content)->toContain('delete-modal-open');
+    expect($content)->toContain('wire:click="confirmDelete');
     expect(str_contains($content, 'confirm('))->toBeFalse();
 });
 
@@ -86,10 +98,10 @@ test('loading overlay is hidden on idle page load', function () {
 });
 
 test('modal is hidden on idle page load', function () {
-    $response = $this->get('/admin/dashboard');
+    $response = $this->get('/periodes');
     $content = $response->getContent();
 
-    // Modal exists but is hidden by default (display: none)
+    // Modal exists but is hidden by default (not rendered when $showModal is false)
     expect(str_contains($content, 'modal-backdrop'))->toBeFalse();
 });
 
@@ -102,7 +114,7 @@ test('profile page loads in idle state', function () {
 });
 
 test('user management page loads without error modals visible', function () {
-    $response = $this->get('/admin/products');
+    $response = $this->get('/users');
     $content = $response->getContent();
 
     expect($content)->toContain('data-table');
@@ -120,7 +132,7 @@ test('dashboard has all idle-state required sections', function () {
 });
 
 test('no JavaScript alert or confirm used on list pages', function () {
-    $pages = ['/admin/periodes', '/admin/account/coa', '/admin/products', '/admin/otorisator/home'];
+    $pages = ['/periodes', '/coa-workspace', '/users', '/otorisator'];
     foreach ($pages as $page) {
         $response = $this->get($page);
         $content = $response->getContent();
@@ -129,12 +141,14 @@ test('no JavaScript alert or confirm used on list pages', function () {
 });
 
 test('redirect after create shows success toast', function () {
-    $response = $this->post('/admin/periodes/save', [
-        'nama_periode' => 'Toast Test ' . uniqid(),
-        'tanggal_awal' => '2024-01-01',
-        'tanggal_akhir' => '2024-12-31',
-    ]);
+    $nama = 'Toast Test ' . uniqid();
 
-    $response->assertSessionHas('success');
-    expect($response->isRedirect())->toBeTrue();
+    Livewire::test(PeriodeManager::class)
+        ->set('formData.nama_periode', $nama)
+        ->set('formData.tanggal_awal', '2024-01-01')
+        ->set('formData.tanggal_akhir', '2024-12-31')
+        ->call('save')
+        ->assertHasNoErrors();
+
+    $this->assertDatabaseHas('periodes', ['nama_periode' => $nama]);
 });

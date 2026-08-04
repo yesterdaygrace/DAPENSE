@@ -4,12 +4,11 @@
 -- 100 akun COA | 500 transaksi jurnal (1000 baris debit/kredit berpasangan)
 -- =====================================================================
 
-SET FOREIGN_KEY_CHECKS=0;
 
 -- ---------------------------------------------------------------------
 -- 1) HEADER COA (kelompok akun)
 -- ---------------------------------------------------------------------
-INSERT INTO `header_coas` (`id`, `kode_header`, `nama_header`, `level`, `parent_id`, `created_at`, `updated_at`) VALUES
+INSERT INTO header_coas (id, kode_header, nama_header, level, parent_id, created_at, updated_at) VALUES
 (1, '1', 'ASET', 1, NULL, '2026-01-01 00:00:00', '2026-01-01 00:00:00'),
 (2, '2', 'KEWAJIBAN', 1, NULL, '2026-01-01 00:00:00', '2026-01-01 00:00:00'),
 (3, '3', 'MODAL', 1, NULL, '2026-01-01 00:00:00', '2026-01-01 00:00:00'),
@@ -31,13 +30,13 @@ INSERT INTO `header_coas` (`id`, `kode_header`, `nama_header`, `level`, `parent_
 -- ---------------------------------------------------------------------
 -- 2) PERIODE AKUNTANSI (satu periode untuk tahun 2025)
 -- ---------------------------------------------------------------------
-INSERT INTO `periodes` (`id`, `nama_periode`, `tanggal_awal`, `tanggal_akhir`, `is_rekap`, `created_at`, `updated_at`) VALUES
-(1, 'Tahun 2025', '2025-01-01', '2025-12-31', 0, '2026-01-01 00:00:00', '2026-01-01 00:00:00');
+INSERT INTO periodes (id, nama_periode, tanggal_awal, tanggal_akhir, is_rekap, created_at, updated_at) VALUES
+(1, 'Tahun 2025', '2025-01-01', '2025-12-31', false, '2026-01-01 00:00:00', '2026-01-01 00:00:00');
 
 -- ---------------------------------------------------------------------
 -- 3) CHART OF ACCOUNTS (100 akun keuangan)
 -- ---------------------------------------------------------------------
-INSERT INTO `coas` (`id`, `kode_akun`, `nama_akun`, `saldo_normal`, `kategori`, `level`, `header_coa_id`, `created_at`, `updated_at`) VALUES
+INSERT INTO coas (id, kode_akun, nama_akun, saldo_normal, kategori, level, header_coa_id, created_at, updated_at) VALUES
 (1, '10010001', 'Kas', 'Debit', 'Aset', 3, 6, '2026-01-01 00:00:00', '2026-01-01 00:00:00'),
 (2, '10010002', 'Kas Kecil', 'Debit', 'Aset', 3, 6, '2026-01-01 00:00:00', '2026-01-01 00:00:00'),
 (3, '10010003', 'Bank BCA', 'Debit', 'Aset', 3, 6, '2026-01-01 00:00:00', '2026-01-01 00:00:00'),
@@ -142,7 +141,7 @@ INSERT INTO `coas` (`id`, `kode_akun`, `nama_akun`, `saldo_normal`, `kategori`, 
 -- ---------------------------------------------------------------------
 -- 4) SALDO AWAL per 1 Januari 2025 - periode Tahun 2025 (54 akun neraca: Aset/Kewajiban/Modal)
 -- ---------------------------------------------------------------------
-INSERT INTO `saldo_awal` (`id`, `coa_id`, `tanggal_saldo`, `debit`, `kredit`, `periode_id`, `created_at`, `updated_at`) VALUES
+INSERT INTO saldo_awal (id, coa_id, tanggal_saldo, debit, kredit, periode_id, created_at, updated_at) VALUES
 (1, 1, '2025-01-01', 320435000.00, 0.00, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00'),
 (2, 2, '2025-01-01', 14455000.00, 0.00, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00'),
 (3, 3, '2025-01-01', 138965000.00, 0.00, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00'),
@@ -201,7 +200,7 @@ INSERT INTO `saldo_awal` (`id`, `coa_id`, `tanggal_saldo`, `debit`, `kredit`, `p
 -- ---------------------------------------------------------------------
 -- 5) JURNAL TRANSAKSI (1000 baris = 500 transaksi berpasangan debit-kredit)
 -- ---------------------------------------------------------------------
-INSERT INTO `jurnalings` (`id`, `tanggal_jurnal`, `nomor_bukti`, `keterangan`, `kategori_jurnal`, `debit`, `kredit`, `coa_id`, `periode_id`, `created_at`, `updated_at`) VALUES
+INSERT INTO jurnalings (id, tanggal_jurnal, nomor_bukti, keterangan, kategori_jurnal, debit, kredit, coa_id, periode_id, created_at, updated_at) VALUES
 (1, '2025-10-21', 'BV/2025/000001', 'Pembelian bahan baku produksi secara kredit', 'Pembelian', '11926000.00', '0.00', 13, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00'),
 (2, '2025-10-21', 'BV/2025/000001', 'Pembelian bahan baku produksi secara kredit', 'Pembelian', '0.00', '11926000.00', 31, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00'),
 (3, '2025-03-15', 'BV/2025/000002', 'Pembelian peralatan kantor secara kredit', 'Pembelian Aset', '17040000.00', '0.00', 22, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00'),
@@ -303,7 +302,7 @@ INSERT INTO `jurnalings` (`id`, `tanggal_jurnal`, `nomor_bukti`, `keterangan`, `
 (99, '2025-10-24', 'BV/2025/000050', 'Pembelian persediaan barang dagang secara kredit', 'Pembelian', '44749000.00', '0.00', 12, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00'),
 (100, '2025-10-24', 'BV/2025/000050', 'Pembelian persediaan barang dagang secara kredit', 'Pembelian', '0.00', '44749000.00', 31, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00');
 
-INSERT INTO `jurnalings` (`id`, `tanggal_jurnal`, `nomor_bukti`, `keterangan`, `kategori_jurnal`, `debit`, `kredit`, `coa_id`, `periode_id`, `created_at`, `updated_at`) VALUES
+INSERT INTO jurnalings (id, tanggal_jurnal, nomor_bukti, keterangan, kategori_jurnal, debit, kredit, coa_id, periode_id, created_at, updated_at) VALUES
 (101, '2025-01-02', 'BV/2025/000051', 'Pembayaran cicilan pokok utang bank jangka panjang', 'Pembayaran Utang', '37130000.00', '0.00', 44, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00'),
 (102, '2025-01-02', 'BV/2025/000051', 'Pembayaran cicilan pokok utang bank jangka panjang', 'Pembayaran Utang', '0.00', '37130000.00', 6, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00'),
 (103, '2025-01-31', 'BV/2025/000052', 'Pembayaran utang usaha kepada supplier', 'Pembayaran Utang', '26376000.00', '0.00', 31, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00'),
@@ -405,7 +404,7 @@ INSERT INTO `jurnalings` (`id`, `tanggal_jurnal`, `nomor_bukti`, `keterangan`, `
 (199, '2025-11-14', 'BV/2025/000100', 'Pembayaran bunga pinjaman bank bulan November 2025', 'Beban Bunga', '3599000.00', '0.00', 91, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00'),
 (200, '2025-11-14', 'BV/2025/000100', 'Pembayaran bunga pinjaman bank bulan November 2025', 'Beban Bunga', '0.00', '3599000.00', 4, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00');
 
-INSERT INTO `jurnalings` (`id`, `tanggal_jurnal`, `nomor_bukti`, `keterangan`, `kategori_jurnal`, `debit`, `kredit`, `coa_id`, `periode_id`, `created_at`, `updated_at`) VALUES
+INSERT INTO jurnalings (id, tanggal_jurnal, nomor_bukti, keterangan, kategori_jurnal, debit, kredit, coa_id, periode_id, created_at, updated_at) VALUES
 (201, '2025-09-05', 'BV/2025/000101', 'Pembayaran PPh 21 karyawan bulan September 2025', 'Pajak', '3686000.00', '0.00', 33, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00'),
 (202, '2025-09-05', 'BV/2025/000101', 'Pembayaran PPh 21 karyawan bulan September 2025', 'Pajak', '0.00', '3686000.00', 3, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00'),
 (203, '2025-11-24', 'BV/2025/000102', 'Pembayaran jasa konsultan pajak', 'Beban Administrasi', '13736000.00', '0.00', 87, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00'),
@@ -507,7 +506,7 @@ INSERT INTO `jurnalings` (`id`, `tanggal_jurnal`, `nomor_bukti`, `keterangan`, `
 (299, '2025-05-19', 'BV/2025/000150', 'Penerimaan pendapatan jasa via transfer Bank BCA', 'Pendapatan Jasa', '24030000.00', '0.00', 3, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00'),
 (300, '2025-05-19', 'BV/2025/000150', 'Penerimaan pendapatan jasa via transfer Bank BCA', 'Pendapatan Jasa', '0.00', '24030000.00', 56, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00');
 
-INSERT INTO `jurnalings` (`id`, `tanggal_jurnal`, `nomor_bukti`, `keterangan`, `kategori_jurnal`, `debit`, `kredit`, `coa_id`, `periode_id`, `created_at`, `updated_at`) VALUES
+INSERT INTO jurnalings (id, tanggal_jurnal, nomor_bukti, keterangan, kategori_jurnal, debit, kredit, coa_id, periode_id, created_at, updated_at) VALUES
 (301, '2025-07-31', 'BV/2025/000151', 'Pembayaran jasa konsultan pajak', 'Beban Administrasi', '11295000.00', '0.00', 87, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00'),
 (302, '2025-07-31', 'BV/2025/000151', 'Pembayaran jasa konsultan pajak', 'Beban Administrasi', '0.00', '11295000.00', 1, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00'),
 (303, '2025-10-23', 'BV/2025/000152', 'Pembelian bahan baku produksi secara kredit', 'Pembelian', '50173000.00', '0.00', 13, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00'),
@@ -609,7 +608,7 @@ INSERT INTO `jurnalings` (`id`, `tanggal_jurnal`, `nomor_bukti`, `keterangan`, `
 (399, '2025-07-04', 'BV/2025/000200', 'Pembelian alat tulis kantor', 'Beban Administrasi', '1135000.00', '0.00', 81, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00'),
 (400, '2025-07-04', 'BV/2025/000200', 'Pembelian alat tulis kantor', 'Beban Administrasi', '0.00', '1135000.00', 2, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00');
 
-INSERT INTO `jurnalings` (`id`, `tanggal_jurnal`, `nomor_bukti`, `keterangan`, `kategori_jurnal`, `debit`, `kredit`, `coa_id`, `periode_id`, `created_at`, `updated_at`) VALUES
+INSERT INTO jurnalings (id, tanggal_jurnal, nomor_bukti, keterangan, kategori_jurnal, debit, kredit, coa_id, periode_id, created_at, updated_at) VALUES
 (401, '2025-05-27', 'BV/2025/000201', 'Pembayaran tagihan telepon dan internet bulan Mei 2025', 'Beban Operasional', '684000.00', '0.00', 72, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00'),
 (402, '2025-05-27', 'BV/2025/000201', 'Pembayaran tagihan telepon dan internet bulan Mei 2025', 'Beban Operasional', '0.00', '684000.00', 4, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00'),
 (403, '2025-03-26', 'BV/2025/000202', 'Pembelian persediaan barang dagang secara kredit', 'Pembelian', '26686000.00', '0.00', 12, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00'),
@@ -711,7 +710,7 @@ INSERT INTO `jurnalings` (`id`, `tanggal_jurnal`, `nomor_bukti`, `keterangan`, `
 (499, '2025-12-03', 'BV/2025/000250', 'Pembelian kendaraan operasional perusahaan', 'Investasi Aset Tetap', '197172000.00', '0.00', 20, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00'),
 (500, '2025-12-03', 'BV/2025/000250', 'Pembelian kendaraan operasional perusahaan', 'Investasi Aset Tetap', '0.00', '197172000.00', 5, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00');
 
-INSERT INTO `jurnalings` (`id`, `tanggal_jurnal`, `nomor_bukti`, `keterangan`, `kategori_jurnal`, `debit`, `kredit`, `coa_id`, `periode_id`, `created_at`, `updated_at`) VALUES
+INSERT INTO jurnalings (id, tanggal_jurnal, nomor_bukti, keterangan, kategori_jurnal, debit, kredit, coa_id, periode_id, created_at, updated_at) VALUES
 (501, '2025-11-23', 'BV/2025/000251', 'Pembayaran tunjangan karyawan bulan November 2025', 'Penggajian', '26560000.00', '0.00', 68, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00'),
 (502, '2025-11-23', 'BV/2025/000251', 'Pembayaran tunjangan karyawan bulan November 2025', 'Penggajian', '0.00', '26560000.00', 3, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00'),
 (503, '2025-03-23', 'BV/2025/000252', 'Pembayaran iuran BPJS Ketenagakerjaan karyawan', 'Beban Operasional', '3695000.00', '0.00', 69, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00'),
@@ -813,7 +812,7 @@ INSERT INTO `jurnalings` (`id`, `tanggal_jurnal`, `nomor_bukti`, `keterangan`, `
 (599, '2025-10-07', 'BV/2025/000300', 'Pembayaran tagihan air bulan Oktober 2025', 'Beban Operasional', '323000.00', '0.00', 71, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00'),
 (600, '2025-10-07', 'BV/2025/000300', 'Pembayaran tagihan air bulan Oktober 2025', 'Beban Operasional', '0.00', '323000.00', 1, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00');
 
-INSERT INTO `jurnalings` (`id`, `tanggal_jurnal`, `nomor_bukti`, `keterangan`, `kategori_jurnal`, `debit`, `kredit`, `coa_id`, `periode_id`, `created_at`, `updated_at`) VALUES
+INSERT INTO jurnalings (id, tanggal_jurnal, nomor_bukti, keterangan, kategori_jurnal, debit, kredit, coa_id, periode_id, created_at, updated_at) VALUES
 (601, '2025-10-07', 'BV/2025/000301', 'Pembayaran biaya perjalanan dinas karyawan', 'Beban Administrasi', '8224000.00', '0.00', 83, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00'),
 (602, '2025-10-07', 'BV/2025/000301', 'Pembayaran biaya perjalanan dinas karyawan', 'Beban Administrasi', '0.00', '8224000.00', 1, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00'),
 (603, '2025-06-25', 'BV/2025/000302', 'Pembelian kendaraan operasional perusahaan', 'Investasi Aset Tetap', '119840000.00', '0.00', 20, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00'),
@@ -915,7 +914,7 @@ INSERT INTO `jurnalings` (`id`, `tanggal_jurnal`, `nomor_bukti`, `keterangan`, `
 (699, '2025-05-10', 'BV/2025/000350', 'Pembayaran tagihan air bulan Mei 2025', 'Beban Operasional', '791000.00', '0.00', 71, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00'),
 (700, '2025-05-10', 'BV/2025/000350', 'Pembayaran tagihan air bulan Mei 2025', 'Beban Operasional', '0.00', '791000.00', 1, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00');
 
-INSERT INTO `jurnalings` (`id`, `tanggal_jurnal`, `nomor_bukti`, `keterangan`, `kategori_jurnal`, `debit`, `kredit`, `coa_id`, `periode_id`, `created_at`, `updated_at`) VALUES
+INSERT INTO jurnalings (id, tanggal_jurnal, nomor_bukti, keterangan, kategori_jurnal, debit, kredit, coa_id, periode_id, created_at, updated_at) VALUES
 (701, '2025-08-24', 'BV/2025/000351', 'Penjualan tunai kepada pelanggan', 'Penjualan', '8898000.00', '0.00', 1, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00'),
 (702, '2025-08-24', 'BV/2025/000351', 'Penjualan tunai kepada pelanggan', 'Penjualan', '0.00', '8898000.00', 55, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00'),
 (703, '2025-07-18', 'BV/2025/000352', 'Pembayaran tagihan air bulan Juli 2025', 'Beban Operasional', '1467000.00', '0.00', 71, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00'),
@@ -1017,7 +1016,7 @@ INSERT INTO `jurnalings` (`id`, `tanggal_jurnal`, `nomor_bukti`, `keterangan`, `
 (799, '2025-12-15', 'BV/2025/000400', 'Pembayaran utang usaha kepada supplier', 'Pembayaran Utang', '4097000.00', '0.00', 31, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00'),
 (800, '2025-12-15', 'BV/2025/000400', 'Pembayaran utang usaha kepada supplier', 'Pembayaran Utang', '0.00', '4097000.00', 3, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00');
 
-INSERT INTO `jurnalings` (`id`, `tanggal_jurnal`, `nomor_bukti`, `keterangan`, `kategori_jurnal`, `debit`, `kredit`, `coa_id`, `periode_id`, `created_at`, `updated_at`) VALUES
+INSERT INTO jurnalings (id, tanggal_jurnal, nomor_bukti, keterangan, kategori_jurnal, debit, kredit, coa_id, periode_id, created_at, updated_at) VALUES
 (801, '2025-11-24', 'BV/2025/000401', 'Penerimaan bunga deposito bank', 'Pendapatan Lain', '1569000.00', '0.00', 1, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00'),
 (802, '2025-11-24', 'BV/2025/000401', 'Penerimaan bunga deposito bank', 'Pendapatan Lain', '0.00', '1569000.00', 63, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00'),
 (803, '2025-10-10', 'BV/2025/000402', 'Pembayaran iuran BPJS Ketenagakerjaan karyawan', 'Beban Operasional', '7772000.00', '0.00', 69, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00'),
@@ -1119,7 +1118,7 @@ INSERT INTO `jurnalings` (`id`, `tanggal_jurnal`, `nomor_bukti`, `keterangan`, `
 (899, '2025-03-23', 'BV/2025/000450', 'Pembayaran sewa gedung kantor', 'Beban Operasional', '24976000.00', '0.00', 79, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00'),
 (900, '2025-03-23', 'BV/2025/000450', 'Pembayaran sewa gedung kantor', 'Beban Operasional', '0.00', '24976000.00', 4, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00');
 
-INSERT INTO `jurnalings` (`id`, `tanggal_jurnal`, `nomor_bukti`, `keterangan`, `kategori_jurnal`, `debit`, `kredit`, `coa_id`, `periode_id`, `created_at`, `updated_at`) VALUES
+INSERT INTO jurnalings (id, tanggal_jurnal, nomor_bukti, keterangan, kategori_jurnal, debit, kredit, coa_id, periode_id, created_at, updated_at) VALUES
 (901, '2025-01-24', 'BV/2025/000451', 'Pembayaran iuran BPJS Ketenagakerjaan karyawan', 'Beban Operasional', '8830000.00', '0.00', 69, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00'),
 (902, '2025-01-24', 'BV/2025/000451', 'Pembayaran iuran BPJS Ketenagakerjaan karyawan', 'Beban Operasional', '0.00', '8830000.00', 1, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00'),
 (903, '2025-10-14', 'BV/2025/000452', 'Pembayaran premi asuransi perusahaan', 'Beban Administrasi', '6942000.00', '0.00', 86, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00'),
@@ -1221,4 +1220,3 @@ INSERT INTO `jurnalings` (`id`, `tanggal_jurnal`, `nomor_bukti`, `keterangan`, `
 (999, '2025-04-28', 'BV/2025/000500', 'Setoran modal tambahan dari pemilik', 'Modal', '181439000.00', '0.00', 3, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00'),
 (1000, '2025-04-28', 'BV/2025/000500', 'Setoran modal tambahan dari pemilik', 'Modal', '0.00', '181439000.00', 49, 1, '2026-01-01 00:00:00', '2026-01-01 00:00:00');
 
-SET FOREIGN_KEY_CHECKS=1;

@@ -37,6 +37,11 @@ class JurnalManager extends Component
     public $periodes = [];
     public $coas = [];
 
+    public function boot()
+    {
+        Gate::authorize('viewAny', Jurnaling::class);
+    }
+
     public function mount()
     {
         $this->periodes = Periode::orderBy('tanggal_awal', 'desc')->get();
@@ -160,7 +165,7 @@ class JurnalManager extends Component
             ->max('nomor_bukti');
 
         if ($max && preg_match('/(\d+)$/', $max, $m)) {
-            return $prefix . '-' . str_pad(((int) $m[1]) + 1, 4, '0', STR_PAD_LEFT);
+            return $prefix . '-' . str_pad((string) (((int) $m[1]) + 1), 4, '0', STR_PAD_LEFT);
         }
 
         return $prefix . '-0001';
@@ -170,8 +175,8 @@ class JurnalManager extends Component
     {
         $entries = Jurnaling::with('coa')
             ->where('kategori_jurnal', $this->typeFilter)
-            ->when($this->periodeFilter, fn($q) => $q->where('periode_id', $this->periodeFilter))
-            ->when($this->search, fn($q) => $q->where('nomor_bukti', 'like', '%' . $this->search . '%'))
+            ->when($this->periodeFilter, fn ($q) => $q->where('periode_id', $this->periodeFilter))
+            ->when($this->search, fn ($q) => $q->where('nomor_bukti', 'like', '%' . $this->search . '%'))
             ->orderBy('created_at', 'desc')
             ->paginate(20);
 

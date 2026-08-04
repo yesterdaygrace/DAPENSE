@@ -8,7 +8,6 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
-use Spatie\Activitylog\Facades\Activity;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -38,7 +37,7 @@ class AuthenticatedSessionController extends Controller
 
             $request->session()->regenerate();
 
-            $redirect = match($user->usertype) {
+            $redirect = match ($user->usertype) {
                 'rootsuperuser' => 'rootsuperuser/dashboard',
                 'admin' => 'admin/dashboard',
                 'operator' => 'operator/dashboard',

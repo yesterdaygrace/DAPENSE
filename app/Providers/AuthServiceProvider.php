@@ -3,14 +3,16 @@
 namespace App\Providers;
 
 use App\Models\Jurnaling;
+use App\Models\NeracaSaldo;
+use App\Models\Otorisator;
+use App\Models\Periode;
+use App\Models\SaldoAwal;
 use App\Models\User;
 use App\Policies\JournalPolicy;
 use App\Policies\LedgerPolicy;
 use App\Policies\OtorisatorPolicy;
 use App\Policies\PeriodePolicy;
-use App\Policies\ReportPolicy;
 use App\Policies\SaldoAwalPolicy;
-use App\Policies\SettingPolicy;
 use App\Policies\UserPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
@@ -20,11 +22,10 @@ class AuthServiceProvider extends ServiceProvider
     protected $policies = [
         Jurnaling::class => JournalPolicy::class,
         User::class => UserPolicy::class,
-        'App\Models\NeracaSaldo' => LedgerPolicy::class,
-        'App\Models\Periode' => PeriodePolicy::class,
-        'App\Models\SaldoAwal' => SaldoAwalPolicy::class,
-        'App\Models\Otorisator' => OtorisatorPolicy::class,
-        'App\Models\Setting' => SettingPolicy::class,
+        NeracaSaldo::class => LedgerPolicy::class,
+        Periode::class => PeriodePolicy::class,
+        SaldoAwal::class => SaldoAwalPolicy::class,
+        Otorisator::class => OtorisatorPolicy::class,
     ];
 
     public function boot(): void

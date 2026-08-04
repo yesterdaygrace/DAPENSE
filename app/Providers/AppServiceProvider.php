@@ -18,12 +18,12 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // Force HTTPS in non-local environments (required for Vercel)
-        if ($this->app->environment('production') && ! env('DOCKER')) {
+        if ($this->app->environment('production') && ! config('app.docker')) {
             URL::forceScheme('https');
         }
 
         // Auto-detect Vercel serverless environment and configure drivers
-        if (env('VERCEL') || env('VERCEL_ENV')) {
+        if (config('app.vercel') || config('app.vercel_env')) {
             $this->configureForVercel();
         }
 

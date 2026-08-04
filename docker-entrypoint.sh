@@ -90,6 +90,21 @@ php "${APP_DIR}/artisan" about --no-interaction 2>&1 | tee -a /var/log/nginx/dap
     exit 1
 }
 
+# ── Start Redis (in-container, required by Laravel cache/session) ────
+log "Starting Redis..."
+REDIS_PORT="${REDIS_PORT:-6379}"
+REDIS_PASSWORD="${REDIS_PASSWORD:-}"
+mkdir -p /var/lib/redis && chown -R redis:redis /var/lib/redis 2>/dev/null || true
+if [ -n "${REDIS_PASSWORD}" ]; then
+    redis-server --port "${REDIS_PORT}" --requirepass "${REDIS_PASSWORD}" \
+        --maxmemory 256mb --maxmemory-policy allkeys-lru \
+        --dir /var/lib/redis --daemonize yes
+else
+    redis-server --port "${REDIS_PORT}" \
+        --maxmemory 256mb --maxmemory-policy allkeys-lru \
+        --dir /var/lib/redis --daemonize yes
+fi
+
 # ── Start PHP-FPM ────────────────────────────────────────────────────
 log "Starting PHP-FPM..."
 php-fpm -D

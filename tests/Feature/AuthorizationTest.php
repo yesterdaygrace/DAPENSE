@@ -1,7 +1,12 @@
 <?php
 
-use App\Models\Periode;
+use App\Livewire\COAWorkspace;
+use App\Livewire\OtorisatorManager;
+use App\Livewire\PeriodeManager;
+use App\Livewire\Posting;
+use App\Livewire\UserManager;
 use App\Models\User;
+use Livewire\Livewire;
 
 beforeEach(function () {
     $this->admin = User::factory()->create(['usertype' => 'admin', 'status' => 1]);
@@ -35,90 +40,109 @@ test('operator cannot access admin-specific dashboard route', function () {
     $this->actingAs($this->operator)->get('/admin/dashboard')->assertRedirect('/');
 });
 
-test('bod cannot access admin modules', function () {
-    $this->actingAs($this->bod)->get('/admin/periodes')->assertRedirect('/');
-    $this->actingAs($this->bod)->get('/admin/account/coa')->assertRedirect('/');
-    $this->actingAs($this->bod)->get('/admin/products')->assertRedirect('/');
+test('bod cannot access master-data modules (periodes, coa, users)', function () {
+    $this->actingAs($this->bod)->get('/periodes')->assertForbidden();
+    $this->actingAs($this->bod)->get('/coa-workspace')->assertForbidden();
+    $this->actingAs($this->bod)->get('/users')->assertForbidden();
 });
 
 test('admin can access user management', function () {
-    $this->actingAs($this->admin)->get('/admin/products')->assertOk();
+    $this->actingAs($this->admin)->get('/users')->assertOk();
+    Livewire::test(UserManager::class)->assertOk();
 });
 
 test('operator cannot access user management', function () {
-    $this->actingAs($this->operator)->get('/admin/products')->assertRedirect('/');
+    $this->actingAs($this->operator)->get('/users')->assertForbidden();
 });
 
 test('bod cannot access user management', function () {
-    $this->actingAs($this->bod)->get('/admin/products')->assertRedirect('/');
+    $this->actingAs($this->bod)->get('/users')->assertForbidden();
 });
 
 test('rootsuperuser can access posting module', function () {
-    $this->actingAs($this->root)->get('/rootsuperuser/posting')->assertOk();
+    $this->actingAs($this->root)->get('/posting')->assertOk();
+    Livewire::test(Posting::class)->assertOk();
 });
 
-test('admin cannot access posting module', function () {
+test('admin can access posting module', function () {
+    $this->actingAs($this->admin)->get('/posting')->assertOk();
+});
+
+test('admin cannot access rootsuperuser-only posting route', function () {
     $this->actingAs($this->admin)->get('/rootsuperuser/posting')->assertRedirect('/');
 });
 
+test('operator cannot access posting module', function () {
+    $this->actingAs($this->operator)->get('/posting')->assertForbidden();
+});
+
 test('admin can access otorisator settings', function () {
-    $this->actingAs($this->admin)->get('/admin/otorisator/home')->assertOk();
+    $this->actingAs($this->admin)->get('/otorisator')->assertOk();
+    Livewire::test(OtorisatorManager::class)->assertOk();
 });
 
 test('operator can access otorisator settings', function () {
-    $this->actingAs($this->operator)->get('/operator/otorisator/home')->assertOk();
+    $this->actingAs($this->operator)->get('/otorisator')->assertOk();
 });
 
 test('bod cannot access otorisator settings', function () {
-    $this->actingAs($this->bod)->get('/admin/otorisator/home')->assertRedirect('/');
+    $this->actingAs($this->bod)->get('/otorisator')->assertForbidden();
 });
 
 test('admin can CRUD periode', function () {
     $this->actingAs($this->admin);
-    $this->get('/admin/periodes')->assertOk();
-    $this->get('/admin/periodes/create')->assertOk();
+    $this->get('/periodes')->assertOk();
+    Livewire::test(PeriodeManager::class)->assertOk();
 });
 
 test('operator can CRUD periode', function () {
-    $this->actingAs($this->operator);
-    $this->get('/operator/periodes')->assertOk();
-    $this->get('/operator/periodes/create')->assertOk();
+    $this->actingAs($this->operator)->get('/periodes')->assertOk();
+});
+
+test('bod cannot CRUD periode', function () {
+    $this->actingAs($this->bod)->get('/periodes')->assertForbidden();
 });
 
 test('admin can CRUD COA', function () {
     $this->actingAs($this->admin);
-    $this->get('/admin/account/coa')->assertOk();
-    $this->get('/admin/account/coa/create')->assertOk();
+    $this->get('/coa-workspace')->assertOk();
+    Livewire::test(COAWorkspace::class)->assertOk();
 });
 
 test('operator can CRUD COA', function () {
-    $this->actingAs($this->operator);
-    $this->get('/operator/account/coa')->assertOk();
-    $this->get('/operator/account/coa/create')->assertOk();
+    $this->actingAs($this->operator)->get('/coa-workspace')->assertOk();
+});
+
+test('bod cannot CRUD COA', function () {
+    $this->actingAs($this->bod)->get('/coa-workspace')->assertForbidden();
 });
 
 test('admin can access jurnaling modules', function () {
     $this->actingAs($this->admin);
-    $this->get('/admin/jurnaling')->assertOk();
-    $this->get('/admin/jurnaling/kaskeluar')->assertOk();
-    $this->get('/admin/jurnaling/bankmasuk')->assertOk();
-    $this->get('/admin/jurnaling/bankkeluar')->assertOk();
-    $this->get('/admin/jurnaling/memorial')->assertOk();
-    $this->get('/admin/jurnaling/memorialpenutup')->assertOk();
+    $this->get('/jurnaling')->assertOk();
+    $this->get('/jurnaling-list')->assertOk();
+});
+
+test('operator can access jurnaling modules', function () {
+    $this->actingAs($this->operator);
+    $this->get('/jurnaling')->assertOk();
+    $this->get('/jurnaling-list')->assertOk();
+});
+
+test('bod can view jurnaling modules (read-only)', function () {
+    $this->actingAs($this->bod);
+    $this->get('/jurnaling')->assertOk();
+    $this->get('/jurnaling-list')->assertOk();
 });
 
 test('bod can view laporan modules', function () {
     $this->actingAs($this->bod);
-    $this->get('/bod/bukubesar')->assertOk();
-    $this->get('/bod/neracasaldo/')->assertOk();
-    $periode = Periode::first();
-    if ($periode) {
-        $this->get('/bod/jurnaling/showing?month=2025-01&periode_id=' . $periode->id)->assertOk();
-    }
+    $this->get('/bukubesar')->assertOk();
+    $this->get('/neraca-saldo')->assertOk();
 });
 
 test('unauthenticated user is redirected to login', function () {
     $this->get('/dashboard')->assertRedirect('/login');
     $this->get('/admin/dashboard')->assertRedirect('/login');
-    $this->get('/operator/periodes')->assertRedirect('/login');
+    $this->get('/periodes')->assertRedirect('/login');
 });

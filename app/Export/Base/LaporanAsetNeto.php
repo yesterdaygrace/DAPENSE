@@ -118,9 +118,9 @@ class LaporanAsetNeto implements FromCollection, WithColumnWidths, WithEvents, W
             $totalCurrent = $totalLast = 0;
 
             foreach ($accounts as $name => $config) {
-                $range = is_array($config) && isset($config['range']) ? $config['range'] : $config;
-                $offset = is_array($config) && isset($config['offset']) ? $config['offset'] : [];
-                $add = is_array($config) && isset($config['add']) ? $config['add'] : [];
+                $range = isset($config['range']) ? $config['range'] : $config;
+                $offset = [];
+                $add = isset($config['add']) ? $config['add'] : [];
 
                 $last = $this->getSaldoAkhir($range, $previousMonth, $name, 'Last', 0, $offset, $add);
                 $current = $this->getSaldoAkhir($range, $selectedMonth, $name, 'Current', $last, $offset, $add);
@@ -246,10 +246,10 @@ class LaporanAsetNeto implements FromCollection, WithColumnWidths, WithEvents, W
 
         $range = [12110000, 12129999];
 
-        $last = (new static($periode_id, $month))
+        $last = (new self($periode_id, $month))
             ->getSaldoAkhir($range, $previousMonth, 'Kas & Bank Last', 'Last');
 
-        $current = (new static($periode_id, $month))
+        $current = (new self($periode_id, $month))
             ->getSaldoAkhir($range, $selectedMonth, 'Kas & Bank Current', 'Current');
 
         return [

@@ -51,9 +51,11 @@ class NeracaSaldoController
 
             if ($periode) {
                 $activeMonths = Jurnaling::where('periode_id', $periode->id)
-                    ->selectRaw('DISTINCT DATE_FORMAT(tanggal_jurnal, "%Y-%m") as ym')
-                    ->orderBy('ym', 'desc')
-                    ->pluck('ym')
+                    ->pluck('tanggal_jurnal')
+                    ->map(fn ($d) => Carbon::parse($d)->format('Y-m'))
+                    ->unique()
+                    ->sortDesc()
+                    ->values()
                     ->toArray();
 
                 foreach ($activeMonths as $ym) {
@@ -146,25 +148,6 @@ class NeracaSaldoController
         }
 
         return view($this->viewPrefix() . '.neracasaldo.home', compact('periode', 'headerCoas', 'month'));
-    }
-
-    private function initializeSaldoAwal($currentPeriodeId, $previousPeriodeId)
-    {
-        $previousNeracaSaldo = NeracaSaldo::where('periode_id', $previousPeriodeId)->get();
-        foreach ($previousNeracaSaldo as $saldo) {
-            if (! $saldo->coa_id || ! COA::where('id', $saldo->coa_id)->exists()) {
-                continue;
-            }
-
-            SaldoAwal::updateOrCreate(
-                ['periode_id' => $currentPeriodeId, 'coa_id' => $saldo->coa_id],
-                [
-                    'debit' => max($saldo->balance, 0),
-                    'kredit' => max(-$saldo->balance, 0),
-                    'tanggal_saldo' => Carbon::parse($saldo->month)->startOfMonth()->toDateString(),
-                ]
-            );
-        }
     }
 
     private $headerAccountRanges = [

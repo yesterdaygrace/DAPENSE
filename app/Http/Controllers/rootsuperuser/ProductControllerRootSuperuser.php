@@ -47,15 +47,9 @@ class ProductControllerRootSuperuser
 
         event(new Registered($data));
 
-        if ($data) {
-            session()->flash('success', 'User Added Successfully');
+        session()->flash('success', 'User Added Successfully');
 
-            return redirect()->route('rootsuperuser/products');
-        } else {
-            session()->flash('error', 'Some problem occurred');
-
-            return redirect()->route('rootsuperuser/products/create');
-        }
+        return redirect()->route('rootsuperuser/products');
     }
 
     public function edit($id)

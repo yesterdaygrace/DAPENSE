@@ -16,7 +16,7 @@ class JournalEntryController extends Controller
         $coas = COA::orderBy('kode_akun')->get();
 
         return view('modules.transactions.journal-entry', compact(
-            'periodes', 
+            'periodes',
             'coas'
         ));
     }

@@ -1,8 +1,12 @@
 <?php
 
+use App\Livewire\COAWorkspace;
+use App\Livewire\OtorisatorManager;
+use App\Livewire\PeriodeManager;
 use App\Models\HeaderCOA;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Livewire;
 
 beforeEach(function () {
     $this->admin = User::factory()->create(['usertype' => 'admin', 'status' => 1]);
@@ -10,36 +14,39 @@ beforeEach(function () {
 });
 
 test('periode requires nama field', function () {
-    $response = $this->post('/admin/periodes/save', [
-        'tanggal_awal' => '2024-01-01',
-        'tanggal_akhir' => '2024-12-31',
-    ]);
-    $response->assertSessionHasErrors('nama_periode');
+    Livewire::test(PeriodeManager::class)
+        ->set('formData.nama_periode', '')
+        ->set('formData.tanggal_awal', '2024-01-01')
+        ->set('formData.tanggal_akhir', '2024-12-31')
+        ->call('save')
+        ->assertHasErrors('formData.nama_periode');
 });
 
 test('periode requires tanggal_awal field', function () {
-    $response = $this->post('/admin/periodes/save', [
-        'nama_periode' => 'Test Periode',
-        'tanggal_akhir' => '2024-12-31',
-    ]);
-    $response->assertSessionHasErrors('tanggal_awal');
+    Livewire::test(PeriodeManager::class)
+        ->set('formData.nama_periode', 'Test Periode')
+        ->set('formData.tanggal_awal', '')
+        ->set('formData.tanggal_akhir', '2024-12-31')
+        ->call('save')
+        ->assertHasErrors('formData.tanggal_awal');
 });
 
 test('periode requires tanggal_akhir field', function () {
-    $response = $this->post('/admin/periodes/save', [
-        'nama_periode' => 'Test Periode',
-        'tanggal_awal' => '2024-01-01',
-    ]);
-    $response->assertSessionHasErrors('tanggal_akhir');
+    Livewire::test(PeriodeManager::class)
+        ->set('formData.nama_periode', 'Test Periode')
+        ->set('formData.tanggal_awal', '2024-01-01')
+        ->set('formData.tanggal_akhir', '')
+        ->call('save')
+        ->assertHasErrors('formData.tanggal_akhir');
 });
 
 test('tanggal_akhir must be after tanggal_awal', function () {
-    $response = $this->post('/admin/periodes/save', [
-        'nama_periode' => 'Test Periode',
-        'tanggal_awal' => '2024-12-31',
-        'tanggal_akhir' => '2024-01-01',
-    ]);
-    $response->assertSessionHasErrors();
+    Livewire::test(PeriodeManager::class)
+        ->set('formData.nama_periode', 'Test Periode')
+        ->set('formData.tanggal_awal', '2024-12-31')
+        ->set('formData.tanggal_akhir', '2024-01-01')
+        ->call('save')
+        ->assertHasErrors('formData.tanggal_akhir');
 });
 
 test('COA requires kode_akun', function () {
@@ -48,14 +55,15 @@ test('COA requires kode_akun', function () {
         'nama_header' => 'Test Header',
         'level' => 1,
     ]);
-    $response = $this->post('/admin/account/coa/save', [
-        'nama_akun' => 'Test Akun',
-        'saldo_normal' => 'Debit',
-        'kategori' => 'Aktiva',
-        'level' => '1',
-        'header_id' => $header->id,
-    ]);
-    $response->assertSessionHasErrors('kode_akun');
+
+    Livewire::test(COAWorkspace::class)
+        ->set('formData.nama_akun', 'Test Akun')
+        ->set('formData.saldo_normal', 'Debit')
+        ->set('formData.kategori', 'Aktiva')
+        ->set('formData.level', 1)
+        ->set('formData.header_coa_id', $header->id)
+        ->call('saveAccount')
+        ->assertHasErrors('formData.kode_akun');
 });
 
 test('COA requires nama_akun', function () {
@@ -64,14 +72,15 @@ test('COA requires nama_akun', function () {
         'nama_header' => 'Test Header',
         'level' => 1,
     ]);
-    $response = $this->post('/admin/account/coa/save', [
-        'kode_akun' => '10001',
-        'saldo_normal' => 'Debit',
-        'kategori' => 'Aktiva',
-        'level' => '1',
-        'header_id' => $header->id,
-    ]);
-    $response->assertSessionHasErrors('nama_akun');
+
+    Livewire::test(COAWorkspace::class)
+        ->set('formData.kode_akun', '10001')
+        ->set('formData.saldo_normal', 'Debit')
+        ->set('formData.kategori', 'Aktiva')
+        ->set('formData.level', 1)
+        ->set('formData.header_coa_id', $header->id)
+        ->call('saveAccount')
+        ->assertHasErrors('formData.nama_akun');
 });
 
 test('COA requires valid saldo_normal', function () {
@@ -80,45 +89,48 @@ test('COA requires valid saldo_normal', function () {
         'nama_header' => 'Test Header',
         'level' => 1,
     ]);
-    $response = $this->post('/admin/account/coa/save', [
-        'kode_akun' => '10001',
-        'nama_akun' => 'Test Akun',
-        'saldo_normal' => 'InvalidValue',
-        'kategori' => 'Aktiva',
-        'level' => '1',
-        'header_id' => $header->id,
-    ]);
-    $response->assertSessionHasErrors('saldo_normal');
+
+    Livewire::test(COAWorkspace::class)
+        ->set('formData.kode_akun', '10001')
+        ->set('formData.nama_akun', 'Test Akun')
+        ->set('formData.saldo_normal', 'InvalidValue')
+        ->set('formData.kategori', 'Aktiva')
+        ->set('formData.level', 1)
+        ->set('formData.header_coa_id', $header->id)
+        ->call('saveAccount')
+        ->assertHasErrors('formData.saldo_normal');
 });
 
 test('Header COA requires kode_header', function () {
-    $response = $this->post('/admin/account/header/save', [
-        'nama_header' => 'Test Header',
-        'level' => '1',
-    ]);
-    $response->assertSessionHasErrors('kode_header');
+    Livewire::test(COAWorkspace::class)
+        ->set('headerForm.nama_header', 'Test Header')
+        ->set('headerForm.level', 1)
+        ->call('saveHeader')
+        ->assertHasErrors('headerForm.kode_header');
 });
 
 test('Header COA requires nama_header', function () {
-    $response = $this->post('/admin/account/header/save', [
-        'kode_header' => 'H001',
-        'level' => '1',
-    ]);
-    $response->assertSessionHasErrors('nama_header');
+    Livewire::test(COAWorkspace::class)
+        ->set('headerForm.kode_header', 'H001')
+        ->set('headerForm.level', 1)
+        ->call('saveHeader')
+        ->assertHasErrors('headerForm.nama_header');
 });
 
 test('Otorisator requires nama_otorisator', function () {
-    $response = $this->post('/admin/otorisator/save', [
-        'jabatan_otorisator' => 'Manager',
-    ]);
-    $response->assertSessionHasErrors('nama_otorisator');
+    Livewire::test(OtorisatorManager::class)
+        ->set('formData.nama_otorisator', '')
+        ->set('formData.jabatan_otorisator', 'Manager')
+        ->call('save')
+        ->assertHasErrors('formData.nama_otorisator');
 });
 
 test('Otorisator requires jabatan_otorisator', function () {
-    $response = $this->post('/admin/otorisator/save', [
-        'nama_otorisator' => 'John Doe',
-    ]);
-    $response->assertSessionHasErrors('jabatan_otorisator');
+    Livewire::test(OtorisatorManager::class)
+        ->set('formData.nama_otorisator', 'John Doe')
+        ->set('formData.jabatan_otorisator', '')
+        ->call('save')
+        ->assertHasErrors('formData.jabatan_otorisator');
 });
 
 test('user requires name for registration', function () {

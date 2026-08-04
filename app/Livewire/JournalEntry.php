@@ -9,6 +9,12 @@ use App\Models\Periode;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
 
+/**
+ * @property-read float $totalDebit Computed sum of debit entries
+ * @property-read float $totalKredit Computed sum of kredit entries
+ * @property-read bool $isBalanced Computed balance check
+ * @property-read string $jenisLabel Computed transaction type label
+ */
 class JournalEntry extends Component
 {
     use HasRole;
@@ -25,10 +31,15 @@ class JournalEntry extends Component
     public $coas;
     public $periodes;
 
+    public function boot()
+    {
+        abort_unless($this->canAccess('jurnal-entry'), 403);
+    }
+
     public function mount()
     {
         $this->coas = COA::orderBy('kode_akun')->get()
-            ->map(fn($c) => ['id' => $c->id, 'kode' => $c->kode_akun, 'nama' => $c->nama_akun])
+            ->map(fn ($c) => ['id' => $c->id, 'kode' => $c->kode_akun, 'nama' => $c->nama_akun])
             ->toArray();
 
         $this->periodes = Periode::orderBy('tanggal_awal', 'desc')->get();
@@ -38,12 +49,12 @@ class JournalEntry extends Component
 
     public function getTotalDebitProperty(): float
     {
-        return array_reduce($this->entries, fn($sum, $e) => $sum + (float) ($e['debit'] ?? 0), 0);
+        return array_reduce($this->entries, fn ($sum, $e) => $sum + (float) ($e['debit'] ?? 0), 0);
     }
 
     public function getTotalKreditProperty(): float
     {
-        return array_reduce($this->entries, fn($sum, $e) => $sum + (float) ($e['kredit'] ?? 0), 0);
+        return array_reduce($this->entries, fn ($sum, $e) => $sum + (float) ($e['kredit'] ?? 0), 0);
     }
 
     public function getIsBalancedProperty(): bool
@@ -85,8 +96,9 @@ class JournalEntry extends Component
     {
         Gate::authorize('create', Jurnaling::class);
 
-        if (!$this->isBalanced) {
+        if (! $this->isBalanced) {
             session()->flash('error', 'Debit dan Kredit harus seimbang.');
+
             return;
         }
 
@@ -129,7 +141,7 @@ class JournalEntry extends Component
             ->max('nomor_bukti');
 
         if ($max && preg_match('/(\d+)$/', $max, $m)) {
-            return $prefix . '-' . str_pad(((int) $m[1]) + 1, 4, '0', STR_PAD_LEFT);
+            return $prefix . '-' . str_pad((string) (((int) $m[1]) + 1), 4, '0', STR_PAD_LEFT);
         }
 
         return $prefix . '-0001';

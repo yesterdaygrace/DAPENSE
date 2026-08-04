@@ -1,11 +1,12 @@
 <?php
 
 use App\Http\Middleware\CheckRole;
+use App\Http\Middleware\PreventBfcache;
 use App\Http\Middleware\SecurityHeaders;
 use Illuminate\Foundation\Application;
-use Illuminate\Http\Request;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Request;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -16,7 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
             'role' => CheckRole::class,
-            'no-cache' => \App\Http\Middleware\PreventBfcache::class,
+            'no-cache' => PreventBfcache::class,
         ]);
 
         $middleware->append(SecurityHeaders::class);

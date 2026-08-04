@@ -48,6 +48,11 @@ class COAWorkspace extends Component
         return ['activeTab' => ['except' => 'accounts']];
     }
 
+    public function boot()
+    {
+        abort_unless($this->canAccess('master-data'), 403);
+    }
+
     public function mount()
     {
         $this->activeTab = request()->query('tab', 'accounts');
@@ -231,16 +236,16 @@ class COAWorkspace extends Component
     public function render()
     {
         $coas = COA::with('headerCoa')
-            ->when($this->search, fn($q) => $q->where(function($q) {
+            ->when($this->search, fn ($q) => $q->where(function ($q) {
                 $q->where('kode_akun', 'like', '%' . $this->search . '%')
-                  ->orWhere('nama_akun', 'like', '%' . $this->search . '%');
+                    ->orWhere('nama_akun', 'like', '%' . $this->search . '%');
             }))
             ->paginate(20);
 
         $headers = HeaderCOA::withCount('coas')->with('parent')
-            ->when($this->search, fn($q) => $q->where(function($q) {
+            ->when($this->search, fn ($q) => $q->where(function ($q) {
                 $q->where('kode_header', 'like', '%' . $this->search . '%')
-                  ->orWhere('nama_header', 'like', '%' . $this->search . '%');
+                    ->orWhere('nama_header', 'like', '%' . $this->search . '%');
             }))
             ->paginate(20);
 

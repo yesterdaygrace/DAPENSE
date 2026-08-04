@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\Periode;
 use Illuminate\Http\Request;
-use Spatie\Activitylog\Facades\Activity;
 
 class PeriodeController extends Controller
 {
@@ -23,14 +22,14 @@ class PeriodeController extends Controller
     public function save(Request $request)
     {
         // Validate input
-        $request->validate([
+        $validated = $request->validate([
             'nama_periode' => 'required|string|max:255',
             'tanggal_awal' => 'required|date',
             'tanggal_akhir' => 'required|date|after_or_equal:tanggal_awal',
         ]);
 
         // Save the new periode
-        Periode::create($request->validated());
+        Periode::create($validated);
 
         activity()
             ->log('Periode awal ' . $request->nama_periode . ' dibuat (sebelum login)');

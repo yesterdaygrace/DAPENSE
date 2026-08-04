@@ -22,6 +22,11 @@ class OtorisatorManager extends Component
         'jabatan_otorisator' => '',
     ];
 
+    public function boot()
+    {
+        Gate::authorize('viewAny', Otorisator::class);
+    }
+
     public function create()
     {
         $this->formData = ['nama_otorisator' => '', 'jabatan_otorisator' => ''];
@@ -81,6 +86,7 @@ class OtorisatorManager extends Component
     public function render()
     {
         $otorisators = Otorisator::orderBy('id', 'asc')->get();
+
         return view('livewire.otorisator-manager', compact('otorisators'));
     }
 }

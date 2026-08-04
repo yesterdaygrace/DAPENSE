@@ -24,6 +24,7 @@ set_error_handler(function (int $severity, string $message, string $file, int $l
     if (error_reporting() & $severity) {
         throw new ErrorException($message, 0, $severity, $file, $line);
     }
+
     return false;
 });
 
@@ -33,7 +34,7 @@ set_exception_handler(function (Throwable $e): void {
     error_log('[VERCEL] in ' . $e->getFile() . ':' . $e->getLine());
     error_log('[VERCEL] Stack trace: ' . $e->getTraceAsString());
 
-    if (!headers_sent()) {
+    if (! headers_sent()) {
         http_response_code(500);
         header('Content-Type: application/json');
         echo json_encode([
@@ -50,7 +51,7 @@ register_shutdown_function(function (): void {
     if ($error && in_array($error['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR], true)) {
         error_log('[VERCEL] FATAL ERROR: ' . $error['message'] . ' in ' . $error['file'] . ':' . $error['line']);
 
-        if (!headers_sent()) {
+        if (! headers_sent()) {
             http_response_code(500);
             header('Content-Type: application/json');
             echo json_encode([
@@ -68,7 +69,7 @@ register_shutdown_function(function (): void {
 // ---------------------------------------------------------------------------
 
 foreach (['/tmp/views', '/tmp/cache', '/tmp/sessions'] as $dir) {
-    if (!is_dir($dir)) {
+    if (! is_dir($dir)) {
         @mkdir($dir, 0755, true);
     }
 }
@@ -80,7 +81,7 @@ foreach (['/tmp/views', '/tmp/cache', '/tmp/sessions'] as $dir) {
 // For production with cookie sessions, set a real APP_KEY in Vercel env.
 // ---------------------------------------------------------------------------
 
-if (!getenv('APP_KEY') && !($_ENV['APP_KEY'] ?? null)) {
+if (! getenv('APP_KEY') && ! ($_ENV['APP_KEY'] ?? null)) {
     $key = 'base64:' . base64_encode(random_bytes(32));
     putenv("APP_KEY=$key");
     $_ENV['APP_KEY'] = $key;

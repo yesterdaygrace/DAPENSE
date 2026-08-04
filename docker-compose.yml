@@ -19,7 +19,6 @@ services:
       - storage_data:/var/www/html/storage
     depends_on:
       - mysql
-      - redis
     networks:
       - internal
     cap_drop:
@@ -41,6 +40,7 @@ services:
       - /var/www/html/bootstrap/cache
       - /var/log/nginx
       - /var/lib/nginx
+      - /var/lib/redis
       - /tmp
 
   mysql:
@@ -59,30 +59,10 @@ services:
       timeout: 5s
       retries: 10
 
-  redis:
-    image: redis:7-alpine
-    container_name: dapense-redis
-    restart: unless-stopped
-    command: redis-server --requirepass ${REDIS_PASSWORD} --bind 0.0.0.0 --maxmemory 256mb --maxmemory-policy allkeys-lru
-    volumes:
-      - redis_data:/data
-    networks:
-      - internal
-    cap_drop:
-      - ALL
-    cap_add:
-      - SETGID
-      - SETUID
-      - CHOWN
-      - DAC_OVERRIDE
-    security_opt:
-      - no-new-privileges:true
-
 networks:
   internal:
     name: dapense-internal
 
 volumes:
   mysql_data:
-  redis_data:
   storage_data:

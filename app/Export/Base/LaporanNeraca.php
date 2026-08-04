@@ -100,7 +100,7 @@ class LaporanNeraca implements FromCollection, WithColumnWidths, WithEvents, Wit
             $currentTotal = $lastTotal = 0;
 
             foreach ($items as $label => $config) {
-                if (is_array($config) && str_starts_with($label, '^')) {
+                if (str_starts_with($label, '^')) {
                     $result[] = [$label, '', ''];
                     foreach ($config as $subLabel => $subConfig) {
                         $range = $subConfig['range'] ?? (array) $subConfig;
@@ -120,9 +120,9 @@ class LaporanNeraca implements FromCollection, WithColumnWidths, WithEvents, Wit
                         $lastTotal += $last;
                     }
                 } else {
-                    $range = $config['range'] ?? $config;
-                    $add = $config['add'] ?? [];
-                    $offset = $config['offset'] ?? [];
+                    $range = $config;
+                    $add = [];
+                    $offset = [];
 
                     $last = $this->getSaldoAkhir($range, $previousMonth, $label, 'Last', 0, $offset, $add);
                     $current = $this->getSaldoAkhir($range, $selectedMonth, $label, 'Current', $last, $offset, $add);

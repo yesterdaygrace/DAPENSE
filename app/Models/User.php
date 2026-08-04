@@ -2,21 +2,32 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Database\Factories\UserFactory;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
-class User extends Authenticatable
+/**
+ * @use HasFactory<UserFactory>
+ *
+ * @property int $id
+ * @property string $name
+ * @property string $email
+ * @property string $usertype
+ * @property int $status
+ * @property string|null $image
+ */
+class User extends Authenticatable implements MustVerifyEmail
 {
     use HasFactory, LogsActivity, Notifiable;
 
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $fillable = [
         'name',
@@ -30,7 +41,7 @@ class User extends Authenticatable
     /**
      * The attributes that should be hidden for serialization.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $hidden = [
         'password',
@@ -50,7 +61,7 @@ class User extends Authenticatable
         ];
     }
 
-    public function isActive()
+    public function isActive(): bool
     {
         return $this->status == 1;
     }

@@ -14,8 +14,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Log;
-use Spatie\Activitylog\Facades\Activity;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -45,6 +43,7 @@ class JurnalingController
             'bk' => 'bankkeluar',
             'mem' => 'memorial',
             'mempenutup' => 'memorialpenutup',
+            default => 'home',
         };
     }
 
@@ -174,18 +173,12 @@ class JurnalingController
             && $validated['tanggal_jurnal'] <= Carbon::parse(Periode::find($validated['periode_id'])->tanggal_akhir);
     }
 
-    private function validateYearMatch(array $validated): bool
-    {
-        $periode = Periode::find($validated['periode_id']);
-        $tahunPeriode = Carbon::parse($periode->tanggal_awal)->year;
-        $tahunJurnal = Carbon::parse($validated['tanggal_jurnal'])->year;
-
-        return $tahunJurnal === $tahunPeriode;
-    }
-
     private function checkBalance(array $validated): bool
     {
-        return bccomp(array_sum($validated['debit'] ?? []), array_sum($validated['kredit'] ?? []), 2) === 0;
+        $totalDebit = array_sum($validated['debit'] ?? []);
+        $totalKredit = array_sum($validated['kredit'] ?? []);
+
+        return bccomp((string) $totalDebit, (string) $totalKredit, 2) === 0;
     }
 
     private function buildEntry(array $validated, int $index): array
@@ -282,7 +275,7 @@ class JurnalingController
         }
 
         try {
-            return DB::transaction(function () use ($validated, $sortEntries, $type, $lock) {
+            return DB::transaction(function () use ($validated, $sortEntries, $type) {
                 $entries = [];
 
                 foreach ($validated['coa_id'] as $index => $coa_id) {
@@ -369,6 +362,7 @@ class JurnalingController
             'bm' => substr($request->get('nomor_akun'), -4) . '-BM-' . str_pad($nomorTransaksi, 4, '0', STR_PAD_LEFT) . '/' . $bulan . '/' . $tahun,
             'bk' => substr($request->get('nomor_akun'), -4) . '-BK-' . str_pad($nomorTransaksi, 4, '0', STR_PAD_LEFT) . '/' . $bulan . '/' . $tahun,
             'mem', 'mempenutup' => 'JM-' . str_pad($nomorTransaksi, 4, '0', STR_PAD_LEFT) . '/' . $bulan . '/' . $tahun,
+            default => 'JM-' . str_pad($nomorTransaksi, 4, '0', STR_PAD_LEFT) . '/' . $bulan . '/' . $tahun,
         };
 
         $jurnal = Jurnaling::where('nomor_bukti', $nomorBukti)->get();
@@ -469,7 +463,7 @@ class JurnalingController
 
         $useBccomp = in_array($type, ['km', 'bm']);
         $balanceCheck = $useBccomp
-            ? bccomp($debitSum, $kreditSum, 2) === 0
+            ? bccomp((string) $debitSum, (string) $kreditSum, 2) === 0
             : $debitSum === $kreditSum;
 
         if (! $balanceCheck) {
@@ -629,9 +623,11 @@ class JurnalingController
             $periode = Periode::find($selectedPeriode);
             if ($periode) {
                 $activeMonths = Jurnaling::where('periode_id', $periode->id)
-                    ->selectRaw('DATE_FORMAT(tanggal_jurnal, "%Y-%m") as ym')
-                    ->groupBy('ym')
-                    ->pluck('ym')
+                    ->pluck('tanggal_jurnal')
+                    ->map(fn ($d) => Carbon::parse($d)->format('Y-m'))
+                    ->unique()
+                    ->sortDesc()
+                    ->values()
                     ->toArray();
 
                 $startDate = strtotime($periode->tanggal_awal);
@@ -668,9 +664,11 @@ class JurnalingController
             $periode = Periode::find($selectedPeriode);
             if ($periode) {
                 $activeMonths = Jurnaling::where('periode_id', $periode->id)
-                    ->selectRaw('DATE_FORMAT(tanggal_jurnal, "%Y-%m") as ym')
-                    ->groupBy('ym')
-                    ->pluck('ym')
+                    ->pluck('tanggal_jurnal')
+                    ->map(fn ($d) => Carbon::parse($d)->format('Y-m'))
+                    ->unique()
+                    ->sortDesc()
+                    ->values()
                     ->toArray();
 
                 $startDate = strtotime($periode->tanggal_awal);
@@ -739,8 +737,8 @@ class JurnalingController
                 }
 
                 $existingSaldoAwal = $allSaldoAwal->get($coa->id);
-                $saldoAwalDebit = $existingSaldoAwal?->debit ?? 0;
-                $saldoAwalKredit = $existingSaldoAwal?->kredit ?? 0;
+                $saldoAwalDebit = $existingSaldoAwal->debit ?? 0;
+                $saldoAwalKredit = $existingSaldoAwal->kredit ?? 0;
 
                 $debit = $balanceByCoa->get($coa->id)['debit'] ?? 0;
                 $kredit = $balanceByCoa->get($coa->id)['kredit'] ?? 0;
@@ -790,7 +788,7 @@ class JurnalingController
                 $kredit3202 += $selisih;
             }
 
-            $saldoAkhir3202 = ($saldoAwal3202?->debit ?? 0 - $saldoAwal3202?->kredit ?? 0) + ($debit3202 - $kredit3202);
+            $saldoAkhir3202 = (($saldoAwal3202->debit ?? 0) - ($saldoAwal3202->kredit ?? 0)) + ($debit3202 - $kredit3202);
 
             $neracaSaldoBatch[] = [
                 'coa_id' => '3202',
@@ -799,7 +797,7 @@ class JurnalingController
                 'debit' => $debit3202,
                 'kredit' => $kredit3202,
                 'balance' => $saldoAkhir3202,
-                'saldo_awal' => $saldoAwal3202?->debit ?? 0,
+                'saldo_awal' => $saldoAwal3202->debit ?? 0,
             ];
 
             $isLastMonth = $selectedMonthDate->month < 12;
@@ -813,7 +811,7 @@ class JurnalingController
 
             $debit3201 = ! $isDebitGreater ? $selisih : 0;
             $kredit3201 = $isDebitGreater ? $selisih : 0;
-            $saldoAkhir3201 = ($saldoAwal3201?->debit ?? 0 - $saldoAwal3201?->kredit ?? 0) + ($debit3201 - $kredit3201);
+            $saldoAkhir3201 = (($saldoAwal3201->debit ?? 0) - ($saldoAwal3201->kredit ?? 0)) + ($debit3201 - $kredit3201);
 
             $neracaSaldoBatch[] = [
                 'coa_id' => '3201',
@@ -822,7 +820,7 @@ class JurnalingController
                 'debit' => $debit3201,
                 'kredit' => $kredit3201,
                 'balance' => $saldoAkhir3201,
-                'saldo_awal' => $saldoAwal3201?->debit ?? 0,
+                'saldo_awal' => $saldoAwal3201->debit ?? 0,
             ];
 
             $saldoAwalBatch[] = [
@@ -1022,7 +1020,7 @@ class JurnalingController
             ->when($selectedPeriode, function ($query, $selectedPeriode) {
                 return $query->where('periode_id', $selectedPeriode);
             })
-            ->orderBy('nomor_bukti', 'ASC')
+            ->orderBy('nomor_bukti', 'asc')
             ->orderBy('tanggal_jurnal', 'asc')
             ->get();
 
@@ -1058,7 +1056,7 @@ class JurnalingController
             ->whereMonth('tanggal_jurnal', $monthNumber)
             ->where('periode_id', $periodeId)
             ->orderBy('tanggal_jurnal', 'asc')
-            ->orderBy('nomor_bukti', 'ASC')
+            ->orderBy('nomor_bukti', 'asc')
             ->get()
             ->map(function ($entry) {
                 if (empty(trim($entry->keterangan))) {

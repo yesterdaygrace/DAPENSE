@@ -173,21 +173,19 @@ class LaporanPerubahanAsetNeto implements FromCollection, WithColumnWidths, With
                 $subtotalBuffer[] = ['last' => $last, 'current' => $current];
             }
 
-            if (! empty($accounts)) {
-                $label = 'Total ' . ucwords(strtolower($sectionName));
-                $result[] = [
-                    'Investasi Nilai Buku' => '               ' . $label,
-                    'Saldo Akhir (Last)' => $this->formatSaldo($totalLast),
-                    'Saldo Akhir (Current)' => $this->formatSaldo($totalCurrent),
-                ];
+            $label = 'Total ' . ucwords(strtolower($sectionName));
+            $result[] = [
+                'Investasi Nilai Buku' => '               ' . $label,
+                'Saldo Akhir (Last)' => $this->formatSaldo($totalLast),
+                'Saldo Akhir (Current)' => $this->formatSaldo($totalCurrent),
+            ];
 
-                if ($sectionType === 'penambahan') {
-                    $grandPenambahanCurrent = $totalCurrent;
-                    $grandPenambahanLast = $totalLast;
-                } else {
-                    $grandPenguranganCurrent = $totalCurrent;
-                    $grandPenguranganLast = $totalLast;
-                }
+            if ($sectionType === 'penambahan') {
+                $grandPenambahanCurrent = $totalCurrent;
+                $grandPenambahanLast = $totalLast;
+            } else {
+                $grandPenguranganCurrent = $totalCurrent;
+                $grandPenguranganLast = $totalLast;
             }
         }
 

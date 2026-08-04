@@ -24,6 +24,11 @@ class PeriodeManager extends Component
         'is_rekap' => false,
     ];
 
+    public function boot()
+    {
+        Gate::authorize('viewAny', Periode::class);
+    }
+
     public function create()
     {
         $this->formData = ['nama_periode' => '', 'tanggal_awal' => '', 'tanggal_akhir' => '', 'is_rekap' => false];
@@ -89,6 +94,7 @@ class PeriodeManager extends Component
     public function render()
     {
         $periodes = Periode::orderBy('tanggal_awal', 'desc')->get();
+
         return view('livewire.periode-manager', compact('periodes'));
     }
 }

@@ -5,7 +5,9 @@ namespace App\Livewire;
 use App\Livewire\Concerns\HasRole;
 use App\Models\COA;
 use App\Models\Jurnaling;
+use App\Models\NeracaSaldo as NeracaSaldoModel;
 use App\Models\Periode;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
 
 class NeracaSaldo extends Component
@@ -19,6 +21,11 @@ class NeracaSaldo extends Component
     public float $totalKredit = 0;
     public bool $isBalanced = false;
 
+    public function boot()
+    {
+        Gate::authorize('viewAny', NeracaSaldoModel::class);
+    }
+
     public function mount($periode = null)
     {
         $this->periodes = Periode::orderBy('tanggal_awal', 'desc')->get();
@@ -31,8 +38,9 @@ class NeracaSaldo extends Component
 
     public function loadEntries()
     {
-        if (!$this->periodeId) {
+        if (! $this->periodeId) {
             $this->saldoEntries = [];
+
             return;
         }
 

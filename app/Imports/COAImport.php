@@ -74,7 +74,7 @@ class COAImport implements ToCollection, WithHeadingRow, WithValidation
 
         $header = HeaderCOA::where('kode_header', $headerRef)->first();
 
-        if (!$header) {
+        if (! $header) {
             $header = HeaderCOA::where('nama_header', $headerRef)->first();
         }
 

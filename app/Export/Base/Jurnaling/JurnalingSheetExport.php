@@ -42,7 +42,7 @@ class JurnalingSheetExport implements FromCollection, WithColumnWidths, WithCust
             ->whereMonth('tanggal_jurnal', $monthNumber)
             ->where('periode_id', $this->periodeId)
             ->orderBy('tanggal_jurnal', 'asc')
-            ->orderBy('nomor_bukti', 'ASC');
+            ->orderBy('nomor_bukti', 'asc');
 
         if ($this->kategori) {
             $query->whereRaw('LOWER(kategori_jurnal) = ?', [strtolower($this->kategori)]);

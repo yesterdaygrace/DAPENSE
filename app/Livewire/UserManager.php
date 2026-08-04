@@ -26,6 +26,11 @@ class UserManager extends Component
         'password' => '',
     ];
 
+    public function boot()
+    {
+        Gate::authorize('viewAny', User::class);
+    }
+
     public function create()
     {
         $this->formData = ['name' => '', 'email' => '', 'usertype' => 'operator', 'status' => 1, 'password' => ''];
@@ -76,7 +81,7 @@ class UserManager extends Component
             User::findOrFail($this->editId)->update($data);
             session()->flash('success', 'Pengguna berhasil diperbarui.');
         } else {
-            if (!isset($data['password'])) {
+            if (! isset($data['password'])) {
                 $data['password'] = Hash::make('password123');
             }
             User::create($data);
@@ -90,6 +95,7 @@ class UserManager extends Component
     {
         if ($id === auth()->id()) {
             session()->flash('error', 'Tidak dapat menghapus akun sendiri.');
+
             return;
         }
         $this->deleteId = $id;
@@ -103,6 +109,7 @@ class UserManager extends Component
         if ($this->deleteId === auth()->id()) {
             session()->flash('error', 'Tidak dapat menghapus akun sendiri.');
             $this->showDeleteModal = false;
+
             return;
         }
 
@@ -115,6 +122,7 @@ class UserManager extends Component
     public function render()
     {
         $users = User::orderBy('created_at', 'desc')->get();
+
         return view('livewire.user-manager', compact('users'));
     }
 }

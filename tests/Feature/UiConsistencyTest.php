@@ -10,15 +10,16 @@ beforeEach(function () {
 test('all pages include sidebar component', function () {
     $pages = [
         '/admin/dashboard',
-        '/admin/products',
-        '/admin/periodes',
-        '/admin/account/coa',
-        '/admin/account/header',
-        '/admin/saldoawal',
-        '/admin/jurnaling',
-        '/admin/bukubesar',
-        '/admin/neracasaldo/',
-        '/admin/otorisator/home',
+        '/dashboard',
+        '/periodes',
+        '/coa-workspace',
+        '/saldo-awal',
+        '/jurnaling',
+        '/jurnaling-list',
+        '/bukubesar',
+        '/neraca-saldo',
+        '/otorisator',
+        '/users',
     ];
 
     foreach ($pages as $page) {
@@ -32,15 +33,16 @@ test('all pages include sidebar component', function () {
 test('all pages use applayout layout', function () {
     $pages = [
         '/admin/dashboard',
-        '/admin/products',
-        '/admin/periodes',
-        '/admin/account/coa',
-        '/admin/account/header',
-        '/admin/saldoawal',
-        '/admin/jurnaling',
-        '/admin/bukubesar',
-        '/admin/neracasaldo/',
-        '/admin/otorisator/home',
+        '/dashboard',
+        '/periodes',
+        '/coa-workspace',
+        '/saldo-awal',
+        '/jurnaling',
+        '/jurnaling-list',
+        '/bukubesar',
+        '/neraca-saldo',
+        '/otorisator',
+        '/users',
     ];
 
     foreach ($pages as $page) {
@@ -53,8 +55,8 @@ test('all pages use applayout layout', function () {
 test('all pages use consistent font', function () {
     $pages = [
         '/admin/dashboard',
-        '/admin/products',
-        '/admin/periodes',
+        '/periodes',
+        '/users',
     ];
 
     foreach ($pages as $page) {
@@ -67,8 +69,8 @@ test('all pages use consistent font', function () {
 test('all pages have responsive meta tag', function () {
     $pages = [
         '/admin/dashboard',
-        '/admin/products',
-        '/admin/periodes',
+        '/periodes',
+        '/users',
     ];
 
     foreach ($pages as $page) {
@@ -95,7 +97,7 @@ test('dashboard page has KPI statistics', function () {
 test('dashboard page has module cards', function () {
     $response = $this->get('/admin/dashboard');
     $content = $response->getContent();
-    expect($content)->toContain('User Management');
+    expect($content)->toContain('Manajemen Pengguna');
     expect($content)->toContain('Jurnaling');
     expect($content)->toContain('Buku Besar');
 });
@@ -114,9 +116,9 @@ test('dashboard page has monthly summary', function () {
 
 test('table pages use consistent table structure', function () {
     $pages = [
-        '/admin/products',
-        '/admin/periodes',
-        '/admin/otorisator/home',
+        '/users',
+        '/periodes',
+        '/otorisator',
     ];
 
     foreach ($pages as $page) {
@@ -127,29 +129,16 @@ test('table pages use consistent table structure', function () {
     }
 });
 
-test('create pages have consistent form structure', function () {
-    $pages = [
-        '/admin/products/create',
-        '/admin/periodes/create',
-        '/admin/account/coa/create',
-        '/admin/account/header/create',
-        '/admin/otorisator/create',
-    ];
-
-    foreach ($pages as $page) {
-        $response = $this->get($page);
-        $content = $response->getContent();
-        expect($content)->toContain('</form>');
-    }
+test('profile page has consistent form structure', function () {
+    $response = $this->get('/profile');
+    $content = $response->getContent();
+    expect($content)->toContain('</form>');
 });
 
 test('pages have consistent card components', function () {
     $pages = [
         '/admin/dashboard',
-        '/admin/products',
-        '/admin/periodes',
-        '/admin/account/coa',
-        '/admin/account/header',
+        '/coa-workspace',
     ];
 
     foreach ($pages as $page) {
@@ -171,8 +160,8 @@ test('all pages are accessible (have main content landmark)', function () {
     expect($content)->toContain('main-content');
 });
 
-test('all form pages use POST method for data submission', function () {
-    $response = $this->get('/admin/periodes/create');
+test('form pages use POST method for data submission', function () {
+    $response = $this->get('/profile');
     $content = $response->getContent();
     expect($content)->toContain('method="POST"');
 });

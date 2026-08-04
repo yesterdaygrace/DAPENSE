@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Livewire\Concerns\HasRole;
 use App\Models\Jurnaling;
 use App\Models\Periode;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -16,6 +17,11 @@ class JurnalList extends Component
     public string $typeFilter = '';
     public string $periodeFilter = '';
     public $periodes = [];
+
+    public function boot()
+    {
+        Gate::authorize('viewAny', Jurnaling::class);
+    }
 
     public function mount()
     {
@@ -40,11 +46,11 @@ class JurnalList extends Component
     public function render()
     {
         $entries = Jurnaling::with('coa')
-            ->when($this->typeFilter, fn($q) => $q->where('kategori_jurnal', $this->typeFilter))
-            ->when($this->periodeFilter, fn($q) => $q->where('periode_id', $this->periodeFilter))
-            ->when($this->search, fn($q) => $q->where(function($q) {
+            ->when($this->typeFilter, fn ($q) => $q->where('kategori_jurnal', $this->typeFilter))
+            ->when($this->periodeFilter, fn ($q) => $q->where('periode_id', $this->periodeFilter))
+            ->when($this->search, fn ($q) => $q->where(function ($q) {
                 $q->where('nomor_bukti', 'like', '%' . $this->search . '%')
-                  ->orWhere('keterangan', 'like', '%' . $this->search . '%');
+                    ->orWhere('keterangan', 'like', '%' . $this->search . '%');
             }))
             ->orderBy('created_at', 'desc')
             ->paginate(20);

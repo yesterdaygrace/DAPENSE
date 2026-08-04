@@ -1,7 +1,13 @@
 <?php
 
-use App\Models\Periode;
+use App\Livewire\COAWorkspace;
+use App\Livewire\JurnalList;
+use App\Livewire\JurnalManager;
+use App\Livewire\OtorisatorManager;
+use App\Livewire\PeriodeManager;
+use App\Livewire\UserManager;
 use App\Models\User;
+use Livewire\Livewire;
 
 beforeEach(function () {
     $this->admin = User::factory()->create(['usertype' => 'admin', 'status' => 1]);
@@ -12,78 +18,78 @@ test('dashboard page loads successfully', function () {
     $this->get('/admin/dashboard')->assertOk();
 });
 
+test('livewire dashboard page loads successfully', function () {
+    $this->get('/dashboard')->assertOk();
+});
+
 test('periode list page loads', function () {
-    $this->get('/admin/periodes')->assertOk();
+    $this->get('/periodes')->assertOk();
 });
 
-test('periode create page loads', function () {
-    $this->get('/admin/periodes/create')->assertOk();
+test('periode manager component renders', function () {
+    Livewire::test(PeriodeManager::class)->assertOk();
 });
 
-test('can create periode', function () {
-    $response = $this->post('/admin/periodes/save', [
-        'nama_periode' => 'Periode Test ' . uniqid(),
-        'tanggal_awal' => '2024-01-01',
-        'tanggal_akhir' => '2024-12-31',
-    ]);
-    $response->assertSessionHasNoErrors();
-    $response->assertRedirect();
+test('can create periode via livewire', function () {
+    $nama = 'Periode Test ' . uniqid();
+
+    Livewire::test(PeriodeManager::class)
+        ->set('formData.nama_periode', $nama)
+        ->set('formData.tanggal_awal', '2024-01-01')
+        ->set('formData.tanggal_akhir', '2024-12-31')
+        ->call('save')
+        ->assertHasNoErrors();
+
+    $this->assertDatabaseHas('periodes', ['nama_periode' => $nama]);
 });
 
-test('can view COA list', function () {
-    $this->get('/admin/account/coa')->assertOk();
+test('can view COA workspace', function () {
+    $this->get('/coa-workspace')->assertOk();
 });
 
-test('can view COA create page', function () {
-    $this->get('/admin/account/coa/create')->assertOk();
-});
-
-test('can view header list', function () {
-    $this->get('/admin/account/header')->assertOk();
+test('COA workspace component renders', function () {
+    Livewire::test(COAWorkspace::class)->assertOk();
 });
 
 test('can view saldo awal page', function () {
-    $this->get('/admin/saldoawal')->assertOk();
+    $this->get('/saldo-awal')->assertOk();
 });
 
 test('can view jurnaling pages', function () {
-    $entries = ['', 'kaskeluar', 'bankmasuk', 'bankkeluar', 'memorial', 'memorialpenutup', 'create'];
-    foreach ($entries as $entry) {
-        $url = $entry ? "/admin/jurnaling/{$entry}" : '/admin/jurnaling';
-        $this->get($url)->assertOk();
-    }
+    $this->get('/jurnaling')->assertOk();
+    $this->get('/jurnaling-list')->assertOk();
 });
 
-test('can view jurnaling showing page with parameters', function () {
-    $periode = Periode::first();
-    if ($periode) {
-        $this->get('/admin/jurnaling/showing?month=2025-01&periode_id=' . $periode->id)->assertOk();
-    }
+test('jurnaling manager component renders', function () {
+    Livewire::test(JurnalManager::class)->assertOk();
+});
+
+test('jurnal list component renders', function () {
+    Livewire::test(JurnalList::class)->assertOk();
 });
 
 test('can view bukubesar page', function () {
-    $this->get('/admin/bukubesar')->assertOk();
+    $this->get('/bukubesar')->assertOk();
 });
 
-test('can view bukubesar filter page', function () {
-    $this->get('/admin/bukubesar/filter')->assertOk();
+test('can view neracasaldo page', function () {
+    $this->get('/neraca-saldo')->assertOk();
 });
 
-test('can view neracasaldo list page', function () {
-    $this->get('/admin/neracasaldo/')->assertOk();
+test('can view otorisator page', function () {
+    $this->get('/otorisator')->assertOk();
 });
 
-test('can view otorisator pages', function () {
-    $this->get('/admin/otorisator/home')->assertOk();
-    $this->get('/admin/otorisator/create')->assertOk();
+test('otorisator manager component renders', function () {
+    Livewire::test(OtorisatorManager::class)->assertOk();
 });
 
 test('can view user management page', function () {
-    $this->get('/admin/products')->assertOk();
+    $this->get('/users')->assertOk();
 });
 
-test('can view user create page', function () {
-    $this->get('/admin/products/create')->assertOk();
+test('user manager component renders', function () {
+    Livewire::test(UserManager::class)->assertOk();
 });
 
 test('can access profile page', function () {
@@ -102,28 +108,16 @@ test('can update profile', function () {
 test('semua admin routes return 200', function () {
     $routes = [
         '/admin/dashboard',
-        '/admin/products',
-        '/admin/products/create',
-        '/admin/periodes',
-        '/admin/periodes/create',
-        '/admin/account/header',
-        '/admin/account/header/create',
-        '/admin/account/coa',
-        '/admin/account/coa/create',
-        '/admin/saldoawal',
-        '/admin/saldoawal/create',
-        '/admin/jurnaling',
-        '/admin/jurnaling/kaskeluar',
-        '/admin/jurnaling/bankmasuk',
-        '/admin/jurnaling/bankkeluar',
-        '/admin/jurnaling/memorial',
-        '/admin/jurnaling/memorialpenutup',
-        '/admin/jurnaling/create',
-        '/admin/bukubesar',
-        '/admin/bukubesar/filter',
-        '/admin/neracasaldo/',
-        '/admin/otorisator/home',
-        '/admin/otorisator/create',
+        '/dashboard',
+        '/periodes',
+        '/coa-workspace',
+        '/saldo-awal',
+        '/jurnaling',
+        '/jurnaling-list',
+        '/bukubesar',
+        '/neraca-saldo',
+        '/otorisator',
+        '/users',
         '/profile',
     ];
 

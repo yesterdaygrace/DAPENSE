@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\admin\ProductControllerAdmin;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Base\BukuBesarController;
@@ -16,7 +17,6 @@ use App\Http\Controllers\Modules\JournalEntryController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\rootsuperuser\PostingControllerRootSuperuser;
 use App\Http\Controllers\rootsuperuser\ProductControllerRootSuperuser;
-use App\Http\Controllers\ActivityController;
 use App\Livewire\BukuBesar;
 use App\Livewire\COAWorkspace;
 use App\Livewire\Dashboard;
@@ -29,7 +29,9 @@ use App\Livewire\PeriodeManager;
 use App\Livewire\Posting;
 use App\Livewire\SaldoAwal;
 use App\Livewire\UserManager;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -49,19 +51,25 @@ Route::get('/', function () {
 Route::get('/demo-login', function () {
     $demoEmail = 'demo@dapense.app';
 
-    $user = \App\Models\User::where('email', $demoEmail)->first();
+    $user = User::where('email', $demoEmail)->first();
 
     if (! $user) {
-        $user = \App\Models\User::create([
+        $user = User::create([
             'name' => 'Demo User',
             'email' => $demoEmail,
-            'password' => \Illuminate\Support\Facades\Hash::make('demo-password'),
+            'password' => Hash::make('demo-password'),
             'usertype' => 'rootsuperuser',
             'status' => 1,
+            'email_verified_at' => now(),
         ]);
     }
 
-    \Illuminate\Support\Facades\Auth::login($user);
+    // Demo mode: bypass email verification so the demo user can access all menus.
+    if (! $user->hasVerifiedEmail()) {
+        $user->markEmailAsVerified();
+    }
+
+    Auth::login($user);
 
     return redirect()->intended('rootsuperuser/dashboard');
 })->name('demo.login');
@@ -143,21 +151,21 @@ Route::middleware(['auth', 'role:rootsuperuser'])->prefix('rootsuperuser')->name
     Route::get('/account/header/create', [HeaderController::class, 'create'])->name('account/header/create');
     Route::post('/account/header/save', [HeaderController::class, 'save'])->name('account/header/save');
     Route::get('/account/header/edit/{id}', [HeaderController::class, 'update'])->name('account/header/edit');
-    Route::put('/account/header/update/{id}', [HeaderController::class, 'updatesave'])->name('account/header/update');
+    Route::put('/account/header/update/{id}', [HeaderController::class, 'updateSave'])->name('account/header/update');
     Route::get('/account/header/delete/{id}', [HeaderController::class, 'delete'])->name('account/header/delete');
 
     Route::get('/account/coa', [CoaController::class, 'index'])->name('account/coa');
     Route::get('/account/coa/create', [CoaController::class, 'create'])->name('account/coa/create');
     Route::post('/account/coa/save', [CoaController::class, 'save'])->name('account/coa/save');
     Route::get('/account/coa/edit/{id}', [CoaController::class, 'update'])->name('account/coa/edit');
-    Route::put('/account/coa/update/{id}', [CoaController::class, 'updatesave'])->name('account/coa/update');
+    Route::put('/account/coa/update/{id}', [CoaController::class, 'updateSave'])->name('account/coa/update');
     Route::get('/account/coa/delete/{id}', [CoaController::class, 'delete'])->name('account/coa/delete');
 
     Route::get('/periodes', [PeriodeController::class, 'index'])->name('periodes');
     Route::get('/periodes/create', [PeriodeController::class, 'create'])->name('periodes/create');
     Route::post('/periodes/save', [PeriodeController::class, 'save'])->name('periodes/save');
     Route::get('/periodes/edit/{id}', [PeriodeController::class, 'update'])->name('periodes/edit');
-    Route::put('/periodes/update/{id}', [PeriodeController::class, 'updatesave'])->name('periodes/update');
+    Route::put('/periodes/update/{id}', [PeriodeController::class, 'updateSave'])->name('periodes/update');
     Route::get('/periodes/delete/{id}', [PeriodeController::class, 'delete'])->name('periodes/delete');
 
     Route::get('/jurnaling', [JurnalingController::class, 'index'])->name('jurnaling');
@@ -219,18 +227,18 @@ Route::middleware(['auth', 'role:rootsuperuser'])->prefix('rootsuperuser')->name
    protected by Policy classes for authorization.
    =================================================================== */
 Route::middleware(['auth'])->group(function () {
-    Route::get('/admin/dashboard', [HomeController::class, 'index'])->name('admin/dashboard');
-    Route::get('/operator/dashboard', [HomeController::class, 'homeOperator'])->name('operator/dashboard');
-    Route::get('/bod/dashboard', [HomeController::class, 'homeBod'])->name('bod/dashboard');
+    Route::get('/admin/dashboard', [HomeController::class, 'index'])->name('admin/dashboard')->middleware('role:admin');
+    Route::get('/operator/dashboard', [HomeController::class, 'homeOperator'])->name('operator/dashboard')->middleware('role:operator');
+    Route::get('/bod/dashboard', [HomeController::class, 'homeBod'])->name('bod/dashboard')->middleware('role:bod');
 
     // Product CRUD (admin)
-    Route::get('/products', [ProductControllerAdmin::class, 'index'])->name('products');
-    Route::get('/products/create', [ProductControllerAdmin::class, 'create'])->name('products/create');
-    Route::post('/products/save', [ProductControllerAdmin::class, 'save'])->name('products/save');
-    Route::get('/products/edit/{id}', [ProductControllerAdmin::class, 'edit'])->name('products/edit');
-    Route::put('/products/update/{id}', [ProductControllerAdmin::class, 'update'])->name('products/update');
-    Route::get('/products/delete/{id}', [ProductControllerAdmin::class, 'delete'])->name('products/delete');
-    Route::get('/products/status/{id}', [ProductControllerAdmin::class, 'toggleStatus'])->name('products/status');
+    Route::get('/products', [ProductControllerAdmin::class, 'index'])->name('products')->middleware('role:admin');
+    Route::get('/products/create', [ProductControllerAdmin::class, 'create'])->name('products/create')->middleware('role:admin');
+    Route::post('/products/save', [ProductControllerAdmin::class, 'save'])->name('products/save')->middleware('role:admin');
+    Route::get('/products/edit/{id}', [ProductControllerAdmin::class, 'edit'])->name('products/edit')->middleware('role:admin');
+    Route::put('/products/update/{id}', [ProductControllerAdmin::class, 'update'])->name('products/update')->middleware('role:admin');
+    Route::get('/products/delete/{id}', [ProductControllerAdmin::class, 'delete'])->name('products/delete')->middleware('role:admin');
+    Route::get('/products/status/{id}', [ProductControllerAdmin::class, 'toggleStatus'])->name('products/status')->middleware('role:admin');
 });
 
 Route::get('/health', function () {

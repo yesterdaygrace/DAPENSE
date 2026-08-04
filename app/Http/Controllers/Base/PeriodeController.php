@@ -8,7 +8,6 @@ use App\Models\Periode;
 use App\Models\SaldoAwal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Spatie\Activitylog\Facades\Activity;
 
 class PeriodeController extends Controller
 {

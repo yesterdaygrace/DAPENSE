@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Jurnaling;
 use App\Models\Periode;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
@@ -67,16 +68,18 @@ class HomeController extends Controller
             ->take(6)
             ->get();
 
-        $monthlyRaw = (clone $baseQuery)->select(
-            DB::raw("DATE_FORMAT(tanggal_jurnal, '%Y-%m') as month"),
-            DB::raw('COUNT(*) as total'),
-            DB::raw('COALESCE(SUM(debit), 0) as total_debit'),
-            DB::raw('COALESCE(SUM(kredit), 0) as total_kredit')
-        )
-            ->groupBy('month')
-            ->orderBy('month', 'desc')
-            ->take(6)
+        $monthlyRaw = (clone $baseQuery)
+            ->select('tanggal_jurnal', 'debit', 'kredit')
             ->get()
+            ->groupBy(fn ($j) => Carbon::parse($j->tanggal_jurnal)->format('Y-m'))
+            ->map(fn ($rows, $month) => (object) [
+                'month' => $month,
+                'total' => $rows->count(),
+                'total_debit' => (float) $rows->sum('debit'),
+                'total_kredit' => (float) $rows->sum('kredit'),
+            ])
+            ->sortByDesc('month')
+            ->take(6)
             ->reverse()
             ->values();
 
@@ -104,18 +107,22 @@ class HomeController extends Controller
         return view('dashboard.index', $this->getDashboardData());
     }
 
+    /**
+     * Unified dashboard handler for all roles.
+     * Delegates to index() — the same dashboard logic applies regardless of role.
+     */
     public function homeRootSuperuser()
     {
-        return view('dashboard.index', $this->getDashboardData());
+        return $this->index();
     }
 
     public function homeOperator()
     {
-        return view('dashboard.index', $this->getDashboardData());
+        return $this->index();
     }
 
     public function homeBod()
     {
-        return view('dashboard.index', $this->getDashboardData());
+        return $this->index();
     }
 }

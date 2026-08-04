@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Livewire\Concerns\HasRole;
 use App\Models\Jurnaling;
 use App\Models\Periode;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
@@ -25,6 +26,11 @@ class Dashboard extends Component
     public $activities;
     public $monthlySummary;
     public $favoriteModules;
+
+    public function boot()
+    {
+        abort_unless($this->canAccess('dashboard'), 403);
+    }
 
     public function mount()
     {
@@ -86,16 +92,18 @@ class Dashboard extends Component
             ->take(6)
             ->get();
 
-        $monthlyRaw = (clone $baseQuery)->select(
-            DB::raw("DATE_FORMAT(tanggal_jurnal, '%Y-%m') as month"),
-            DB::raw('COUNT(*) as total'),
-            DB::raw('COALESCE(SUM(debit), 0) as total_debit'),
-            DB::raw('COALESCE(SUM(kredit), 0) as total_kredit')
-        )
-            ->groupBy('month')
-            ->orderBy('month', 'desc')
-            ->take(6)
+        $monthlyRaw = (clone $baseQuery)
+            ->select('tanggal_jurnal', 'debit', 'kredit')
             ->get()
+            ->groupBy(fn ($j) => Carbon::parse($j->tanggal_jurnal)->format('Y-m'))
+            ->map(fn ($rows, $month) => (object) [
+                'month' => $month,
+                'total' => $rows->count(),
+                'total_debit' => (float) $rows->sum('debit'),
+                'total_kredit' => (float) $rows->sum('kredit'),
+            ])
+            ->sortByDesc('month')
+            ->take(6)
             ->reverse()
             ->values();
 

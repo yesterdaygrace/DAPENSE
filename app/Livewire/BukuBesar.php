@@ -5,7 +5,9 @@ namespace App\Livewire;
 use App\Livewire\Concerns\HasRole;
 use App\Models\COA;
 use App\Models\Jurnaling;
+use App\Models\NeracaSaldo;
 use App\Models\Periode;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
 
 class BukuBesar extends Component
@@ -24,6 +26,11 @@ class BukuBesar extends Component
     public float $totalKredit = 0;
     public float $runningBalance = 0;
 
+    public function boot()
+    {
+        Gate::authorize('viewAny', NeracaSaldo::class);
+    }
+
     public function mount()
     {
         $this->periodes = Periode::orderBy('tanggal_awal', 'desc')->get();
@@ -39,7 +46,7 @@ class BukuBesar extends Component
                     $q->whereBetween('tanggal_jurnal', [$periode->tanggal_awal, $periode->tanggal_akhir]);
                 }
             })
-            ->when($this->coaId, fn($q) => $q->where('coa_id', $this->coaId))
+            ->when($this->coaId, fn ($q) => $q->where('coa_id', $this->coaId))
             ->when($this->startDate && $this->endDate, function ($q) {
                 $q->whereBetween('tanggal_jurnal', [$this->startDate, $this->endDate]);
             });

@@ -2,9 +2,13 @@
 
 namespace App\Models;
 
+use Database\Factories\PeriodeFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @use HasFactory<PeriodeFactory>
+ */
 class Periode extends Model
 {
     use HasFactory;

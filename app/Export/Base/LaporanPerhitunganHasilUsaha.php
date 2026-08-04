@@ -66,6 +66,8 @@ class LaporanPerhitunganHasilUsaha implements FromCollection, WithColumnWidths, 
 
         $result = [];
         $totals = [];
+        $hasilInvestasiCurrent = 0;
+        $hasilInvestasiLast = 0;
 
         foreach ($sections as $section => $accounts) {
             $sectionName = strtoupper(str_replace('^', '', $section));

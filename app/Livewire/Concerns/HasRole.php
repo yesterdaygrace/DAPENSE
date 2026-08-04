@@ -34,6 +34,7 @@ trait HasRole
     public function isRole(string|array $roles): bool
     {
         $roles = (array) $roles;
+
         return in_array($this->role(), $roles);
     }
 

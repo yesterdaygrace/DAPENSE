@@ -30,6 +30,11 @@ class SaldoAwal extends Component
         'debit' => 0,
     ];
 
+    public function boot()
+    {
+        Gate::authorize('viewAny', SaldoAwalModel::class);
+    }
+
     public function mount()
     {
         $this->loadPeriodes();
@@ -81,6 +86,7 @@ class SaldoAwal extends Component
 
         if ($tanggalSaldo < $tanggalAwal || $tanggalSaldo > $tanggalAkhir) {
             session()->flash('error', 'Tanggal saldo harus dalam rentang periode');
+
             return;
         }
 
@@ -122,7 +128,7 @@ class SaldoAwal extends Component
     public function render()
     {
         $saldoAwals = SaldoAwalModel::with('coa', 'periode')
-            ->when($this->periodeFilter, fn($q) => $q->where('periode_id', $this->periodeFilter))
+            ->when($this->periodeFilter, fn ($q) => $q->where('periode_id', $this->periodeFilter))
             ->get();
 
         return view('livewire.saldo-awal', compact('saldoAwals'));

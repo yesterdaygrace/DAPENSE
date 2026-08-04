@@ -77,9 +77,9 @@ class LaporanInvestasi implements FromCollection, WithColumnWidths, WithEvents, 
             $tempRows = [];
 
             foreach ($accounts as $name => $config) {
-                $range = is_array($config) && isset($config['range']) ? $config['range'] : $config;
-                $offset = is_array($config) && isset($config['offset']) ? $config['offset'] : [];
-                $add = is_array($config) && isset($config['add']) ? $config['add'] : [];
+                $range = isset($config['range']) ? $config['range'] : $config;
+                $offset = [];
+                $add = isset($config['add']) ? $config['add'] : [];
 
                 $last = $this->getSaldoAkhir($range, $previousMonth, $name, 'Last', 0, $offset, $add);
                 $current = $this->getSaldoAkhir($range, $selectedMonth, $name, 'Current', $last, $offset, $add);

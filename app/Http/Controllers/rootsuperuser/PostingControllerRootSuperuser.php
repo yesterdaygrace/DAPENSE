@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\rootsuperuser;
 
+use App\Models\COA;
 use App\Models\Jurnaling;
+use App\Models\NeracaSaldo;
 use App\Models\Periode;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -72,13 +74,31 @@ class PostingControllerRootSuperuser
     public function postJurnal(Request $request)
     {
         $periodeId = $request->input('periode_id');
-        $selectedPeriode = Periode::find($periodeId);
-        $journalEntries = Jurnaling::where('periode_id', $periodeId)->get();
+        $periode = Periode::findOrFail($periodeId);
 
-        foreach ($journalEntries as $entry) {
-            $entry->posted = true;
-            $entry->save();
-        }    // Redirect back to the posting page with the selected period pre-selected
+        $entries = Jurnaling::where('periode_id', $periodeId)->get();
+        $coas = COA::all();
+
+        foreach ($coas as $coa) {
+            $totals = $entries->where('coa_id', $coa->id);
+            if ($totals->isEmpty()) {
+                continue;
+            }
+
+            $totalDebit = $totals->sum('debit');
+            $totalKredit = $totals->sum('kredit');
+
+            NeracaSaldo::updateOrCreate(
+                ['coa_id' => $coa->id, 'periode_id' => $periodeId],
+                [
+                    'debit' => $totalDebit,
+                    'kredit' => $totalKredit,
+                    'balance' => $totalDebit - $totalKredit,
+                ]
+            );
+        }
+
+        $periode->update(['is_rekap' => true]);
 
         return redirect()->route('rootsuperuser/posting/post', ['periode_id' => $periodeId])
             ->with('success', 'Journal entries successfully posted!');
