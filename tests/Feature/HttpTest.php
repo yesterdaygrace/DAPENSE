@@ -118,17 +118,12 @@ test('role middleware blocks wrong role on dashboard routes', function () {
     $this->actingAs($user)->get('/admin/dashboard')->assertRedirect('/');
 });
 
-test('role middleware blocks wrong role on products routes', function () {
-    $user = User::factory()->create(['usertype' => 'bod', 'status' => 1]);
-    $this->actingAs($user)->get('/products')->assertRedirect('/');
+test('administration module returns 200 for admin', function () {
+    $this->actingAs($this->admin)->get('/administration')->assertOk();
 });
 
-test('products page returns 200 for admin', function () {
-    $this->actingAs($this->admin)->get('/products')->assertOk();
-});
-
-test('product edit page returns 404 for non-existent user', function () {
-    $this->actingAs($this->admin)->get('/products/edit/99999')->assertNotFound();
+test('users management returns 200 for admin', function () {
+    $this->actingAs($this->admin)->get('/users')->assertOk();
 });
 
 test('periode edit throws ModelNotFoundException for non-existent periode', function () {
@@ -162,5 +157,5 @@ test('rootsuperuser routes are accessible by rootsuperuser', function () {
     $this->actingAs($root);
     $this->get('/rootsuperuser/dashboard')->assertOk();
     $this->get('/rootsuperuser/posting')->assertOk();
-    $this->get('/rootsuperuser/products')->assertOk();
+    $this->get('/rootsuperuser/otorisator/home')->assertOk();
 });

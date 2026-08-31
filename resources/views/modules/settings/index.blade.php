@@ -151,7 +151,7 @@
                 <i class='home'></i>
                 <span>Kembali ke Dasbor</span>
             </a>
-            <a href="{{ $prefix }}/products" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-[--radius-button] hover:bg-gray-200 transition-colors text-sm font-medium">
+            <a href="/users" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-[--radius-button] hover:bg-gray-200 transition-colors text-sm font-medium">
                 <i class='user'></i>
                 <span>Kelola Pengguna</span>
             </a>

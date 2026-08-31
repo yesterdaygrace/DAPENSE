@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\ActivityController;
-use App\Http\Controllers\admin\ProductControllerAdmin;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Base\BukuBesarController;
 use App\Http\Controllers\Base\CoaController;
@@ -16,7 +15,6 @@ use App\Http\Controllers\Modules\COAWorkspaceController;
 use App\Http\Controllers\Modules\JournalEntryController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\rootsuperuser\PostingControllerRootSuperuser;
-use App\Http\Controllers\rootsuperuser\ProductControllerRootSuperuser;
 use App\Livewire\BukuBesar;
 use App\Livewire\COAWorkspace;
 use App\Livewire\Dashboard;
@@ -30,6 +28,7 @@ use App\Livewire\Posting;
 use App\Livewire\SaldoAwal;
 use App\Livewire\UserManager;
 use App\Models\User;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
@@ -49,30 +48,47 @@ Route::get('/', function () {
 |--------------------------------------------------------------------------
 */
 Route::get('/demo-login', function () {
+    if (! app()->isLocal() && ! config('app.demo_enabled', false)) {
+        abort(404);
+    }
+
     $demoEmail = 'demo@dapense.app';
 
-    $user = User::where('email', $demoEmail)->first();
+    try {
+        $user = User::where('email', $demoEmail)->first();
 
-    if (! $user) {
-        $user = User::create([
-            'name' => 'Demo User',
-            'email' => $demoEmail,
-            'password' => Hash::make('demo-password'),
-            'usertype' => 'rootsuperuser',
-            'status' => 1,
-            'email_verified_at' => now(),
-        ]);
+        if (! $user) {
+            $user = User::create([
+                'name' => 'Demo User',
+                'email' => $demoEmail,
+                'password' => Hash::make('demo-password'),
+                'usertype' => 'rootsuperuser',
+                'status' => 1,
+                'email_verified_at' => now(),
+            ]);
+        }
+
+        // Demo mode: bypass email verification so the demo user can access all menus.
+        if (! $user->hasVerifiedEmail()) {
+            $user->markEmailAsVerified();
+        }
+
+        Auth::login($user);
+
+        return redirect()->intended('rootsuperuser/dashboard');
+    } catch (QueryException|PDOException $e) {
+        report($e);
+
+        $hint = config('database.connections.mysql.host') === 'dapense-mysql' && ! config('app.docker')
+            ? 'DB host dapense-mysql is only reachable inside Docker. Set DB_HOST=127.0.0.1 and DB_PORT=13306 (docker MySQL) or run `docker compose up`.'
+            : 'Database unavailable. Check DB_HOST/DB_PORT and that MySQL is running (`docker compose ps`).';
+
+        return response()->view('errors.db-unavailable', [
+            'hint' => $hint,
+            'message' => $e->getMessage(),
+        ], 503);
     }
-
-    // Demo mode: bypass email verification so the demo user can access all menus.
-    if (! $user->hasVerifiedEmail()) {
-        $user->markEmailAsVerified();
-    }
-
-    Auth::login($user);
-
-    return redirect()->intended('rootsuperuser/dashboard');
-})->name('demo.login');
+})->middleware('throttle:6,1')->name('demo.login');
 
 /*
 |--------------------------------------------------------------------------
@@ -138,14 +154,6 @@ Route::middleware(['auth', 'role:rootsuperuser'])->prefix('rootsuperuser')->name
     Route::get('/master-data/coa-workspace/template', [COAWorkspaceController::class, 'downloadTemplate'])->name('master-data/coa-workspace.template');
     Route::get('/transactions/journal-entry', [JournalEntryController::class, 'index'])->name('transactions/journal-entry');
     Route::post('/transactions/journal-entry', [JournalEntryController::class, 'store'])->name('transactions/journal-entry.store');
-
-    Route::get('/products', [ProductControllerRootSuperuser::class, 'index'])->name('products');
-    Route::get('/products/create', [ProductControllerRootSuperuser::class, 'create'])->name('products/create');
-    Route::post('/products/save', [ProductControllerRootSuperuser::class, 'save'])->name('products/save');
-    Route::get('/products/edit/{id}', [ProductControllerRootSuperuser::class, 'edit'])->name('products/edit');
-    Route::put('/products/update/{id}', [ProductControllerRootSuperuser::class, 'update'])->name('products/update');
-    Route::get('/products/delete/{id}', [ProductControllerRootSuperuser::class, 'delete'])->name('products/delete');
-    Route::get('/products/status/{id}', [ProductControllerRootSuperuser::class, 'toggleStatus'])->name('products/status');
 
     Route::get('/account/header', [HeaderController::class, 'index'])->name('account/header');
     Route::get('/account/header/create', [HeaderController::class, 'create'])->name('account/header/create');
@@ -230,15 +238,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/dashboard', [HomeController::class, 'index'])->name('admin/dashboard')->middleware('role:admin');
     Route::get('/operator/dashboard', [HomeController::class, 'homeOperator'])->name('operator/dashboard')->middleware('role:operator');
     Route::get('/bod/dashboard', [HomeController::class, 'homeBod'])->name('bod/dashboard')->middleware('role:bod');
-
-    // Product CRUD (admin)
-    Route::get('/products', [ProductControllerAdmin::class, 'index'])->name('products')->middleware('role:admin');
-    Route::get('/products/create', [ProductControllerAdmin::class, 'create'])->name('products/create')->middleware('role:admin');
-    Route::post('/products/save', [ProductControllerAdmin::class, 'save'])->name('products/save')->middleware('role:admin');
-    Route::get('/products/edit/{id}', [ProductControllerAdmin::class, 'edit'])->name('products/edit')->middleware('role:admin');
-    Route::put('/products/update/{id}', [ProductControllerAdmin::class, 'update'])->name('products/update')->middleware('role:admin');
-    Route::get('/products/delete/{id}', [ProductControllerAdmin::class, 'delete'])->name('products/delete')->middleware('role:admin');
-    Route::get('/products/status/{id}', [ProductControllerAdmin::class, 'toggleStatus'])->name('products/status')->middleware('role:admin');
 });
 
 Route::get('/health', function () {

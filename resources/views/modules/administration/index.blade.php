@@ -94,7 +94,7 @@
     <!-- Feature Cards Grid -->
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <!-- User Management -->
-        <a href="{{ $prefix }}/products" class="bg-white rounded-[--radius-card] p-6 shadow-card hover:shadow-card-hover transition-shadow cursor-pointer group">
+        <a href="/users" class="bg-white rounded-[--radius-card] p-6 shadow-card hover:shadow-card-hover transition-shadow cursor-pointer group">
             <div class="w-12 h-12 rounded-[--radius-button] bg-primary-50 flex items-center justify-center text-primary mb-4 group-hover:scale-110 transition-transform">
                 <i data-lucide='user' class='text-2xl' aria-hidden="true"></i>
             </div>
@@ -110,11 +110,11 @@
         <div class="bg-white rounded-[--radius-card] p-6 shadow-card">
             <h2 class="text-lg font-semibold text-gray-900 mb-4">Aksi Cepat</h2>
             <div class="flex flex-wrap gap-3">
-                <a href="{{ $prefix }}/products?action=new" class="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-[--radius-button] hover:bg-primary-600 transition-colors text-sm font-medium">
+                <a href="/users?action=new" class="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-[--radius-button] hover:bg-primary-600 transition-colors text-sm font-medium">
                     <i class='plus'></i>
                     <span>Tambah Pengguna Baru</span>
                 </a>
-                <a href="{{ $prefix }}/products" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-[--radius-button] hover:bg-gray-200 transition-colors text-sm font-medium">
+                <a href="/users" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-[--radius-button] hover:bg-gray-200 transition-colors text-sm font-medium">
                     <i class='search'></i>
                     <span>Cari Pengguna</span>
                 </a>
