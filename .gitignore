@@ -19,3 +19,4 @@ task.md
 opencode.json
 .codegraph
 .commandcode/
+database/pgsql-dump/
