@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Livewire\Concerns\HasRole;
 use App\Models\Otorisator;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
 
@@ -77,8 +78,12 @@ class OtorisatorManager extends Component
     {
         Gate::authorize('delete', Otorisator::class);
 
-        Otorisator::findOrFail($this->deleteId)->delete();
-        session()->flash('success', 'Otorisator berhasil dihapus.');
+        try {
+            Otorisator::findOrFail($this->deleteId)->delete();
+            session()->flash('success', 'Otorisator berhasil dihapus.');
+        } catch (QueryException $e) {
+            session()->flash('error', 'Tidak dapat menghapus otorisator.');
+        }
         $this->showDeleteModal = false;
         $this->deleteId = null;
     }

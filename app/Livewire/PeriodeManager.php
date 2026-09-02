@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Livewire\Concerns\HasRole;
 use App\Models\Periode;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
 
@@ -85,8 +86,12 @@ class PeriodeManager extends Component
     {
         Gate::authorize('delete', Periode::class);
 
-        Periode::findOrFail($this->deleteId)->delete();
-        session()->flash('success', 'Periode berhasil dihapus.');
+        try {
+            Periode::findOrFail($this->deleteId)->delete();
+            session()->flash('success', 'Periode berhasil dihapus.');
+        } catch (QueryException $e) {
+            session()->flash('error', 'Tidak dapat menghapus periode: masih dipakai jurnal / saldo awal / neraca saldo.');
+        }
         $this->showDeleteModal = false;
         $this->deleteId = null;
     }

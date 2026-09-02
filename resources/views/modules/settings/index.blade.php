@@ -16,7 +16,7 @@
 <div class="space-y-6">
     <!-- Breadcrumb -->
     <nav class="flex items-center gap-2 text-sm text-gray-600">
-        <a href="{{ $prefix }}/dashboard" class="hover:text-primary transition-colors">Dasbor</a>
+        <a href="{{ route('dashboard') }}" class="hover:text-primary transition-colors">Dasbor</a>
         <i data-lucide='chevron-right' class='text-gray-400' aria-hidden="true"></i>
         <span class="text-gray-900 font-medium">Pengaturan</span>
     </nav>
@@ -147,7 +147,7 @@
     <div class="bg-white rounded-[--radius-card] p-6 shadow-card">
         <h2 class="text-lg font-semibold text-gray-900 mb-4">Tautan Cepat</h2>
         <div class="flex flex-wrap gap-3">
-            <a href="{{ $prefix }}/dashboard" class="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-[--radius-button] hover:bg-primary-600 transition-colors text-sm font-medium">
+            <a href="{{ route('dashboard') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-[--radius-button] hover:bg-primary-600 transition-colors text-sm font-medium">
                 <i class='home'></i>
                 <span>Kembali ke Dasbor</span>
             </a>

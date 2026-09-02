@@ -4,6 +4,7 @@
 
 @section('content')
 @php
+    // Use named Livewire routes (not $prefix legacy controllers) — hub must point to working CRUD
     $prefix = match(Auth::user()->usertype) {
         'rootsuperuser' => '/rootsuperuser',
         'admin' => '/admin',
@@ -16,7 +17,7 @@
 <div class="space-y-6">
     <!-- Breadcrumb -->
     <nav class="flex items-center gap-2 text-sm text-gray-600">
-        <a href="{{ $prefix }}/dashboard" class="hover:text-primary transition-colors">Dasbor</a>
+        <a href="{{ route('dashboard') }}" class="hover:text-primary transition-colors">Dasbor</a>
         <i data-lucide='chevron-right' class='text-gray-400' aria-hidden="true"></i>
         <span class="text-gray-900 font-medium">Data Master</span>
     </nav>
@@ -80,7 +81,7 @@
     <!-- Feature Cards Grid -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <!-- Accounting Period -->
-        <a href="{{ $prefix }}/periodes" class="bg-white rounded-[--radius-card] p-6 shadow-card hover:shadow-card-hover transition-shadow cursor-pointer group">
+        <a href="{{ route('periodes') }}" class="bg-white rounded-[--radius-card] p-6 shadow-card hover:shadow-card-hover transition-shadow cursor-pointer group">
             <div class="w-12 h-12 rounded-[--radius-button] bg-primary-50 flex items-center justify-center text-primary mb-4 group-hover:scale-110 transition-transform">
                 <i data-lucide='calendar' class='text-2xl' aria-hidden="true"></i>
             </div>
@@ -93,7 +94,7 @@
         </a>
 
         <!-- Chart of Accounts + Headers -->
-        <a href="{{ $prefix }}/master-data/coa-workspace" class="bg-white rounded-[--radius-card] p-6 shadow-card hover:shadow-card-hover transition-shadow cursor-pointer group">
+        <a href="{{ route('coa-workspace') }}" class="bg-white rounded-[--radius-card] p-6 shadow-card hover:shadow-card-hover transition-shadow cursor-pointer group">
             <div class="w-12 h-12 rounded-[--radius-button] bg-primary-50 flex items-center justify-center text-primary mb-4 group-hover:scale-110 transition-transform">
                 <i data-lucide='table-2' class='text-2xl' aria-hidden="true"></i>
             </div>
@@ -106,7 +107,7 @@
         </a>
 
         <!-- Opening Balance -->
-        <a href="{{ $prefix }}/saldoawal" class="bg-white rounded-[--radius-card] p-6 shadow-card hover:shadow-card-hover transition-shadow cursor-pointer group">
+        <a href="{{ route('saldo-awal') }}" class="bg-white rounded-[--radius-card] p-6 shadow-card hover:shadow-card-hover transition-shadow cursor-pointer group">
             <div class="w-12 h-12 rounded-[--radius-button] bg-primary-50 flex items-center justify-center text-primary mb-4 group-hover:scale-110 transition-transform">
                 <i data-lucide='banknote' class='text-2xl' aria-hidden="true"></i>
             </div>
@@ -123,11 +124,11 @@
     <div class="bg-white rounded-[--radius-card] p-6 shadow-card">
         <h2 class="text-lg font-semibold text-gray-900 mb-4">Aksi Cepat</h2>
         <div class="flex flex-wrap gap-3">
-            <a href="{{ $prefix }}/master-data/coa-workspace?action=new" class="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-[--radius-button] hover:bg-primary-600 transition-colors text-sm font-medium">
+            <a href="{{ route('coa-workspace') }}?action=new" class="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-[--radius-button] hover:bg-primary-600 transition-colors text-sm font-medium">
                 <i class='plus'></i>
                 <span>Akun Baru</span>
             </a>
-            <a href="{{ $prefix }}/periodes?action=new" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-[--radius-button] hover:bg-gray-200 transition-colors text-sm font-medium">
+            <a href="{{ route('periodes') }}?action=new" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-[--radius-button] hover:bg-gray-200 transition-colors text-sm font-medium">
                 <i data-lucide='calendar-plus' aria-hidden="true"></i>
                 <span>Periode Baru</span>
             </a>

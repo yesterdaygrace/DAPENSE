@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -1088,8 +1089,13 @@ class JurnalingController
 
         $periode = Periode::find($periodeId);
         if (! $periode) {
-            return redirect()->route($this->routePrefix() . '/jurnaling/months')
-                ->withErrors(['error' => 'Invalid period selected.']);
+            $fallback = $this->routePrefix() . '/jurnaling/months';
+            if (Route::has($fallback)) {
+                return redirect()->route($fallback)
+                    ->withErrors(['error' => 'Invalid period selected.']);
+            }
+
+            return redirect('/jurnaling')->withErrors(['error' => 'Invalid period selected.']);
         }
 
         $monthName = Carbon::createFromFormat('Y-m', $month)->translatedFormat('F');

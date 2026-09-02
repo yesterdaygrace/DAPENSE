@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Livewire\Concerns\HasRole;
 use App\Models\COA;
 use App\Models\HeaderCOA;
+use Illuminate\Database\QueryException;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -138,8 +139,12 @@ class COAWorkspace extends Component
 
     public function deleteAccount()
     {
-        COA::findOrFail($this->deleteId)->delete();
-        session()->flash('success', 'Akun berhasil dihapus.');
+        try {
+            COA::findOrFail($this->deleteId)->delete();
+            session()->flash('success', 'Akun berhasil dihapus.');
+        } catch (QueryException $e) {
+            session()->flash('error', 'Tidak dapat menghapus akun: masih dipakai jurnal / saldo awal.');
+        }
         $this->showDeleteModal = false;
         $this->deleteId = null;
     }
@@ -203,8 +208,12 @@ class COAWorkspace extends Component
 
     public function deleteHeader()
     {
-        HeaderCOA::findOrFail($this->headerDeleteId)->delete();
-        session()->flash('success', 'Header berhasil dihapus.');
+        try {
+            HeaderCOA::findOrFail($this->headerDeleteId)->delete();
+            session()->flash('success', 'Header berhasil dihapus.');
+        } catch (QueryException $e) {
+            session()->flash('error', 'Tidak dapat menghapus header: masih dipakai akun.');
+        }
         $this->showHeaderDeleteModal = false;
         $this->headerDeleteId = null;
     }

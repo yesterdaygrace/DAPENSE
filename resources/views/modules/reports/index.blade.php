@@ -16,7 +16,7 @@
 <div class="space-y-6">
     <!-- Breadcrumb -->
     <nav class="flex items-center gap-2 text-sm text-gray-600">
-        <a href="{{ $prefix }}/dashboard" class="hover:text-primary transition-colors">Dasbor</a>
+        <a href="{{ route('dashboard') }}" class="hover:text-primary transition-colors">Dasbor</a>
         <i data-lucide='chevron-right' class='text-gray-400' aria-hidden="true"></i>
         <span class="text-gray-900 font-medium">Laporan</span>
     </nav>
@@ -95,7 +95,7 @@
     <!-- Feature Cards Grid -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <!-- Journal Summary -->
-        <a href="{{ $prefix }}/jurnaling/showing" class="bg-white rounded-[--radius-card] p-6 shadow-card hover:shadow-card-hover transition-shadow cursor-pointer group">
+        <a href="{{ route('jurnaling-list') }}" class="bg-white rounded-[--radius-card] p-6 shadow-card hover:shadow-card-hover transition-shadow cursor-pointer group">
             <div class="w-12 h-12 rounded-[--radius-button] bg-primary-50 flex items-center justify-center text-primary mb-4 group-hover:scale-110 transition-transform">
                 <i data-lucide='receipt' class='text-2xl' aria-hidden="true"></i>
             </div>
@@ -108,7 +108,7 @@
         </a>
 
         <!-- General Ledger -->
-        <a href="{{ $prefix }}/bukubesar" class="bg-white rounded-[--radius-card] p-6 shadow-card hover:shadow-card-hover transition-shadow cursor-pointer group">
+        <a href="{{ route('bukubesar') }}" class="bg-white rounded-[--radius-card] p-6 shadow-card hover:shadow-card-hover transition-shadow cursor-pointer group">
             <div class="w-12 h-12 rounded-[--radius-button] bg-primary-50 flex items-center justify-center text-primary mb-4 group-hover:scale-110 transition-transform">
                 <i data-lucide='book' class='text-2xl' aria-hidden="true"></i>
             </div>
@@ -121,7 +121,7 @@
         </a>
 
         <!-- Trial Balance -->
-        <a href="{{ $prefix }}/neracasaldo/" class="bg-white rounded-[--radius-card] p-6 shadow-card hover:shadow-card-hover transition-shadow cursor-pointer group">
+        <a href="{{ route('neraca-saldo') }}" class="bg-white rounded-[--radius-card] p-6 shadow-card hover:shadow-card-hover transition-shadow cursor-pointer group">
             <div class="w-12 h-12 rounded-[--radius-button] bg-primary-50 flex items-center justify-center text-primary mb-4 group-hover:scale-110 transition-transform">
                 <i data-lucide='calculator' class='text-2xl' aria-hidden="true"></i>
             </div>
@@ -139,15 +139,15 @@
     <div class="bg-white rounded-[--radius-card] p-6 shadow-card">
         <h2 class="text-lg font-semibold text-gray-900 mb-4">Aksi Cepat</h2>
         <div class="flex flex-wrap gap-3">
-            <a href="{{ $prefix }}/neracasaldo/" class="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-[--radius-button] hover:bg-primary-600 transition-colors text-sm font-medium">
+            <a href="{{ route('neraca-saldo') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-[--radius-button] hover:bg-primary-600 transition-colors text-sm font-medium">
                 <i class='calculator'></i>
                 <span>Hitung Neraca Saldo</span>
             </a>
-            <a href="{{ $prefix }}/bukubesar" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-[--radius-button] hover:bg-gray-200 transition-colors text-sm font-medium">
+            <a href="{{ route('bukubesar') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-[--radius-button] hover:bg-gray-200 transition-colors text-sm font-medium">
                 <i class='book-open'></i>
                 <span>Lihat Buku Besar</span>
             </a>
-            <a href="{{ $prefix }}/jurnaling/showing" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-[--radius-button] hover:bg-gray-200 transition-colors text-sm font-medium">
+            <a href="{{ route('jurnaling-list') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-[--radius-button] hover:bg-gray-200 transition-colors text-sm font-medium">
                 <i class='receipt'></i>
                 <span>Ringkasan Jurnal</span>
             </a>

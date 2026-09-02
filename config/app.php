@@ -137,5 +137,6 @@ return [
     'docker' => (bool) env('DOCKER', false),
     'vercel' => (bool) env('VERCEL', false),
     'vercel_env' => (bool) env('VERCEL_ENV', false),
+    'demo_enabled' => (bool) env('DEMO_ENABLED', false),
 
 ];

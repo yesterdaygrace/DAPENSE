@@ -9,9 +9,13 @@ public/storage
 .phpunit.result.cache
 .omo/
 .playwright-mcp/
+playwright-report/
+test-results/
+blob-report/
 
 # Tool configs
 .envsitter/
 task.md
 opencode.json
 .codegraph
+.commandcode/

@@ -59,7 +59,7 @@ class JournalEntry extends Component
 
     public function getIsBalancedProperty(): bool
     {
-        return $this->totalDebit === $this->totalKredit && $this->totalDebit > 0;
+        return abs($this->totalDebit - $this->totalKredit) < 0.01 && $this->totalDebit > 0;
     }
 
     public function getJenisLabelProperty(): string
@@ -97,7 +97,7 @@ class JournalEntry extends Component
         Gate::authorize('create', Jurnaling::class);
 
         if (! $this->isBalanced) {
-            session()->flash('error', 'Debit dan Kredit harus seimbang.');
+            $this->addError('entries', 'Debit dan Kredit harus seimbang (selisih ' . number_format(abs($this->totalDebit - $this->totalKredit), 2) . ').');
 
             return;
         }

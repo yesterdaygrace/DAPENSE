@@ -16,7 +16,7 @@
 <div class="space-y-6">
     <!-- Breadcrumb -->
     <nav class="flex items-center gap-2 text-sm text-gray-600">
-        <a href="{{ $prefix }}/dashboard" class="hover:text-primary transition-colors">Dasbor</a>
+        <a href="{{ route('dashboard') }}" class="hover:text-primary transition-colors">Dasbor</a>
         <i data-lucide='chevron-right' class='text-gray-400' aria-hidden="true"></i>
         <span class="text-gray-900 font-medium">Transaksi</span>
     </nav>
@@ -95,7 +95,7 @@
     <!-- Feature Cards Grid -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <!-- Journal Entry -->
-        <a href="{{ $prefix }}/transactions/journal-entry" class="bg-white rounded-[--radius-card] p-6 shadow-card hover:shadow-card-hover transition-shadow cursor-pointer group">
+        <a href="{{ route('jurnal-entry') }}" class="bg-white rounded-[--radius-card] p-6 shadow-card hover:shadow-card-hover transition-shadow cursor-pointer group">
             <div class="w-12 h-12 rounded-[--radius-button] bg-primary-50 flex items-center justify-center text-primary mb-4 group-hover:scale-110 transition-transform">
                 <i data-lucide='edit' class='text-2xl' aria-hidden="true"></i>
             </div>
@@ -108,7 +108,7 @@
         </a>
 
         <!-- Journal List -->
-        <a href="{{ $prefix }}/jurnaling/showing" class="bg-white rounded-[--radius-card] p-6 shadow-card hover:shadow-card-hover transition-shadow cursor-pointer group">
+        <a href="{{ route('jurnaling-list') }}" class="bg-white rounded-[--radius-card] p-6 shadow-card hover:shadow-card-hover transition-shadow cursor-pointer group">
             <div class="w-12 h-12 rounded-[--radius-button] bg-primary-50 flex items-center justify-center text-primary mb-4 group-hover:scale-110 transition-transform">
                 <i data-lucide='list' class='text-2xl' aria-hidden="true"></i>
             </div>
@@ -123,7 +123,7 @@
 
 
         <!-- Export -->
-        <a href="{{ $prefix }}/jurnaling/export" class="bg-white rounded-[--radius-card] p-6 shadow-card hover:shadow-card-hover transition-shadow cursor-pointer group">
+        <a href="{{ route('jurnaling.export') }}" class="bg-white rounded-[--radius-card] p-6 shadow-card hover:shadow-card-hover transition-shadow cursor-pointer group">
             <div class="w-12 h-12 rounded-[--radius-button] bg-primary-50 flex items-center justify-center text-primary mb-4 group-hover:scale-110 transition-transform">
                 <i data-lucide='download' class='text-2xl' aria-hidden="true"></i>
             </div>
@@ -140,15 +140,15 @@
     <div class="bg-white rounded-[--radius-card] p-6 shadow-card">
         <h2 class="text-lg font-semibold text-gray-900 mb-4">Aksi Cepat</h2>
         <div class="flex flex-wrap gap-3">
-            <a href="{{ $prefix }}/transactions/journal-entry" class="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-[--radius-button] hover:bg-primary-600 transition-colors text-sm font-medium">
+            <a href="{{ route('jurnal-entry') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-[--radius-button] hover:bg-primary-600 transition-colors text-sm font-medium">
                 <i class='plus'></i>
                 <span>Entri Jurnal Baru</span>
             </a>
-            <a href="{{ $prefix }}/jurnaling/showing" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-[--radius-button] hover:bg-gray-200 transition-colors text-sm font-medium">
+            <a href="{{ route('jurnaling-list') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-[--radius-button] hover:bg-gray-200 transition-colors text-sm font-medium">
                 <i class='search'></i>
                 <span>Cari Jurnal</span>
             </a>
-            <a href="{{ $prefix }}/jurnaling/export" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-[--radius-button] hover:bg-gray-200 transition-colors text-sm font-medium">
+            <a href="{{ route('jurnaling.export') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-[--radius-button] hover:bg-gray-200 transition-colors text-sm font-medium">
                 <i class='download'></i>
                 <span>Ekspor Data</span>
             </a>
@@ -206,7 +206,7 @@
             </div>
         </div>
         <div class="mt-4">
-            <a href="{{ $prefix }}/jurnaling/showing" class="text-sm text-primary hover:text-primary-600 font-medium">
+            <a href="{{ route('jurnaling-list') }}" class="text-sm text-primary hover:text-primary-600 font-medium">
                 Lihat semua transaksi →
             </a>
         </div>

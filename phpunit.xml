@@ -22,6 +22,7 @@
         <env name="APP_MAINTENANCE_DRIVER" value="file"/>
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="CACHE_STORE" value="array"/>
+        <!-- Opt-in fast path: uncomment for quick unit-only runs. Keep commented for full suite — DashboardTotalsTest and SUM(debit) require MySQL 8.4 (VARCHAR regression). -->
         <!-- <env name="DB_CONNECTION" value="sqlite"/> -->
         <!-- <env name="DB_DATABASE" value=":memory:"/> -->
         <env name="MAIL_MAILER" value="array"/>

@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
@@ -25,6 +26,11 @@ class AppServiceProvider extends ServiceProvider
         // Auto-detect Vercel serverless environment and configure drivers
         if (config('app.vercel') || config('app.vercel_env')) {
             $this->configureForVercel();
+        }
+
+        // Warn when host .env uses container-only DB host (common cause of "getaddrinfo for dapense-mysql failed")
+        if (! config('app.docker') && config('database.connections.mysql.host') === 'dapense-mysql') {
+            Log::warning('DB_HOST=dapense-mysql is only resolvable inside Docker. For `php artisan serve` on host, set DB_HOST=127.0.0.1 and DB_PORT=${DB_EXTERNAL_PORT:-13306} or run `docker compose up`.');
         }
 
         RateLimiter::for('export', function (Request $request) {

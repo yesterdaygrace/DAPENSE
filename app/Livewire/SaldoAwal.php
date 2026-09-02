@@ -6,6 +6,7 @@ use App\Livewire\Concerns\HasRole;
 use App\Models\COA;
 use App\Models\Periode;
 use App\Models\SaldoAwal as SaldoAwalModel;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
 
@@ -85,7 +86,7 @@ class SaldoAwal extends Component
         $tanggalAkhir = strtotime($periode->tanggal_akhir);
 
         if ($tanggalSaldo < $tanggalAwal || $tanggalSaldo > $tanggalAkhir) {
-            session()->flash('error', 'Tanggal saldo harus dalam rentang periode');
+            $this->addError('formData.tanggal_saldo', 'Tanggal saldo harus dalam rentang periode (' . $periode->tanggal_awal . ' s/d ' . $periode->tanggal_akhir . ')');
 
             return;
         }
@@ -119,8 +120,12 @@ class SaldoAwal extends Component
     {
         Gate::authorize('delete', SaldoAwalModel::class);
 
-        SaldoAwalModel::findOrFail($this->deleteId)->delete();
-        session()->flash('success', 'Saldo awal berhasil dihapus.');
+        try {
+            SaldoAwalModel::findOrFail($this->deleteId)->delete();
+            session()->flash('success', 'Saldo awal berhasil dihapus.');
+        } catch (QueryException $e) {
+            session()->flash('error', 'Tidak dapat menghapus saldo awal: masih terkait.');
+        }
         $this->showDeleteModal = false;
         $this->deleteId = null;
     }

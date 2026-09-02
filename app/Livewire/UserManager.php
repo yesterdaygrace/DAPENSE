@@ -56,7 +56,7 @@ class UserManager extends Component
 
     public function save()
     {
-        Gate::authorize('manage-users');
+        Gate::authorize($this->editing ? 'update' : 'create', User::class);
 
         $this->validate([
             'formData.name' => 'required|string|max:255',
@@ -104,7 +104,7 @@ class UserManager extends Component
 
     public function deleteUser()
     {
-        Gate::authorize('manage-users');
+        Gate::authorize('delete', User::findOrFail($this->deleteId));
 
         if ($this->deleteId === auth()->id()) {
             session()->flash('error', 'Tidak dapat menghapus akun sendiri.');

@@ -79,6 +79,7 @@ class JurnalManager extends Component
             'debit' => $entry->debit,
             'kredit' => $entry->kredit,
             'periode_id' => (string) $entry->periode_id,
+            'kategori_jurnal' => $entry->kategori_jurnal,
         ];
         $this->editing = true;
         $this->editId = $id;
@@ -100,13 +101,14 @@ class JurnalManager extends Component
             'formData.debit' => 'required|numeric|min:0',
             'formData.kredit' => 'required|numeric|min:0',
             'formData.periode_id' => 'required|exists:periodes,id',
+            'formData.kategori_jurnal' => 'nullable|in:km,kk,bm,bk,mem,mempenutup',
         ]);
 
         $data = [
             'tanggal_jurnal' => $this->formData['tanggal_jurnal'],
             'nomor_bukti' => $this->formData['nomor_bukti'],
             'keterangan' => $this->formData['keterangan'],
-            'kategori_jurnal' => $this->typeFilter,
+            'kategori_jurnal' => $this->formData['kategori_jurnal'] ?? $this->typeFilter,
             'debit' => $this->formData['debit'],
             'kredit' => $this->formData['kredit'],
             'coa_id' => $this->formData['coa_id'],

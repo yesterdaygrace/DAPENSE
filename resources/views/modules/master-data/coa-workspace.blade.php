@@ -17,9 +17,9 @@
 <div x-data="{ activeTab: '{{ request()->query('tab', 'accounts') }}' }">
     <!-- Breadcrumb -->
     <nav class="flex items-center gap-2 text-sm text-gray-600 mb-6">
-        <a href="{{ $prefix }}/dashboard" class="hover:text-primary transition-colors">Dasbor</a>
+        <a href="{{ route('dashboard') }}" class="hover:text-primary transition-colors">Dasbor</a>
         <i data-lucide='chevron-right' class='text-gray-400' aria-hidden="true"></i>
-        <a href="{{ $prefix }}/master-data" class="hover:text-primary transition-colors">Data Master</a>
+        <a href="{{ route('master-data') }}" class="hover:text-primary transition-colors">Data Master</a>
         <i data-lucide='chevron-right' class='text-gray-400' aria-hidden="true"></i>
         <span class="hover:text-primary transition-colors">Ruang Kerja COA</span>
         <i data-lucide='chevron-right' class='text-gray-400' aria-hidden="true"></i>

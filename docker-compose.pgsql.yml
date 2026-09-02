@@ -1,3 +1,9 @@
+# PostgreSQL variant of docker-compose.yml — drop-in replacement for pgsql.
+# Usage:
+#   cp .env.example .env   # then set DB_CONNECTION=pgsql, DB_PORT=5432
+#   docker compose -f docker-compose.pgsql.yml up --build -d
+# or use profile overlay: docker compose -f docker-compose.yml -f docker-compose.pgsql.yml up -d
+
 services:
   app:
     build:
@@ -11,15 +17,17 @@ services:
       - APP_ENV=production
       - APP_DEBUG=false
       - DOCKER=true
-      # Overrides env_file .env so host can keep DB_HOST=127.0.0.1; container resolves dapense-mysql
-      - DB_HOST=dapense-mysql
+      - DB_HOST=dapense-postgres
+      - DB_CONNECTION=pgsql
+      - DB_PORT=5432
       - APP_URL=http://localhost:8080
     env_file:
       - .env
     volumes:
       - storage_data:/var/www/html/storage
     depends_on:
-      - mysql
+      postgres:
+        condition: service_healthy
     networks:
       - internal
     cap_drop:
@@ -44,28 +52,35 @@ services:
       - /var/lib/redis
       - /tmp
 
-  mysql:
-    image: mysql:8.4
-    container_name: dapense-mysql
+  postgres:
+    image: postgres:16-alpine
+    container_name: dapense-postgres
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-      MYSQL_DATABASE: ${DB_DATABASE}
+      POSTGRES_DB: ${DB_DATABASE:-dapense}
+      POSTGRES_USER: ${DB_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      PGDATA: /var/lib/postgresql/data/pgdata
     ports:
-      - "${DB_EXTERNAL_PORT:-13306}:3306"
+      - "${DB_EXTERNAL_PORT:-15432}:5432"
     volumes:
-      - mysql_data:/var/lib/mysql
+      - postgres_data:/var/lib/postgresql/data
     networks:
       - internal
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-postgres} -d ${DB_DATABASE:-dapense}"]
+      interval: 5s
       timeout: 5s
       retries: 10
+    command: >
+      postgres
+      -c max_connections=200
+      -c shared_buffers=256MB
 
 networks:
   internal:
     name: dapense-internal
 
 volumes:
-  mysql_data:
+  postgres_data:
   storage_data:

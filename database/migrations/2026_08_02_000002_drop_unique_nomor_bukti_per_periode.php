@@ -13,13 +13,14 @@ use Illuminate\Support\Facades\Schema;
  */
 return new class extends Migration
 {
-public function up(): void
+    public function up(): void
     {
         Schema::table('jurnalings', function (Blueprint $table) {
             $indexes = Schema::getIndexes('jurnalings');
+            $candidates = ['jurnalings_nomor_bukti_periode_unique', 'jurnaling_nomor_bukti_periode_unique'];
             foreach ($indexes as $index) {
-                if ($index['name'] === 'jurnaling_nomor_bukti_periode_unique') {
-                    $table->dropUnique('jurnaling_nomor_bukti_periode_unique');
+                if (in_array($index['name'], $candidates, true)) {
+                    $table->dropUnique($index['name']);
                     break;
                 }
             }

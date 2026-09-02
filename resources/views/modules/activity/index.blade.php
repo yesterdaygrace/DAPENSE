@@ -16,7 +16,7 @@
 <div class="space-y-6">
     {{-- Breadcrumb --}}
     <nav class="flex items-center gap-2 text-sm text-gray-600">
-        <a href="{{ $prefix }}/dashboard" class="hover:text-primary transition-colors">Dasbor</a>
+        <a href="{{ route('dashboard') }}" class="hover:text-primary transition-colors">Dasbor</a>
         <i data-lucide='chevron-right' class='text-gray-400' aria-hidden="true"></i>
         <span class="text-gray-900 font-medium">Aktivitas Terbaru</span>
     </nav>
