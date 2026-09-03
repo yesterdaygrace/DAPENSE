@@ -95,34 +95,34 @@ erDiagram
     users ||--o{ jurnalings : "otorisator (approver)"
     header_coas {
         bigint id PK
-        string kode_header "HEADER-01"
+        string kode_header
         string nama_header
         int level
-        bigint parent_id FK "nullable self"
+        bigint parent_id FK
     }
     coas {
         bigint id PK
-        string kode_akun UK "AKT-001"
+        string kode_akun UK
         string nama_akun
-        string saldo_normal "D/K"
+        string saldo_normal
         string kategori
         int level
         bigint header_coa_id FK
     }
     periodes {
         bigint id PK
-        string nama_periode "2024-08"
+        string nama_periode
         boolean is_rekap
         date start_date
         date end_date
     }
     jurnalings {
         bigint id PK
-        string nomor_bukti UK_per_periode "VCHR-001"
+        string nomor_bukti UK
         bigint coa_id FK
         bigint periode_id FK
-        numeric debit "NUMERIC(15,2)"
-        numeric kredit "NUMERIC(15,2)"
+        decimal debit
+        decimal kredit
         string kategori_jurnal
         date tanggal
     }
@@ -130,17 +130,17 @@ erDiagram
         bigint id PK
         bigint coa_id FK
         bigint periode_id FK
-        numeric debit
-        numeric kredit
+        decimal debit
+        decimal kredit
     }
     neraca_saldos {
         bigint id PK
-        string coa_id FK "→ coas.kode_akun"
+        string coa_id FK
         bigint periode_id FK
-        numeric saldo_awal
-        numeric mutasi_debit
-        numeric mutasi_kredit
-        numeric saldo_akhir
+        decimal saldo_awal
+        decimal mutasi_debit
+        decimal mutasi_kredit
+        decimal saldo_akhir
     }
     users {
         bigint id PK
