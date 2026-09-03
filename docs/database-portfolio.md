@@ -18,50 +18,61 @@
 
 ## 1) CV Bullets — VERIFIED (file:line)
 
-### Bullet 1 — 3NF Design
+### 1 — 3NF Design
+
 > Designed a 3NF database for a pension-fund accounting system, building 8 core tables, 8 foreign keys, 3 unique constraints, and 19 migrations (18 schema states + seed dataset) supporting 100 COAs and 1,000+ journal transactions
 
-| Claim | Source |
-|---|---|
-| 8 core tables | `database/migrations/*.php` (19 files) — `header_coas, coas, periodes, jurnalings, saldo_awal, neraca_saldos, users, otorisators` (+ infra `cache/jobs/activity_log`) |
-| `Header → COA → Journal` hierarchy | `app/Models/COA.php:24`, `Jurnaling.php:47`, `2024_07_12_155920_header.php:19` (`parent_id` self-FK) |
-| 8 FKs | `coas.header_coa_id`→`header_coas`, `header_coas.parent_id` (self), `saldo_awal.coa_id`, `saldo_awal.periode_id`, `jurnalings.coa_id`, `jurnalings.periode_id`, `neraca_saldos.coa_id→coas.kode_akun` (VARCHAR FK), `neraca_saldos.periode_id` — all `constrained()->onDelete('cascade')` |
-| 3 uniques | `2024_07_12_160105_c_o_a.php:24-25` `UQ(kode_akun)`, `UQ(kode_akun,nama_akun)`; `2026_07_26_000001:12` `UQ(nomor_bukti, periode_id)` (dropped/re-added `2026_08_02_000002`) |
-| 19 migrations | `ls database/migrations/*.php | wc -l` → 19 = 18 schema + `2026_09_02_seed_jurnal_coa_dataset.php` |
-| 100/17/54/1000 seed | `database/seed_data_jurnal_coa.sql:11-28` (17), `:39-139` (100), `:144-198` (54), `:203ff` (1000 = 500 vouchers ×2) |
 
-### Bullet 2 — Reporting & Integrity
+| Claim                              | Source                                                                                                                                                                                                                                                                                    |
+| ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 8 core tables                      | `database/migrations/*.php` (19 files) — `header_coas, coas, periodes, jurnalings, saldo_awal, neraca_saldos, users, otorisators` (+ infra `cache/jobs/activity_log`)                                                                                                                     |
+| `Header → COA → Journal` hierarchy | `app/Models/COA.php:24`, `Jurnaling.php:47`, `2024_07_12_155920_header.php:19` (`parent_id` self-FK)                                                                                                                                                                                      |
+| 8 FKs                              | `coas.header_coa_id`→`header_coas`, `header_coas.parent_id` (self), `saldo_awal.coa_id`, `saldo_awal.periode_id`, `jurnalings.coa_id`, `jurnalings.periode_id`, `neraca_saldos.coa_id→coas.kode_akun` (VARCHAR FK), `neraca_saldos.periode_id` — all `constrained()->onDelete('cascade')` |
+| 3 uniques                          | `2024_07_12_160105_c_o_a.php:24-25` `UQ(kode_akun)`, `UQ(kode_akun,nama_akun)`; `2026_07_26_000001:12` `UQ(nomor_bukti, periode_id)` (dropped/re-added `2026_08_02_000002`)                                                                                                               |
+| 19 migrations                      | `ls database/migrations/*.php                                                                                                                                                                                                                                                             |
+| 100/17/54/1000 seed                | `database/seed_data_jurnal_coa.sql:11-28` (17), `:39-139` (100), `:144-198` (54), `:203ff` (1000 = 500 vouchers ×2)                                                                                                                                                                       |
+
+
+### 2 — Reporting &amp; Integrity
+
 > Optimized financial reporting and data integrity for General Ledger and Trial Balance by implementing composite constraints, indexed foreign keys, and NUMERIC(15,2) financial fields, enabling accurate debit/credit reconciliation across 1,000+ journal entries
 
-| Claim | Source |
-|---|---|
-| Composite constraints | `2024_07_12_160105:25`, `2026_07_26_000001:12` |
-| FK indexes | All 8 FKs auto-indexed via `foreignId()->constrained()` — `2024_08_02_072943:22-23`, `2024_08_10_114736:16,20`, `2024_09_07_064446:17-18` |
-| `NUMERIC(15,2)` | `2026_08_03_000001:13-21` (`VARCHAR` `2024_08_02_072943:20-21` → `NUMERIC NOT NULL DEFAULT 0`, PG `USING ::numeric`); `Jurnaling.php:42-43` `decimal:2` |
-| Reconciliation | `NeracaSaldoController.php:107,115` `selectRaw SUM` + `saldo_akhir=(awal.debit-kredit)+(mutasi.debit-kredit)`; `PostingControllerRootSuperuser.php:88-95`; `JurnalingController.php:467-468` `bccomp(...,2)===0` |
 
-### Bullet 3 — Platform / RBAC / Backups / Portability
+| Claim                 | Source                                                                                                                                                                                                           |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Composite constraints | `2024_07_12_160105:25`, `2026_07_26_000001:12`                                                                                                                                                                   |
+| FK indexes            | All 8 FKs auto-indexed via `foreignId()->constrained()` — `2024_08_02_072943:22-23`, `2024_08_10_114736:16,20`, `2024_09_07_064446:17-18`                                                                        |
+| `NUMERIC(15,2)`       | `2026_08_03_000001:13-21` (`VARCHAR` `2024_08_02_072943:20-21` → `NUMERIC NOT NULL DEFAULT 0`, PG `USING ::numeric`); `Jurnaling.php:42-43` `decimal:2`                                                          |
+| Reconciliation        | `NeracaSaldoController.php:107,115` `selectRaw SUM` + `saldo_akhir=(awal.debit-kredit)+(mutasi.debit-kredit)`; `PostingControllerRootSuperuser.php:88-95`; `JurnalingController.php:467-468` `bccomp(...,2)===0` |
+
+
+### 3 — Platform / RBAC / Backups / Portability
+
 > Managed MySQL 8.4 and PostgreSQL 16 on Ubuntu/Docker, implementing 4-role RBAC, automated AES-256-CBC encrypted backups, and MySQL → PostgreSQL migration tooling for database portability and recovery
 
-| Claim | Source |
-|---|---|
-| MySQL 8.4 | `docker-compose.yml:48` `image: mysql:8.4`, `config/database.php:32-60`, `.env.example:24` `DB_CONNECTION=mysql` |
-| PG 16 | `docker-compose.pgsql.yml:56` `postgres:16-alpine`, `config/database.php:82-95`, `.env.example:36`, `docker-compose.pgsql.yml:21` |
-| Ubuntu/Docker | `Dockerfile:1,3` `php:8.3-fpm` + `apt-get nginx redis-server`, harden `cap_drop: ALL` `read_only: true` |
-| 4-role RBAC | `2024_06_17_033310_users.php:18` `usertype` default `rootsuperuser` + `admin/operator/bod`; `HasRole` trait, `CheckRole` middleware `bootstrap/app.php:20` |
+
+| Claim                | Source                                                                                                                                                                                        |
+| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| MySQL 8.4            | `docker-compose.yml:48` `image: mysql:8.4`, `config/database.php:32-60`, `.env.example:24` `DB_CONNECTION=mysql`                                                                              |
+| PG 16                | `docker-compose.pgsql.yml:56` `postgres:16-alpine`, `config/database.php:82-95`, `.env.example:36`, `docker-compose.pgsql.yml:21`                                                             |
+| Ubuntu/Docker        | `Dockerfile:1,3` `php:8.3-fpm` + `apt-get nginx redis-server`, harden `cap_drop: ALL` `read_only: true`                                                                                       |
+| 4-role RBAC          | `2024_06_17_033310_users.php:18` `usertype` default `rootsuperuser` + `admin/operator/bod`; `HasRole` trait, `CheckRole` middleware `bootstrap/app.php:20`                                    |
 | 8 Policies + 4 Gates | `app/Policies/*.php` (8): Journal/Ledger/User/Periode/SaldoAwal/Otorisator/Report/Setting; `AuthServiceProvider.php:36-50` `export-journal:36 import-data:40 post-journal:44 manage-users:48` |
-| AES-256-CBC | `docker/backup.sh:27` `mysqldump|gzip|openssl enc -aes-256-cbc -salt -pbkdf2`; `backup-pg.sh:38` `pg_dump`; `restore.sh:43` `restore-pg.sh:45`; `config/app.php:98` `cipher AES-256-CBC`; 30d retention |
-| Portability | `2026_08_03:12-22` driver-aware, `JurnalCoaSeeder.php:15-35` `TRUNCATE CASCADE` + `setval(pg_get_serial_sequence...)`, `docs/postgres-migration.md`, `database/pgsql-export.sh` |
+| AES-256-CBC          | `docker/backup.sh:27` `mysqldump                                                                                                                                                              |
+| Portability          | `2026_08_03:12-22` driver-aware, `JurnalCoaSeeder.php:15-35` `TRUNCATE CASCADE` + `setval(pg_get_serial_sequence...)`, `docs/postgres-migration.md`, `database/pgsql-export.sh`               |
+
 
 **Tech Stack line:** `MySQL 8.4 (prod) | PostgreSQL 16 (portable alt) | SQLite (dev/test fallback) | Redis 7 | PHP 8.3 | Laravel 13 | Eloquent | Livewire 4 | Ubuntu | Docker | Nginx | RBAC | AES-256-CBC | Spatie ActivityLog | Pest 4`
 
 **DB Engine Roles (one active):**
 
-| Engine | Role | How it runs |
-|---|---|---|
-| **MySQL 8.4** | Prod OLTP default `DB_CONNECTION=mysql` `.env.example:24` `docker-compose.yml:47` | All financial tables + Laravel `sessions/cache/queue` (`database` driver) + `SUM` reports; `mysqldump` backups |
-| **PostgreSQL 16** | Portable alt `DB_CONNECTION=pgsql` `.env.example:36` `docker-compose.pgsql.yml:21` | Same schema via driver-aware migrations; `pg_dump` backups; `pgloader` guide |
-| **SQLite** | Zero-config fallback `config/database.php:37` | Default if `.env` missing; `phpunit.xml:26-27` `:memory:` commented out (needs MySQL for VARCHAR regression) |
+
+| Engine            | Role                                                                               | How it runs                                                                                                    |
+| ----------------- | ---------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| **MySQL 8.4**     | Prod OLTP default `DB_CONNECTION=mysql` `.env.example:24` `docker-compose.yml:47`  | All financial tables + Laravel `sessions/cache/queue` (`database` driver) + `SUM` reports; `mysqldump` backups |
+| **PostgreSQL 16** | Portable alt `DB_CONNECTION=pgsql` `.env.example:36` `docker-compose.pgsql.yml:21` | Same schema via driver-aware migrations; `pg_dump` backups; `pgloader` guide                                   |
+| **SQLite**        | Zero-config fallback `config/database.php:37`                                      | Default if `.env` missing; `phpunit.xml:26-27` `:memory:` commented out (needs MySQL for VARCHAR regression)   |
+
 
 ---
 
@@ -144,7 +155,7 @@ erDiagram
 
 **Hierarchy read:** `HeaderCOA (Kelompok Akun)` 1—N `COA (Akun)` 1—N `Jurnaling (Jurnal)` — canonical General Ledger (*Buku Besar*) chain. `header_coas.parent_id` enables arbitrary-depth grouping (`2024_07_12_155920_header.php:19`). Models: `COA.php:24` `belongsTo(HeaderCOA)`, `Jurnaling.php:47` `belongsTo(COA)`.
 
-### 2.2 Flowchart — relations & data flow
+### 2.2 Flowchart — relations &amp; data flow
 
 ```mermaid
 flowchart TB
@@ -169,33 +180,38 @@ flowchart TB
 ```
 
 **How to read the flowchart:**
-- **Solid →** physical FK (`constrained()->onDelete('cascade')`, auto-indexed). **Dashed -.->** logical/snapshot FK (natural key `kode_akun`, or approver link).
+
+- **Solid →** physical FK (`constrained()->onDelete('cascade')`, auto-indexed). **Dashed -.-&gt;** logical/snapshot FK (natural key `kode_akun`, or approver link).
 - **Top chain** is the accounting spine: 5 top headers (`ASET` etc.) → 17 leaf headers → 100 COAs → journals. Each voucher (`Nomor Bukti`) is scoped to one `Periode` (`UQ(nomor_bukti,periode_id)`), kept balanced (`debit XOR kredit`, `bccomp(...,2)`).
-- **`saldo_awal`** holds opening balances per `COA × Periode` (54 rows for seed periode 1); **`neraca_saldos`** is the period-close snapshot produced by `sp_posting_periode` (100 rows, one per `kode_akun`).
+- `**saldo_awal**` holds opening balances per `COA × Periode` (54 rows for seed periode 1); `**neraca_saldos**` is the period-close snapshot produced by `sp_posting_periode` (100 rows, one per `kode_akun`).
 - **Right column** is the synthetic showcase derived from this spine: two `VIEW`s, one `TRIGGER`, one `PROCEDURE`, plus the 3 JOINs (incl. `WITH` rollup over `header_coas` level 1 `4/5` vs children `4.1/4.2/5.1/5.2/5.3`).
 
 ### 2.3 FK Catalogue — 8 FKs
 
-| # | FK | From → To | Migration | On Delete | Index |
-|---|---|---|---|---|---|
-| 1 | `coas.header_coa_id` | `coas` → `header_coas.id` | `2024_07_12_160105_c_o_a.php:19` | `cascade` | auto |
-| 2 | `header_coas.parent_id` | `header_coas` → `header_coas.id` (self) | `2024_07_12_155920_header.php:19` | `cascade` (nullable) | auto |
-| 3 | `saldo_awal.coa_id` | `saldo_awal` → `coas.id` | `2024_08_10_114736_create_saldo_awals_table.php:16` | `cascade` | auto |
-| 4 | `saldo_awal.periode_id` | `saldo_awal` → `periodes.id` | `2024_08_10_114736_create_saldo_awals_table.php:20` | `cascade` | auto |
-| 5 | `jurnalings.coa_id` | `jurnalings` → `coas.id` | `2024_08_02_072943_jurnalings.php:22` | `cascade` | auto |
-| 6 | `jurnalings.periode_id` | `jurnalings` → `periodes.id` | `2024_08_02_072943_jurnalings.php:23` | `cascade` | auto |
-| 7 | `neraca_saldos.coa_id` | `neraca_saldos` → `coas.kode_akun` (VARCHAR FK) | `2024_09_07_064446_create_neraca_saldos_table.php:17` | `cascade` | auto |
-| 8 | `neraca_saldos.periode_id` | `neraca_saldos` → `periodes.id` | `2024_09_07_064446_create_neraca_saldos_table.php:18` | `cascade` | auto |
+
+| #   | FK                         | From → To                                       | Migration                                             | On Delete            | Index |
+| --- | -------------------------- | ----------------------------------------------- | ----------------------------------------------------- | -------------------- | ----- |
+| 1   | `coas.header_coa_id`       | `coas` → `header_coas.id`                       | `2024_07_12_160105_c_o_a.php:19`                      | `cascade`            | auto  |
+| 2   | `header_coas.parent_id`    | `header_coas` → `header_coas.id` (self)         | `2024_07_12_155920_header.php:19`                     | `cascade` (nullable) | auto  |
+| 3   | `saldo_awal.coa_id`        | `saldo_awal` → `coas.id`                        | `2024_08_10_114736_create_saldo_awals_table.php:16`   | `cascade`            | auto  |
+| 4   | `saldo_awal.periode_id`    | `saldo_awal` → `periodes.id`                    | `2024_08_10_114736_create_saldo_awals_table.php:20`   | `cascade`            | auto  |
+| 5   | `jurnalings.coa_id`        | `jurnalings` → `coas.id`                        | `2024_08_02_072943_jurnalings.php:22`                 | `cascade`            | auto  |
+| 6   | `jurnalings.periode_id`    | `jurnalings` → `periodes.id`                    | `2024_08_02_072943_jurnalings.php:23`                 | `cascade`            | auto  |
+| 7   | `neraca_saldos.coa_id`     | `neraca_saldos` → `coas.kode_akun` (VARCHAR FK) | `2024_09_07_064446_create_neraca_saldos_table.php:17` | `cascade`            | auto  |
+| 8   | `neraca_saldos.periode_id` | `neraca_saldos` → `periodes.id`                 | `2024_09_07_064446_create_neraca_saldos_table.php:18` | `cascade`            | auto  |
+
 
 Verified `grep -rn constrained database/migrations` → 8 hits. **Note:** `neraca_saldos.coa_id → kode_akun` is intentional natural-key FK for Trial Balance snapshots.
 
 ### 2.4 Unique Constraints — 3 Domain Uniques
 
-| Constraint | Columns | Migration | Purpose |
-|---|---|---|---|
-| `UQ(coas.kode_akun)` | `kode_akun` | `2024_07_12_160105_c_o_a.php:24` | Chart of Accounts uniqueness |
-| `UQ(coas.kode_akun, nama_akun)` | `kode_akun + nama_akun` | `2024_07_12_160105_c_o_a.php:25` | Composite dedup |
+
+| Constraint                               | Columns                    | Migration                                             | Purpose                         |
+| ---------------------------------------- | -------------------------- | ----------------------------------------------------- | ------------------------------- |
+| `UQ(coas.kode_akun)`                     | `kode_akun`                | `2024_07_12_160105_c_o_a.php:24`                      | Chart of Accounts uniqueness    |
+| `UQ(coas.kode_akun, nama_akun)`          | `kode_akun + nama_akun`    | `2024_07_12_160105_c_o_a.php:25`                      | Composite dedup                 |
 | `UQ(jurnalings.nomor_bukti, periode_id)` | `nomor_bukti + periode_id` | `2026_07_26_000001:12` (re-added `2026_08_02_000002`) | Voucher integrity per *Periode* |
+
 
 ---
 
@@ -230,13 +246,15 @@ Verified `grep -rn constrained database/migrations` → 8 hits. **Note:** `nerac
 
 ## 4) Seed Dataset — Counts Verified
 
-| Dataset | File:lines | Rows | Detail |
-|---|---|---|---|
-| Header COA | `seed_data_jurnal_coa.sql:11-28` | **17** | `INSERT INTO header_coas` |
-| COA | `seed_data_jurnal_coa.sql:39-139` | **100** | `AKT-* / PAS-* / MOD-* / PEND-* / BIAYA-*` |
-| Saldo Awal | `seed_data_jurnal_coa.sql:144-198` | **54** | Opening per `periode_id=1` |
-| Jurnaling | `seed_data_jurnal_coa.sql:203ff` | **1,000** (500 vouchers ×2) | Double-entry journals |
-| Periode | `seed_data_jurnal_coa.sql` + `2024_07_09_044815` | 1+ | `Tahun 2025`, drives `periode_id` |
+
+| Dataset    | File:lines                                       | Rows                        | Detail                                     |
+| ---------- | ------------------------------------------------ | --------------------------- | ------------------------------------------ |
+| Header COA | `seed_data_jurnal_coa.sql:11-28`                 | **17**                      | `INSERT INTO header_coas`                  |
+| COA        | `seed_data_jurnal_coa.sql:39-139`                | **100**                     | `AKT-* / PAS-* / MOD-* / PEND-* / BIAYA-*` |
+| Saldo Awal | `seed_data_jurnal_coa.sql:144-198`               | **54**                      | Opening per `periode_id=1`                 |
+| Jurnaling  | `seed_data_jurnal_coa.sql:203ff`                 | **1,000** (500 vouchers ×2) | Double-entry journals                      |
+| Periode    | `seed_data_jurnal_coa.sql` + `2024_07_09_044815` | 1+                          | `Tahun 2025`, drives `periode_id`          |
+
 
 Loaded via `JurnalCoaSeeder.php:15-35` (`TRUNCATE CASCADE` + `setval(pg_get_serial_sequence(...))` for PG) + `2026_09_02_000000`.
 
@@ -279,7 +297,8 @@ flowchart LR
 
 Verify `docs/postgres-migration.md:101` — `NUMERIC(15,2)` on both engines.
 
-### Indexes & Integrity
+### Indexes &amp; Integrity
+
 - 8 FKs auto-indexed; `UQ(...)` doubles as lookup index. `EXPLAIN WHERE coa_id=? AND periode_id=?` hits FK path.
 - No RLS (`docs/postgres-migration.md:105`) — auth is app-level (see §6).
 
@@ -287,42 +306,48 @@ Verify `docs/postgres-migration.md:101` — `NUMERIC(15,2)` on both engines.
 
 ## 6) RBAC — 4 Roles, HasRole, CheckRole, 8 Policies, 4 Gates
 
-| Layer | Source | Detail |
-|---|---|---|
-| Roles (4) | `2024_06_17_033310_users.php:18` `users.usertype` | `rootsuperuser` (super admin) / `admin` / `operator` (entry) / `bod` (Board) |
-| Trait | `app/Traits/HasRole.php` | `hasRole(string|array)` |
-| Middleware | `bootstrap/app.php:20` `CheckRole` | `->middleware('role:rootsuperuser,admin')` |
-| Policies (8) | `app/Policies/*.php` | Journal, Ledger, User, Periode, SaldoAwal, Otorisator, Report, Setting |
-| Gates (4) | `AuthServiceProvider.php:36-50` | `export-journal:36` `import-data:40` `post-journal:44` `manage-users:48` |
-| Audit | `spatie/laravel-activitylog` `2026_07_15_142905` | `activity_log` + `event` + `batch_uuid` |
 
-`operator` writes journals, `rootsuperuser` posts & manages periods/users, `bod` reads reports, `admin` manages masters — server-side enforced (`AGENTS.md:14`).
+| Layer        | Source                                            | Detail                                                                       |
+| ------------ | ------------------------------------------------- | ---------------------------------------------------------------------------- |
+| Roles (4)    | `2024_06_17_033310_users.php:18` `users.usertype` | `rootsuperuser` (super admin) / `admin` / `operator` (entry) / `bod` (Board) |
+| Trait        | `app/Traits/HasRole.php`                          | `hasRole(string                                                              |
+| Middleware   | `bootstrap/app.php:20` `CheckRole`                | `->middleware('role:rootsuperuser,admin')`                                   |
+| Policies (8) | `app/Policies/*.php`                              | Journal, Ledger, User, Periode, SaldoAwal, Otorisator, Report, Setting       |
+| Gates (4)    | `AuthServiceProvider.php:36-50`                   | `export-journal:36` `import-data:40` `post-journal:44` `manage-users:48`     |
+| Audit        | `spatie/laravel-activitylog` `2026_07_15_142905`  | `activity_log` + `event` + `batch_uuid`                                      |
+
+
+`operator` writes journals, `rootsuperuser` posts &amp; manages periods/users, `bod` reads reports, `admin` manages masters — server-side enforced (`AGENTS.md:14`).
 
 ---
 
-## 7) Backup & Recovery — AES-256-CBC, 30-day
+## 7) Backup &amp; Recovery — AES-256-CBC, 30-day
 
-| Path | Source | Command |
-|---|---|---|
-| MySQL backup | `docker/backup.sh:27` | `mysqldump | gzip | openssl enc -aes-256-cbc -salt -pbkdf2 -pass $BACKUP_ENCRYPTION_KEY > /backups/dapense_*.sql.enc` |
-| PG backup | `docker/backup-pg.sh:38` | `pg_dump | gzip | openssl enc -aes-256-cbc -salt -pbkdf2` |
-| MySQL restore | `docker/restore.sh:43` | `openssl enc -d ... | gunzip | mysql` |
-| PG restore | `docker/restore-pg.sh:45` | `openssl enc -d ... | gunzip | psql` |
-| Cipher | `config/app.php:98` | `AES-256-CBC` |
-| Retention | `docker/backup*.sh` | 30 days cron-friendly |
+
+| Path          | Source                    | Command               |
+| ------------- | ------------------------- | --------------------- |
+| MySQL backup  | `docker/backup.sh:27`     | `mysqldump            |
+| PG backup     | `docker/backup-pg.sh:38`  | `pg_dump              |
+| MySQL restore | `docker/restore.sh:43`    | `openssl enc -d ...   |
+| PG restore    | `docker/restore-pg.sh:45` | `openssl enc -d ...   |
+| Cipher        | `config/app.php:98`       | `AES-256-CBC`         |
+| Retention     | `docker/backup*.sh`       | 30 days cron-friendly |
+
 
 ---
 
 ## 8) Portability — MySQL 8.4 ↔ PostgreSQL 16
 
-| Area | MySQL | PostgreSQL | Source |
-|---|---|---|---|
-| Active engine | `DB_CONNECTION=mysql` `.env.example:24` | `DB_CONNECTION=pgsql` `.env.example:36` `docker-compose.pgsql.yml:21` | `config/database.php:19,32-60,82-95` |
-| Schema | `BIGINT UNSIGNED` backticks `MODIFY` | `BIGINT` no backticks `ALTER TYPE ... USING ::numeric` | `2026_08_03:13-21` |
-| Seed | `seed_data_jurnal_coa.sql` | **PG-compatible** plain `INSERT` | `docs/postgres-migration.md:12` |
-| Live migration | `mysqldump` | `pgloader mysql://... pgsql://...` | `docs/postgres-migration.md:64-66` |
-| Export | — | `./database/pgsql-export.sh → pgsql-dump/full.sql` | `docs/postgres-migration.md:89-95` |
-| SQLite | default if `.env` missing `config/database.php:37` | `:memory:` commented out `phpunit.xml:26-27` | needs MySQL for VARCHAR regression |
+
+| Area           | MySQL                                              | PostgreSQL                                                            | Source                               |
+| -------------- | -------------------------------------------------- | --------------------------------------------------------------------- | ------------------------------------ |
+| Active engine  | `DB_CONNECTION=mysql` `.env.example:24`            | `DB_CONNECTION=pgsql` `.env.example:36` `docker-compose.pgsql.yml:21` | `config/database.php:19,32-60,82-95` |
+| Schema         | `BIGINT UNSIGNED` backticks `MODIFY`               | `BIGINT` no backticks `ALTER TYPE ... USING ::numeric`                | `2026_08_03:13-21`                   |
+| Seed           | `seed_data_jurnal_coa.sql`                         | **PG-compatible** plain `INSERT`                                      | `docs/postgres-migration.md:12`      |
+| Live migration | `mysqldump`                                        | `pgloader mysql://... pgsql://...`                                    | `docs/postgres-migration.md:64-66`   |
+| Export         | —                                                  | `./database/pgsql-export.sh → pgsql-dump/full.sql`                    | `docs/postgres-migration.md:89-95`   |
+| SQLite         | default if `.env` missing `config/database.php:37` | `:memory:` commented out `phpunit.xml:26-27`                          | needs MySQL for VARCHAR regression   |
+
 
 ---
 
@@ -332,12 +357,14 @@ Verify `docs/postgres-migration.md:101` — `NUMERIC(15,2)` on both engines.
 
 ### 9.1 What you will find
 
-| File | What it proves | Mirrors |
-|---|---|---|
-| `database/sql-showcase/01_views.sql` | `v_neraca_saldo` + `v_buku_besar` (`OVER PARTITION BY` running balance) | `NeracaSaldoController:107,135` · `BukuBesarController:56,119,189` |
-| `database/sql-showcase/02_triggers.sql` | `trg_jurnal_balance_check` `debit XOR kredit` | `JurnalingController:467-468` `bccomp` |
-| `database/sql-showcase/03_procedures.sql` | `sp_posting_periode(p_periode_id)` transactional snapshot | `PostingController:88-95` |
-| `database/sql-showcase/04_complex_joins.sql` | 3 JOINs: Buku Besar per COA×bulan, Neraca `LEFT JOIN` (all 100 COAs), Laba-Rugi `WITH` CTE + voucher audit | `NeracaSaldoController:107` · `seed_data:11ff` |
+
+| File                                         | What it proves                                                                                             | Mirrors                                                            |
+| -------------------------------------------- | ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| `database/sql-showcase/01_views.sql`         | `v_neraca_saldo` + `v_buku_besar` (`OVER PARTITION BY` running balance)                                    | `NeracaSaldoController:107,135` · `BukuBesarController:56,119,189` |
+| `database/sql-showcase/02_triggers.sql`      | `trg_jurnal_balance_check` `debit XOR kredit`                                                              | `JurnalingController:467-468` `bccomp`                             |
+| `database/sql-showcase/03_procedures.sql`    | `sp_posting_periode(p_periode_id)` transactional snapshot                                                  | `PostingController:88-95`                                          |
+| `database/sql-showcase/04_complex_joins.sql` | 3 JOINs: Buku Besar per COA×bulan, Neraca `LEFT JOIN` (all 100 COAs), Laba-Rugi `WITH` CTE + voucher audit | `NeracaSaldoController:107` · `seed_data:11ff`                     |
+
 
 ### 9.2 Quick start (either engine)
 
@@ -354,6 +381,7 @@ for f in database/sql-showcase/*.sql; do docker compose -f docker-compose.pgsql.
 ```
 
 Verify:
+
 ```sql
 SELECT COUNT(*) FROM coas; -- 100
 SELECT * FROM v_neraca_saldo WHERE periode_id=1 LIMIT 5;
@@ -371,11 +399,11 @@ CALL sp_posting_periode(1); SELECT COUNT(*) FROM neraca_saldos WHERE periode_id=
 - MySQL `BEFORE INSERT/UPDATE` `SIGNAL SQLSTATE '45000'` on `NOT (debit>0 XOR kredit>0)`.
 - PG `FUNCTION fn_jurnal_balance_check() RETURNS TRIGGER` + `BEFORE INSERT OR UPDATE EXECUTE FUNCTION`.
 
-Invalid (both 0/ both >0/ negatives/ NULL) rejected at DB layer — complement to app `bccomp`.
+Invalid (both 0/ both &gt;0/ negatives/ NULL) rejected at DB layer — complement to app `bccomp`.
 
 ### 9.5 Procedure — `sp_posting_periode(p_periode_id)`
 
-1. Count unbalanced vouchers `GROUP BY nomor_bukti HAVING ABS(SUM(debit)-SUM(kredit))>0.005`. If >0 → `SIGNAL`/`RAISE`.
+1. Count unbalanced vouchers `GROUP BY nomor_bukti HAVING ABS(SUM(debit)-SUM(kredit))>0.005`. If &gt;0 → `SIGNAL`/`RAISE`.
 2. `DELETE FROM neraca_saldos WHERE periode_id=p` + `INSERT ... SELECT` per `kode_akun` with `COALESCE` + `NOW()`. Idempotent `CALL`.
 
 ### 9.6 3 Complex JOINs + Bonus
